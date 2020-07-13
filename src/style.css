@@ -1,0 +1,48 @@
+
+/* *, *::before, *::after {
+    box-sizing: border-box;
+} */
+
+.wall {
+    position: relative;
+    width: 400px;
+    height: 320px;
+
+    background-color: blue;
+}
+
+.tile {
+    position: absolute;
+    width: 90px;
+    height: 70px;
+    margin: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: lightblue;
+}
+
+.clue {
+    text-align: center;
+    color: black;
+    /* TODO: prevent highlighting for copy/paste */
+}
+
+.selected {
+    background-color: maroon;
+}
+.selected .clue {
+    color: white;
+}
+
+.row_0 { top:  0%; }
+.row_1 { top: 25%; }
+.row_2 { top: 50%; }
+.row_3 { top: 75%; }
+.column_0 { left:  0%; }
+.column_1 { left: 25%; }
+.column_2 { left: 50%; }
+.column_3 { left: 75%; }
+
