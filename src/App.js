@@ -6,17 +6,25 @@ const num_columns = 4;
 const group_size = 4;
 
 function Tile(props) {
+  // props.clue - string of the clue for this tile
+  // props.column, props.row - 0 indexed position in the wall
+  // props.selected - truthy if currently selected  (mutually exclusive with props.group)
+  // props.group - 0 for first found, 1 for second ...
+  //               else null if clue's group hasn't been found
+
   let className = "tile"
   className += ` column_${props.column} row_${props.row}`
   if (props.selected) {
     className += " selected"
   }
-  if (props.group != null) {
+  let onClick
+  if (props.group == null) {
+    onClick = props.onClick
+  }else {
     className += ` group_${props.group}`
   }
-  // TODO: should wall handle preventing clicking?
   return (
-    <div className={className} onClick={props.group != null ? null : props.onClick}>
+    <div className={className} onClick={onClick}>
       <div className="clue">
         {props.clue}
       </div>
@@ -25,11 +33,16 @@ function Tile(props) {
 }
 
 function Wall(props) {
+  // props.clueOrder - array of all clues specified left to right, top to bottom
+  // props.foundGroups - array of the groups found so far, in order of discovery
+  //                     each group is a Set of clues
+  // props.selected - Set of selected clues
+  // props.onClick - callback for when a tile is clicked, takes the clue as an argument
   const tiles = []
   for (let i = 0; i < props.clueOrder.length; i++) {
     const clue = props.clueOrder[i];
 
-    let group = props.groups.findIndex(group => group.has(clue))
+    let group = props.groundGroups.findIndex(group => group.has(clue))
     if (group === -1) group = null
 
     tiles.push(
@@ -64,9 +77,9 @@ class Game extends React.Component {
     // this.props.groups - array of groups, each is a Set of clues
     
     this.state = {
-      selected: new Set(), // the selected clues
-      clueOrder: this.props.clues, // the current order of clues in the wall 
-      foundGroups: [] // the indexes of found groups
+      selected: new Set(), // currently selected clues
+      clueOrder: this.props.clues, // the current order of clues in the wall (left to right, top to bottom)
+      foundGroups: [] // the indexes of found groups (in this.props.groups)
     }
     // TODO: shuffle initially
   }
@@ -115,7 +128,7 @@ class Game extends React.Component {
       <Wall 
         clueOrder={this.state.clueOrder} 
         selected={this.state.selected}
-        groups={foundGroups}
+        foundGroups={foundGroups}
         onClick={clue => this.tileClicked(clue)} />
     )
   }
