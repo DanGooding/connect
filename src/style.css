@@ -1,14 +1,14 @@
 
-/* *, *::before, *::after {
+*, *::before, *::after {
     box-sizing: border-box;
-} */
+}
 
 .wall {
     position: relative;
     width: 400px;
     height: 320px;
 
-    background-color: blue;
+    background-color: lightgray;
 }
 
 .tile {
@@ -21,20 +21,35 @@
     align-items: center;
     justify-content: center;
 
-    background-color: lightblue;
+    background-color: gray;
+    color: black;
 }
 
 .clue {
     text-align: center;
-    color: black;
     /* TODO: prevent highlighting for copy/paste */
 }
 
+/* TODO: style selected as the next group */
 .selected {
-    background-color: maroon;
+    border: 3px solid black;
 }
-.selected .clue {
+
+.group_0 {
     color: white;
+    background-color: blue;
+}
+.group_1 {
+    color: white;
+    background-color: green;
+}
+.group_2 {
+    color: white;
+    background-color: red;
+}
+.group_3 {
+    color: white;
+    background-color: purple;
 }
 
 .row_0 { top:  0%; }

@@ -1,14 +1,22 @@
 import React from 'react';
 import './style.css'
 
+const num_rows = 4;
+const num_columns = 4;
+const group_size = 4;
+
 function Tile(props) {
   let className = "tile"
   className += ` column_${props.column} row_${props.row}`
   if (props.selected) {
     className += " selected"
   }
+  if (props.group != null) {
+    className += ` group_${props.group}`
+  }
+  // TODO: should wall handle preventing clicking?
   return (
-    <div className={className} onClick={props.onClick}>
+    <div className={className} onClick={props.group != null ? null : props.onClick}>
       <div className="clue">
         {props.clue}
       </div>
@@ -18,14 +26,19 @@ function Tile(props) {
 
 function Wall(props) {
   const tiles = []
-  for (let i = 0; i < props.clueOrder.length; i++) { // TODO: need a key on each ?
+  for (let i = 0; i < props.clueOrder.length; i++) {
     const clue = props.clueOrder[i];
+
+    let group = props.groups.findIndex(group => group.has(clue))
+    if (group === -1) group = null
+
     tiles.push(
       <Tile 
         clue={clue} 
         key={clue}
         selected={props.selected.has(clue)}
-        column={i % 4} row={Math.floor(i / 4)}
+        group={group}
+        column={i % num_columns} row={Math.floor(i / num_columns)}
         onClick={() => props.onClick(clue)}
       />)
   }
@@ -36,45 +49,75 @@ function Wall(props) {
   )
 }
 
+function set_eq(a, b) {
+  if (a.size !== b.size) return false
+  for (let x of a) {
+    if (!b.has(x)) return false
+  }
+  return true
+}
+
 class Game extends React.Component {
   constructor(props) {
     super(props)
     // this.props.clues - array of all clues (strings)
-    // this.props.groups - array of groups, each is an array of clues
+    // this.props.groups - array of groups, each is a Set of clues
     
     this.state = {
       selected: new Set(), // the selected clues
       clueOrder: this.props.clues, // the current order of clues in the wall 
-      // TODO: shuffle initially
+      foundGroups: [] // the indexes of found groups
     }
+    // TODO: shuffle initially
   }
 
   tileClicked(clue) {
-    
-    if (this.state.selected.has(clue)) {
-      let newSelected = new Set(this.state.selected)
+    let newSelected = new Set(this.state.selected)
+
+    if (this.state.selected.has(clue)) { // deselect
+      // TODO: delay
       newSelected.delete(clue)
       this.setState({selected: newSelected})
       
-    }else {
-      let newSelected = new Set(this.state.selected)
+    }else { // select
       newSelected.add(clue)
-      this.setState({selected: newSelected})
       // TODO: use async - callback
+      
+      if (newSelected.size < group_size) { // just add to selected
+        this.setState({selected: newSelected})
 
-      if (newSelected.size === 4) {
-        // check for group
+      }else { // a full group guess: check if correct, handle, then clear
+        for (let i = 0; i < this.props.groups.length; i++) {
+          if (this.state.foundGroups.includes(i)) {
+            continue
+          }
+          if (set_eq(newSelected, this.props.groups[i])) {
+            let newFoundGroups = this.state.foundGroups.slice()
+            newFoundGroups.push(i)
+            this.setState({
+              selected: new Set(), 
+              foundGroups: newFoundGroups
+            })
+            // TODO: move tiles
+            return
+          }
+        }
+        // doesn't match any group: incorrect
+        this.setState({selected: new Set()})
+        // TODO: callback for life update
       }
     }
   }
 
   render() {
+    let foundGroups = this.state.foundGroups.map(i => this.props.groups[i])
     return (
       <Wall 
         clueOrder={this.state.clueOrder} 
         selected={this.state.selected}
-        onClick={(clue) => this.tileClicked(clue)} />
-    )// TODO: also take selected
+        groups={foundGroups}
+        onClick={clue => this.tileClicked(clue)} />
+    )
   }
 }
 
@@ -86,11 +129,11 @@ function App() {
     "iota", "kappa", "lambda", "mu", 
     "nu", "xi", "omikron", "pi"]
   const groups = [
-    [0, 1, 2, 3],
-    [4, 5, 6, 7],
-    [8, 9, 10, 11],
-    [12, 13, 14, 15]]
-  
+    new Set(["alpha", "beta", "gamma", "delta"]), 
+    new Set(["epsilon", "zeta", "eta", "theta"]), 
+    new Set(["iota", "kappa", "lambda", "mu"]), 
+    new Set(["nu", "xi", "omikron", "pi"])]
+  // TODO: just take groups & build clues from there
   return <Game clues={clues} groups={groups}/>
 }
 
