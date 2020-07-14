@@ -91,12 +91,9 @@ class Game extends React.Component {
     // this.props.clues - array of all clues (strings)
     // this.props.groups - array of groups, each is a Set of clues
     
-    let clueOrder = this.props.clues.slice()
-    shuffle(clueOrder) // can't shuffleTiles, since this calls setState
-    
     this.state = {
       selected: new Set(), // currently selected clues
-      clueOrder: clueOrder, // the current order of clues in the wall (left to right, top to bottom)
+      clueOrder: [], // the current order of clues in the wall (left to right, top to bottom)
       foundGroups: [] // the indexes of found groups (in this.props.groups)
     }
   }
