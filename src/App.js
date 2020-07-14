@@ -1,9 +1,9 @@
 import React from 'react';
 import './style.css'
 
-const num_rows = 4;
 const num_columns = 4;
-const group_size = 4;
+const num_rows = 4;
+const group_size = num_rows;
 
 function Tile(props) {
   // props.clue - string of the clue for this tile
@@ -25,7 +25,7 @@ function Tile(props) {
   }
   return (
     <div className={className} onClick={onClick}>
-      <div className="clue">
+      <div className="clue noselect">
         {props.clue}
       </div>
     </div>
@@ -42,7 +42,7 @@ function Wall(props) {
   for (let i = 0; i < props.clueOrder.length; i++) {
     const clue = props.clueOrder[i];
 
-    let group = props.groundGroups.findIndex(group => group.has(clue))
+    let group = props.foundGroups.findIndex(group => group.has(clue))
     if (group === -1) group = null
 
     tiles.push(
@@ -62,12 +62,27 @@ function Wall(props) {
   )
 }
 
-function set_eq(a, b) {
+function setEq(a, b) {
+  // are these Sets equal?
   if (a.size !== b.size) return false
   for (let x of a) {
     if (!b.has(x)) return false
   }
   return true
+}
+
+function randomInt(min, max) {
+  // return a random integer in [min, max)
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function shuffle(a) {
+  for (let i = 0; i < a.length; i++) {
+    const j = randomInt(i, a.length);
+    [a[i], a[j]] = [a[j], a[i]]
+  }
 }
 
 class Game extends React.Component {
@@ -76,49 +91,101 @@ class Game extends React.Component {
     // this.props.clues - array of all clues (strings)
     // this.props.groups - array of groups, each is a Set of clues
     
+    let clueOrder = this.props.clues.slice()
+    shuffle(clueOrder) // can't shuffleTiles, since this calls setState
+    
     this.state = {
       selected: new Set(), // currently selected clues
-      clueOrder: this.props.clues, // the current order of clues in the wall (left to right, top to bottom)
+      clueOrder: clueOrder, // the current order of clues in the wall (left to right, top to bottom)
       foundGroups: [] // the indexes of found groups (in this.props.groups)
     }
-    // TODO: shuffle initially
+  }
+
+  componentDidMount() {
+    // before initial render
+    this.shuffleTiles()
+    // TODO: calling setState here may cause performance issues?
+  }
+
+  shuffleTiles() {
+    // shuffle the wall, putting found groups in their own rows at the top
+
+    // clues not in any group
+    let remainingClues = 
+      this.props.clues.filter(clue => 
+        !this.state.foundGroups.some(i => this.props.groups[i].has(clue)))
+    
+    let hasGroupOnSingleRow = false
+    do {
+      shuffle(remainingClues)
+
+      for (let i = 0; i < remainingClues.length; i += group_size) {
+        const row = new Set(remainingClues.slice(i, i + group_size))
+        if (this.props.groups.some(group => setEq(row, group))) {
+          hasGroupOnSingleRow = true
+          break
+        }
+      }
+    }while (hasGroupOnSingleRow) // TODO: this hangs for a single row remaining - use a for loop? handle that case properly anyway
+
+    let clues = []
+    for (const i of this.state.foundGroups) {
+      clues = clues.concat(Array.from(this.props.groups[i]))
+    }
+    clues = clues.concat(remainingClues)
+
+    this.setState({clueOrder: clues})
+
+    // TODO: do found groups go in selection order, or question order??
+    // TODO: should this be idempotent?
+
+    // TODO: don't reshuffle once a group is found?
+
+    // TODO: is the initial render guaranteed not to show?
   }
 
   tileClicked(clue) {
     let newSelected = new Set(this.state.selected)
 
-    if (this.state.selected.has(clue)) { // deselect
+    if (this.state.selected.has(clue)) { // deselect this clue
       // TODO: delay
       newSelected.delete(clue)
       this.setState({selected: newSelected})
       
-    }else { // select
+    }else { // select this clue
       newSelected.add(clue)
-      // TODO: use async - callback
       
-      if (newSelected.size < group_size) { // just add to selected
-        this.setState({selected: newSelected})
+      this.setState({selected: newSelected}, () => {
+        if (this.state.selected.size < group_size) {
+          return
+        }
+        
+        // check if any group matches the selection
+        const i = this.props.groups.findIndex(group => setEq(group, this.state.selected))
+        if (i === -1 || this.state.foundGroups.includes(i)) {
+          // haven't found a new group
+          this.setState({selected: new Set()})
+          return
+        }
 
-      }else { // a full group guess: check if correct, handle, then clear
-        for (let i = 0; i < this.props.groups.length; i++) {
-          if (this.state.foundGroups.includes(i)) {
-            continue
-          }
-          if (set_eq(newSelected, this.props.groups[i])) {
-            let newFoundGroups = this.state.foundGroups.slice()
-            newFoundGroups.push(i)
-            this.setState({
-              selected: new Set(), 
-              foundGroups: newFoundGroups
-            })
-            // TODO: move tiles
-            return
+        // group i matches the selection
+        let newFoundGroups = this.state.foundGroups.slice()
+        newFoundGroups.push(i)
+        if (newFoundGroups.length === this.props.groups.length - 1) {
+          // finding penultimagte also finds final
+          for (let j = 0; j < this.props.groups.length; j++) {
+            if (!newFoundGroups.includes(j)) {
+              newFoundGroups.push(j)
+              break
+            }
           }
         }
-        // doesn't match any group: incorrect
-        this.setState({selected: new Set()})
-        // TODO: callback for life update
-      }
+
+        this.setState({
+          foundGroups: newFoundGroups,
+          selected: new Set()
+        }, () => this.shuffleTiles())
+      })
     }
   }
 
@@ -137,15 +204,17 @@ class Game extends React.Component {
 
 function App() {
   const clues = [
-    "alpha", "beta", "gamma", "delta", 
-    "epsilon", "zeta", "eta", "theta", 
-    "iota", "kappa", "lambda", "mu", 
-    "nu", "xi", "omikron", "pi"]
+    "A1", "A2", "A3", "A4",
+    "B1", "B2", "B3", "B4",
+    "C1", "C2", "C3", "C4",
+    "D1", "D2", "D3", "D4",
+  ]
   const groups = [
-    new Set(["alpha", "beta", "gamma", "delta"]), 
-    new Set(["epsilon", "zeta", "eta", "theta"]), 
-    new Set(["iota", "kappa", "lambda", "mu"]), 
-    new Set(["nu", "xi", "omikron", "pi"])]
+    new Set(["A1", "A2", "A3", "A4"]), 
+    new Set(["B1", "B2", "B3", "B4"]), 
+    new Set(["C1", "C2", "C3", "C4"]), 
+    new Set(["D1", "D2", "D3", "D4"])]
+  // TODO **** game doesn't respond to changes in props!! - anti pattern?
   // TODO: just take groups & build clues from there
   return <Game clues={clues} groups={groups}/>
 }

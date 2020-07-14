@@ -3,6 +3,7 @@
     box-sizing: border-box;
 }
 
+/* TODO: size dependent on page? */
 .wall {
     position: relative;
     width: 400px;
@@ -23,6 +24,9 @@
 
     background-color: gray;
     color: black;
+
+    /* border: 0px solid black; */
+    transition: all 0.1s linear; /* TODO: do properly */
 }
 
 .clue {
@@ -35,6 +39,7 @@
     border: 3px solid black;
 }
 
+/* these should have increase z index */
 .group_0 {
     color: white;
     background-color: blue;
@@ -61,3 +66,11 @@
 .column_2 { left: 50%; }
 .column_3 { left: 75%; }
 
+.noselect {
+    -webkit-touch-callout: none;
+      -webkit-user-select: none;
+       -khtml-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+}
