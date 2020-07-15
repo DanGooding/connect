@@ -1,9 +1,11 @@
 import React from 'react';
 import './style.css'
 
-const num_columns = 4;
-const num_rows = 4;
-const group_size = num_rows;
+const num_columns = 4
+const num_rows = 4
+const group_size = num_rows
+const num_groups = num_columns
+const maxLives = 3
 
 function Tile(props) {
   // props.clue - string of the clue for this tile
@@ -62,6 +64,20 @@ function Wall(props) {
   )
 }
 
+function HealthBar(props) {
+  // props.lives - number of remaining lives
+  // props.maxLives - ...
+  let lives = []
+  for (let i = 0; i < props.maxLives; i++) {
+    if (i < props.lives) {
+      lives.push(<span key={i} aria-label="life" role="img">💙</span>)
+    }else {
+      lives.push(<span key={i} aria-label="lost life" role="img">🤍</span>)
+    }
+  }
+  return <div className="health-bar">{lives}</div>
+}
+
 function setEq(a, b) {
   // are these Sets equal?
   if (a.size !== b.size) return false
@@ -91,54 +107,20 @@ class Game extends React.Component {
     // this.props.clues - array of all clues (strings)
     // this.props.groups - array of groups, each is a Set of clues
     
+    let clueOrder = this.props.clues.slice()
+    shuffle(clueOrder)
+
     this.state = {
-      selected: new Set(), // currently selected clues
-      clueOrder: [], // the current order of clues in the wall (left to right, top to bottom)
-      foundGroups: [] // the indexes of found groups (in this.props.groups)
+      // currently selected clues
+      selected: new Set(),
+      // the current order of clues in the wall (left to right, top to bottom)
+      clueOrder: clueOrder, 
+      // the indexes of found groups (in this.props.groups)
+      foundGroups: [],
+      // the number of lives remaining - null means unlimited
+      lives: null
     }
-  }
-
-  componentDidMount() {
-    // before initial render
-    this.shuffleTiles()
-    // TODO: calling setState here may cause performance issues?
-  }
-
-  shuffleTiles() {
-    // shuffle the wall, putting found groups in their own rows at the top
-
-    // clues not in any group
-    let remainingClues = 
-      this.props.clues.filter(clue => 
-        !this.state.foundGroups.some(i => this.props.groups[i].has(clue)))
-    
-    let hasGroupOnSingleRow = false
-    do {
-      shuffle(remainingClues)
-
-      for (let i = 0; i < remainingClues.length; i += group_size) {
-        const row = new Set(remainingClues.slice(i, i + group_size))
-        if (this.props.groups.some(group => setEq(row, group))) {
-          hasGroupOnSingleRow = true
-          break
-        }
-      }
-    }while (hasGroupOnSingleRow) // TODO: this hangs for a single row remaining - use a for loop? handle that case properly anyway
-
-    let clues = []
-    for (const i of this.state.foundGroups) {
-      clues = clues.concat(Array.from(this.props.groups[i]))
-    }
-    clues = clues.concat(remainingClues)
-
-    this.setState({clueOrder: clues})
-
-    // TODO: do found groups go in selection order, or question order??
-    // TODO: should this be idempotent?
-
-    // TODO: don't reshuffle once a group is found?
-
-    // TODO: is the initial render guaranteed not to show?
+    // TODO: 2:30 timer, lives
   }
 
   tileClicked(clue) {
@@ -151,49 +133,101 @@ class Game extends React.Component {
       
     }else { // select this clue
       newSelected.add(clue)
-      
-      this.setState({selected: newSelected}, () => {
-        if (this.state.selected.size < group_size) {
-          return
-        }
-        
-        // check if any group matches the selection
-        const i = this.props.groups.findIndex(group => setEq(group, this.state.selected))
-        if (i === -1 || this.state.foundGroups.includes(i)) {
-          // haven't found a new group
-          this.setState({selected: new Set()})
-          return
-        }
+      this.setState({selected: newSelected}, () => this.checkGuess())
+    }
+  }
 
-        // group i matches the selection
-        let newFoundGroups = this.state.foundGroups.slice()
-        newFoundGroups.push(i)
-        if (newFoundGroups.length === this.props.groups.length - 1) {
-          // finding penultimagte also finds final
-          for (let j = 0; j < this.props.groups.length; j++) {
-            if (!newFoundGroups.includes(j)) {
-              newFoundGroups.push(j)
-              break
-            }
-          }
-        }
+  checkGuess() {
+    // check whether the selected clues form a group, and handle
 
-        this.setState({
-          foundGroups: newFoundGroups,
-          selected: new Set()
-        }, () => this.shuffleTiles())
+    if (this.state.selected.size < group_size) {
+      return
+    }
+    
+    // check if any group matches the selection
+    const i = this.props.groups.findIndex(group => setEq(group, this.state.selected))
+    if (i === -1 || this.state.foundGroups.includes(i)) {
+      // haven't found a (new) group - deselect
+      this.setState({
+        selected: new Set()
+      }, () => this.incorrectGuess())
+      return
+    }
+
+    // group i matches the selection
+    let newFoundGroups = this.state.foundGroups.slice()
+    newFoundGroups.push(i)
+    if (newFoundGroups.length === this.props.groups.length - 1) {
+      // finding penultimate also finds final
+      for (let j = 0; j < this.props.groups.length; j++) {
+        if (!newFoundGroups.includes(j)) {
+          newFoundGroups.push(j)
+          break
+        }
+      }
+      // solved wall!
+    }
+
+    this.setState({
+      foundGroups: newFoundGroups,
+      selected: new Set()
+    }, () => this.correctGuess())
+  }
+
+  incorrectGuess() {
+    if (this.state.lives != null) {
+      let newLives = Math.max(this.state.lives - 1, 0)
+      if (newLives == 0) {
+        // TODO: game over
+      }
+      this.setState({
+        lives: newLives
       })
     }
+  }
+
+  correctGuess() {
+    // callback when a group has been found
+
+    // put the found group(s) at the top
+    let newClueOrder = []
+    for (const i of this.state.foundGroups) {
+      newClueOrder = newClueOrder.concat(Array.from(this.props.groups[i]))
+    }
+    // preserve the order of remaining clues
+    for (const clue of this.state.clueOrder) {
+      if (!newClueOrder.includes(clue)) {
+        newClueOrder.push(clue)
+      }
+    }
+
+    // when only two groups left, enable lives
+    let newLives = this.state.lives
+    if (this.state.foundGroups.length == num_groups - 2) {
+      newLives = maxLives
+    }
+
+    if (this.state.foundGroups.length == num_groups) {
+      // TODO: game won
+    }
+
+    this.setState({
+      clueOrder: newClueOrder,
+      lives: newLives
+    })
   }
 
   render() {
     let foundGroups = this.state.foundGroups.map(i => this.props.groups[i])
     return (
-      <Wall 
-        clueOrder={this.state.clueOrder} 
-        selected={this.state.selected}
-        foundGroups={foundGroups}
-        onClick={clue => this.tileClicked(clue)} />
+      <div>
+        <Wall 
+          clueOrder={this.state.clueOrder} 
+          selected={this.state.selected}
+          foundGroups={foundGroups}
+          onClick={clue => this.tileClicked(clue)} />
+        {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
+      </div>
     )
   }
 }

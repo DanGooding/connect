@@ -24,14 +24,10 @@
 
     background-color: gray;
     color: black;
-
-    /* border: 0px solid black; */
-    transition: all 0.1s linear; /* TODO: do properly */
 }
 
 .clue {
     text-align: center;
-    /* TODO: prevent highlighting for copy/paste */
 }
 
 /* TODO: style selected as the next group */
