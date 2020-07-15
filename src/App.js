@@ -35,14 +35,16 @@ function Tile(props) {
 }
 
 function Wall(props) {
+  // props.clues - array of all clues, in the order they appear in the DOM
+  //               this is fixed even when props.clueOrder changes, so the css transitions work correctly
   // props.clueOrder - array of all clues specified left to right, top to bottom
   // props.foundGroups - array of the groups found so far, in order of discovery
   //                     each group is a Set of clues
   // props.selected - Set of selected clues
   // props.onClick - callback for when a tile is clicked, takes the clue as an argument
   const tiles = []
-  for (let i = 0; i < props.clueOrder.length; i++) {
-    const clue = props.clueOrder[i];
+  for (const clue of props.clues) {
+    const i = props.clueOrder.indexOf(clue);
 
     let group = props.foundGroups.findIndex(group => group.has(clue))
     if (group === -1) group = null
@@ -177,7 +179,7 @@ class Game extends React.Component {
   incorrectGuess() {
     if (this.state.lives != null) {
       let newLives = Math.max(this.state.lives - 1, 0)
-      if (newLives == 0) {
+      if (newLives === 0) {
         // TODO: game over
       }
       this.setState({
@@ -203,11 +205,11 @@ class Game extends React.Component {
 
     // when only two groups left, enable lives
     let newLives = this.state.lives
-    if (this.state.foundGroups.length == num_groups - 2) {
+    if (this.state.foundGroups.length === num_groups - 2) {
       newLives = maxLives
     }
 
-    if (this.state.foundGroups.length == num_groups) {
+    if (this.state.foundGroups.length === num_groups) {
       // TODO: game won
     }
 
@@ -222,6 +224,7 @@ class Game extends React.Component {
     return (
       <div>
         <Wall 
+          clues={this.props.clues}
           clueOrder={this.state.clueOrder} 
           selected={this.state.selected}
           foundGroups={foundGroups}

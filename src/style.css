@@ -24,6 +24,8 @@
 
     background-color: gray;
     color: black;
+
+    transition: top .5s ease, left .5s ease;
 }
 
 .clue {
