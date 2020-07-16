@@ -1,5 +1,6 @@
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
 import { setEq, shuffle } from './utils.js';
@@ -138,6 +139,13 @@ class Game extends React.Component {
       </div>
     );
   }
+}
+
+Game.propTypes = {
+  // all clues to appear in the wall
+  clues: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // the correct groupings of clues
+  groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)).isRequired
 }
 
 export default Game;

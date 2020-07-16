@@ -1,5 +1,6 @@
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import Tile from './Tile.js';
 import { numColumns, groupSize } from './constants.js';
 import './style.css';
@@ -7,11 +8,6 @@ import './style.css';
 class Wall extends React.Component {
   constructor(props) {
     super(props);
-    // this.props.clues - array of all clues, in the order they appear in the DOM this is fixed even when this.props.clueOrder changes, so the css transitions work correctly
-    // this.props.clueOrder - array of all clues specified left to right, top to bottom
-    // this.props.foundGroups - array of the groups found so far, in order of discovery each group is a Set of clues
-    // this.props.frozen - if truthy, input is ignored
-    // this.props.handleGuess - given a guess, updates game state, returns true if correct
 
     this.state = {
       // the selected clues
@@ -65,6 +61,20 @@ class Wall extends React.Component {
       </div>
     );
   }
+}
+
+Wall.propTypes = {
+    // all clues, in the order they appear in the DOM.
+    // this is unchanged even when clueOrder changes, so the css transitions work correctly
+    clues: PropTypes.arrayOf(PropTypes.string).isRequired,
+    // all clues specified left to right, top to bottom
+    clueOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
+    // the groups found so far, in order of discovery each group is a Set of clues
+    foundGroups: PropTypes.arrayOf(PropTypes.instanceOf(Set)).isRequired,
+    // if truthy, click input is ignored
+    frozen: PropTypes.bool,
+    // given a guess, updates game state, returns true if correct
+    handleGuess: PropTypes.func.isRequired,
 }
 
 export default Wall;

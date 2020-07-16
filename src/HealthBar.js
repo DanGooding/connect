@@ -1,9 +1,8 @@
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 function HealthBar(props) {
-  // props.lives - number of remaining lives
-  // props.maxLives - number of spaces to be shown
   let lives = [];
   for (let i = 0; i < props.maxLives; i++) {
     if (i < props.lives) {
@@ -13,6 +12,13 @@ function HealthBar(props) {
     }
   }
   return <div className="health-bar">{lives}</div>;
+}
+
+HealthBar.propTypes = {
+  // the current number of lives
+  lives: PropTypes.number.isRequired,
+  // the total number of life symbols shown
+  maxLives: PropTypes.number.isRequired
 }
 
 export default HealthBar;
