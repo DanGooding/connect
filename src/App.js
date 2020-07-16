@@ -80,8 +80,8 @@ function HealthBar(props) {
   return <div className="health-bar">{lives}</div>
 }
 
+// are these Sets equal?
 function setEq(a, b) {
-  // are these Sets equal?
   if (a.size !== b.size) return false
   for (let x of a) {
     if (!b.has(x)) return false
@@ -89,8 +89,8 @@ function setEq(a, b) {
   return true
 }
 
+// return a random integer in [min, max)
 function randomInt(min, max) {
-  // return a random integer in [min, max)
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
@@ -144,8 +144,8 @@ class Game extends React.Component {
     }
   }
 
+  // check whether the selected clues form a group, and handle
   checkGuess() {
-    // check whether the selected clues form a group, and handle
 
     if (this.state.selected.size < group_size) {
       return
@@ -197,8 +197,8 @@ class Game extends React.Component {
     }
   }
 
+  // called when a group has been found
   correctGuess() {
-    // called when a group has been found
     this.updateClueOrder(() => {
       if (this.state.foundGroups.length === num_groups) {
         // TODO: game won
@@ -210,8 +210,8 @@ class Game extends React.Component {
     })
   }
 
+  // update the order of clues in the wall to reflect changes in foundGroups
   updateClueOrder(callback) {
-    // update the order of clues in the wall to reflect changes in foundGroups
 
     // put the found group(s) at the top
     let newClueOrder = []
@@ -227,8 +227,8 @@ class Game extends React.Component {
     this.setState({clueOrder: newClueOrder}, callback)
   }
 
+  // automatically find all remaining groups
   resolve() {
-    // automatically find all remaining groups
     let remainingGroups = []
     for (let i = 0; i < this.props.groups.length; i++) {
       if (!this.state.foundGroups.includes(i)) {
@@ -251,7 +251,7 @@ class Game extends React.Component {
           foundGroups={foundGroups}
           onClick={clue => this.tileClicked(clue)} />
         {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
-        {this.state.lives == 0 && <button onClick={() => this.resolve()}>resolve</button>}
+        {this.state.lives === 0 && <button onClick={() => this.resolve()}>resolve</button>}
       </div>
     )
   }
