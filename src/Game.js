@@ -20,7 +20,7 @@ class Game extends React.Component {
       // the current order of clues in the wall (left to right, top to bottom)
       clueOrder: clueOrder, 
       // the indexes of found groups (in this.props.groups)
-      foundGroups: [],
+      foundGroupIndices: [],
       // the number of lives remaining - null means unlimited
       lives: null,
       // whether input is accepted or ignored - set to true when out of lives or time
@@ -29,58 +29,39 @@ class Game extends React.Component {
     // TODO: 2:30 timer
   }
 
-  tileClicked(clue) {
-    if (this.state.frozen) return;
-    if (this.state.selected.size === groupSize) return;  // TODO: this is a hack
+  // check whether the given set of clues is a group,
+  // updating state if so.
+  // returns true if the guess was correct
+  handleGuess(guess, callback) {
 
-    let newSelected = new Set(this.state.selected);
-
-    if (this.state.selected.has(clue)) { // deselect this clue
-      // TODO: delay
-      newSelected.delete(clue);
-      this.setState({selected: newSelected});
-      
-    }else { // select this clue
-      newSelected.add(clue);
-      this.setState({selected: newSelected}, () => this.checkGuess());
-    }
-  }
-
-  // check whether the selected clues form a group, and handle
-  checkGuess() {
-
-    if (this.state.selected.size < groupSize) return;
+    if (guess.size < groupSize) return;
     
     // check if any group matches the selection
-    const i = this.props.groups.findIndex(group => setEq(group, this.state.selected));
-    if (i === -1 || this.state.foundGroups.includes(i)) {
+    const i = this.props.groups.findIndex(group => setEq(group, guess));
+    if (i === -1 || this.state.foundGroupIndices.includes(i)) {
       // haven't found a (new) group - deselect
-      setTimeout(() =>
-        this.setState({
-          selected: new Set()
-        }, () => this.incorrectGuess()),
-        500);
+      this.incorrectGuess();
+      setTimeout(callback, 500, false); // 'rate limit' guessing
       return;
     }
 
     // group i matches the selection
-    let newFoundGroups = this.state.foundGroups.slice();
-    newFoundGroups.push(i);
-    if (newFoundGroups.length === this.props.groups.length - 1) {
+    let newFoundGroupIndices = this.state.foundGroupIndices.slice();
+    newFoundGroupIndices.push(i);
+    if (newFoundGroupIndices.length === this.props.groups.length - 1) {
       // finding penultimate also finds final
       for (let j = 0; j < this.props.groups.length; j++) {
-        if (!newFoundGroups.includes(j)) {
-          newFoundGroups.push(j);
+        if (!newFoundGroupIndices.includes(j)) {
+          newFoundGroupIndices.push(j);
           break;
         }
       }
-      // solved wall!
     }
 
     this.setState({
-      foundGroups: newFoundGroups,
-      selected: new Set()
+      foundGroupIndices: newFoundGroupIndices
     }, () => this.correctGuess());
+    callback(true);
   }
 
   incorrectGuess() {
@@ -101,11 +82,11 @@ class Game extends React.Component {
   correctGuess() {
     // TODO: swap order of these
     this.updateClueOrder(() => {
-      if (this.state.foundGroups.length === numGroups) {
+      if (this.state.foundGroupIndices.length === numGroups) {
         // TODO: game won
       }
       // when only two groups left, enable lives
-      if (this.state.foundGroups.length === numGroups - 2) {
+      if (this.state.foundGroupIndices.length === numGroups - 2) {
         this.setState({lives: maxLives});
       }
     });
@@ -116,7 +97,7 @@ class Game extends React.Component {
 
     // put the found group(s) at the top
     let newClueOrder = [];
-    for (const i of this.state.foundGroups) {
+    for (const i of this.state.foundGroupIndices) {
       newClueOrder = newClueOrder.concat(Array.from(this.props.groups[i]));
     }
     // preserve the order of remaining clues
@@ -132,25 +113,26 @@ class Game extends React.Component {
   resolve() {
     let remainingGroups = [];
     for (let i = 0; i < this.props.groups.length; i++) {
-      if (!this.state.foundGroups.includes(i)) {
+      if (!this.state.foundGroupIndices.includes(i)) {
         remainingGroups.push(i);
       }
     }
     this.setState({
-      foundGroups: this.state.foundGroups.concat(remainingGroups)
+      foundGroupIndices: this.state.foundGroupIndices.concat(remainingGroups)
     }, () => this.updateClueOrder());
   }
 
   render() {
-    let foundGroups = this.state.foundGroups.map(i => this.props.groups[i]);
+    const foundGroups = this.state.foundGroupIndices.map(i => this.props.groups[i]);
     return (
       <div>
         <Wall 
           clues={this.props.clues}
           clueOrder={this.state.clueOrder} 
-          selected={this.state.selected}
           foundGroups={foundGroups}
-          onClick={clue => this.tileClicked(clue)} />
+          handleGuess={this.handleGuess.bind(this)} 
+          frozen={this.state.frozen}
+        />
         {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
         {this.state.lives === 0 && <button onClick={() => this.resolve()}>resolve</button>}
       </div>
