@@ -1,11 +1,11 @@
 import React from 'react';
-import './style.css'
+import './style.css';
 
-const num_columns = 4
-const num_rows = 4
-const group_size = num_rows
-const num_groups = num_columns
-const maxLives = 3
+const num_columns = 4;
+const num_rows = 4;
+const group_size = num_rows;
+const num_groups = num_columns;
+const maxLives = 3;
 
 function Tile(props) {
   // props.clue - string of the clue for this tile
@@ -14,16 +14,16 @@ function Tile(props) {
   // props.group - 0 for first found, 1 for second ...
   //               else null if clue's group hasn't been found
 
-  let className = "tile"
-  className += ` column_${props.column} row_${props.row}`
+  let className = "tile";
+  className += ` column_${props.column} row_${props.row}`;
   if (props.selected) {
-    className += " selected"
+    className += " selected";
   }
-  let onClick
+  let onClick;
   if (props.group == null) {
-    onClick = props.onClick
+    onClick = props.onClick;
   }else {
-    className += ` group_${props.group}`
+    className += ` group_${props.group}`;
   }
   return (
     <div className={className} onClick={onClick}>
@@ -31,7 +31,7 @@ function Tile(props) {
         {props.clue}
       </div>
     </div>
-  )
+  );
 }
 
 function Wall(props) {
@@ -42,12 +42,12 @@ function Wall(props) {
   //                     each group is a Set of clues
   // props.selected - Set of selected clues
   // props.onClick - callback for when a tile is clicked, takes the clue as an argument
-  const tiles = []
+  const tiles = [];
   for (const clue of props.clues) {
     const i = props.clueOrder.indexOf(clue);
 
-    let group = props.foundGroups.findIndex(group => group.has(clue))
-    if (group === -1) group = null
+    let group = props.foundGroups.findIndex(group => group.has(clue));
+    if (group === -1) group = null;
 
     tiles.push(
       <Tile 
@@ -57,36 +57,36 @@ function Wall(props) {
         group={group}
         column={i % num_columns} row={Math.floor(i / num_columns)}
         onClick={() => props.onClick(clue)}
-      />)
+      />);
   }
   return (
     <div className="wall">
       {tiles}
     </div>
-  )
+  );
 }
 
 function HealthBar(props) {
   // props.lives - number of remaining lives
   // props.maxLives - ...
-  let lives = []
+  let lives = [];
   for (let i = 0; i < props.maxLives; i++) {
     if (i < props.lives) {
-      lives.push(<span key={i} aria-label="life" role="img">💙</span>)
+      lives.push(<span key={i} aria-label="life" role="img">💙</span>);
     }else {
-      lives.push(<span key={i} aria-label="lost life" role="img">🤍</span>)
+      lives.push(<span key={i} aria-label="lost life" role="img">🤍</span>);
     }
   }
-  return <div className="health-bar">{lives}</div>
+  return <div className="health-bar">{lives}</div>;
 }
 
 // are these Sets equal?
 function setEq(a, b) {
-  if (a.size !== b.size) return false
+  if (a.size !== b.size) return false;
   for (let x of a) {
-    if (!b.has(x)) return false
+    if (!b.has(x)) return false;
   }
-  return true
+  return true;
 }
 
 // return a random integer in [min, max)
@@ -99,18 +99,18 @@ function randomInt(min, max) {
 function shuffle(a) {
   for (let i = 0; i < a.length; i++) {
     const j = randomInt(i, a.length);
-    [a[i], a[j]] = [a[j], a[i]]
+    [a[i], a[j]] = [a[j], a[i]];
   }
 }
 
 class Game extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     // this.props.clues - array of all clues (strings)
     // this.props.groups - array of groups, each is a Set of clues
     
-    let clueOrder = this.props.clues.slice()
-    shuffle(clueOrder)
+    let clueOrder = this.props.clues.slice();
+    shuffle(clueOrder);
 
     this.state = {
       // currently selected clues
@@ -123,7 +123,7 @@ class Game extends React.Component {
       lives: null,
       // whether input is accepted or ignored - set to true when out of lives or time
       frozen: false
-    }
+    };
     // TODO: 2:30 timer
   }
 
@@ -131,47 +131,45 @@ class Game extends React.Component {
     if (this.state.frozen) return;
     if (this.state.selected.size === group_size) return;  // TODO: this is a hack
 
-    let newSelected = new Set(this.state.selected)
+    let newSelected = new Set(this.state.selected);
 
     if (this.state.selected.has(clue)) { // deselect this clue
       // TODO: delay
-      newSelected.delete(clue)
-      this.setState({selected: newSelected})
+      newSelected.delete(clue);
+      this.setState({selected: newSelected});
       
     }else { // select this clue
-      newSelected.add(clue)
-      this.setState({selected: newSelected}, () => this.checkGuess())
+      newSelected.add(clue);
+      this.setState({selected: newSelected}, () => this.checkGuess());
     }
   }
 
   // check whether the selected clues form a group, and handle
   checkGuess() {
 
-    if (this.state.selected.size < group_size) {
-      return
-    }
+    if (this.state.selected.size < group_size) return;
     
     // check if any group matches the selection
-    const i = this.props.groups.findIndex(group => setEq(group, this.state.selected))
+    const i = this.props.groups.findIndex(group => setEq(group, this.state.selected));
     if (i === -1 || this.state.foundGroups.includes(i)) {
       // haven't found a (new) group - deselect
       setTimeout(() =>
         this.setState({
           selected: new Set()
         }, () => this.incorrectGuess()),
-      500)
-      return
+        500);
+      return;
     }
 
     // group i matches the selection
-    let newFoundGroups = this.state.foundGroups.slice()
-    newFoundGroups.push(i)
+    let newFoundGroups = this.state.foundGroups.slice();
+    newFoundGroups.push(i);
     if (newFoundGroups.length === this.props.groups.length - 1) {
       // finding penultimate also finds final
       for (let j = 0; j < this.props.groups.length; j++) {
         if (!newFoundGroups.includes(j)) {
-          newFoundGroups.push(j)
-          break
+          newFoundGroups.push(j);
+          break;
         }
       }
       // solved wall!
@@ -180,7 +178,7 @@ class Game extends React.Component {
     this.setState({
       foundGroups: newFoundGroups,
       selected: new Set()
-    }, () => this.correctGuess())
+    }, () => this.correctGuess());
   }
 
   incorrectGuess() {
@@ -188,60 +186,61 @@ class Game extends React.Component {
 
       let newState = {
         lives: Math.max(this.state.lives - 1, 0)
-      }
+      };
       if (newState.lives === 0) {
         // TODO: game over
-        newState.frozen = true
+        newState.frozen = true;
       }
-      this.setState(newState)
+      this.setState(newState);
     }
   }
 
   // called when a group has been found
   correctGuess() {
+    // TODO: swap order of these
     this.updateClueOrder(() => {
       if (this.state.foundGroups.length === num_groups) {
         // TODO: game won
       }
       // when only two groups left, enable lives
       if (this.state.foundGroups.length === num_groups - 2) {
-        this.setState({lives: maxLives})
+        this.setState({lives: maxLives});
       }
-    })
+    });
   }
 
   // update the order of clues in the wall to reflect changes in foundGroups
   updateClueOrder(callback) {
 
     // put the found group(s) at the top
-    let newClueOrder = []
+    let newClueOrder = [];
     for (const i of this.state.foundGroups) {
-      newClueOrder = newClueOrder.concat(Array.from(this.props.groups[i]))
+      newClueOrder = newClueOrder.concat(Array.from(this.props.groups[i]));
     }
     // preserve the order of remaining clues
     for (const clue of this.state.clueOrder) {
       if (!newClueOrder.includes(clue)) {
-        newClueOrder.push(clue)
+        newClueOrder.push(clue);
       }
     }
-    this.setState({clueOrder: newClueOrder}, callback)
+    this.setState({clueOrder: newClueOrder}, callback);
   }
 
   // automatically find all remaining groups
   resolve() {
-    let remainingGroups = []
+    let remainingGroups = [];
     for (let i = 0; i < this.props.groups.length; i++) {
       if (!this.state.foundGroups.includes(i)) {
-        remainingGroups.push(i)
+        remainingGroups.push(i);
       }
     }
     this.setState({
       foundGroups: this.state.foundGroups.concat(remainingGroups)
-    }, () => this.updateClueOrder())
+    }, () => this.updateClueOrder());
   }
 
   render() {
-    let foundGroups = this.state.foundGroups.map(i => this.props.groups[i])
+    let foundGroups = this.state.foundGroups.map(i => this.props.groups[i]);
     return (
       <div>
         <Wall 
@@ -253,7 +252,7 @@ class Game extends React.Component {
         {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
         {this.state.lives === 0 && <button onClick={() => this.resolve()}>resolve</button>}
       </div>
-    )
+    );
   }
 }
 
@@ -264,15 +263,15 @@ function App() {
     "B1", "B2", "B3", "B4",
     "C1", "C2", "C3", "C4",
     "D1", "D2", "D3", "D4",
-  ]
+  ];
   const groups = [
     new Set(["A1", "A2", "A3", "A4"]), 
     new Set(["B1", "B2", "B3", "B4"]), 
     new Set(["C1", "C2", "C3", "C4"]), 
-    new Set(["D1", "D2", "D3", "D4"])]
+    new Set(["D1", "D2", "D3", "D4"])];
   // TODO **** game doesn't respond to changes in props!! - anti pattern?
   // TODO: just take groups & build clues from there
-  return <Game clues={clues} groups={groups}/>
+  return <Game clues={clues} groups={groups}/>;
 }
 
 export default App;
