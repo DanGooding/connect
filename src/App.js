@@ -1,11 +1,7 @@
 import React from 'react';
+import { setEq, shuffle } from './utils.js'
+import { numColumns, groupSize, numGroups, maxLives } from './constants.js'
 import './style.css';
-
-const num_columns = 4;
-const num_rows = 4;
-const group_size = num_rows;
-const num_groups = num_columns;
-const maxLives = 3;
 
 function Tile(props) {
   // props.clue - string of the clue for this tile
@@ -55,7 +51,7 @@ function Wall(props) {
         key={clue}
         selected={props.selected.has(clue)}
         group={group}
-        column={i % num_columns} row={Math.floor(i / num_columns)}
+        column={i % numColumns} row={Math.floor(i / numColumns)}
         onClick={() => props.onClick(clue)}
       />);
   }
@@ -78,29 +74,6 @@ function HealthBar(props) {
     }
   }
   return <div className="health-bar">{lives}</div>;
-}
-
-// are these Sets equal?
-function setEq(a, b) {
-  if (a.size !== b.size) return false;
-  for (let x of a) {
-    if (!b.has(x)) return false;
-  }
-  return true;
-}
-
-// return a random integer in [min, max)
-function randomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-function shuffle(a) {
-  for (let i = 0; i < a.length; i++) {
-    const j = randomInt(i, a.length);
-    [a[i], a[j]] = [a[j], a[i]];
-  }
 }
 
 class Game extends React.Component {
@@ -129,7 +102,7 @@ class Game extends React.Component {
 
   tileClicked(clue) {
     if (this.state.frozen) return;
-    if (this.state.selected.size === group_size) return;  // TODO: this is a hack
+    if (this.state.selected.size === groupSize) return;  // TODO: this is a hack
 
     let newSelected = new Set(this.state.selected);
 
@@ -147,7 +120,7 @@ class Game extends React.Component {
   // check whether the selected clues form a group, and handle
   checkGuess() {
 
-    if (this.state.selected.size < group_size) return;
+    if (this.state.selected.size < groupSize) return;
     
     // check if any group matches the selection
     const i = this.props.groups.findIndex(group => setEq(group, this.state.selected));
@@ -199,11 +172,11 @@ class Game extends React.Component {
   correctGuess() {
     // TODO: swap order of these
     this.updateClueOrder(() => {
-      if (this.state.foundGroups.length === num_groups) {
+      if (this.state.foundGroups.length === numGroups) {
         // TODO: game won
       }
       // when only two groups left, enable lives
-      if (this.state.foundGroups.length === num_groups - 2) {
+      if (this.state.foundGroups.length === numGroups - 2) {
         this.setState({lives: maxLives});
       }
     });
