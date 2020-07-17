@@ -69,7 +69,7 @@ class GameWall extends React.Component {
         lives: Math.max(this.state.lives - 1, 0)
       };
       if (newState.lives === 0) {
-        this.props.onFail(0, null);
+        this.props.onFail(this.state.foundGroupIndices.slice(), 0, null);
         newState.frozen = true;
       }
       this.setState(newState);
@@ -81,7 +81,7 @@ class GameWall extends React.Component {
     // TODO: swap order of these
     this.updateClueOrder(() => {
       if (this.state.foundGroupIndices.length === numGroups) {
-        this.props.onSolve(this.state.lives, null);
+        this.props.onSolve(this.state.foundGroupIndices.slice(), this.state.lives, null);
       }else if (this.state.foundGroupIndices.length === numGroups - 2) {
         // when only two groups left, enable lives
         this.setState({lives: maxLives});
