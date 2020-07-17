@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Game from './Game.js';
+import GameWall from './GameWall.js';
 
 function App() {
   const clues = [
@@ -16,7 +16,7 @@ function App() {
     new Set(["D1", "D2", "D3", "D4"])];
   // TODO **** game doesn't respond to changes in props!! - anti pattern?
   // TODO: just take groups & build clues from there
-  return <Game clues={clues} groups={groups}/>;
+  return <GameWall clues={clues} groups={groups}/>;
 }
 
 export default App;

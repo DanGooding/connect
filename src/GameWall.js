@@ -6,7 +6,7 @@ import HealthBar from './HealthBar.js';
 import { setEq, shuffle } from './utils.js';
 import { groupSize, numGroups, maxLives } from './constants.js';
 
-class Game extends React.Component {
+class GameWall extends React.Component {
   constructor(props) {
     super(props);
     // this.props.clues - array of all clues (strings)
@@ -141,11 +141,11 @@ class Game extends React.Component {
   }
 }
 
-Game.propTypes = {
+GameWall.propTypes = {
   // all clues to appear in the wall
   clues: PropTypes.arrayOf(PropTypes.string).isRequired,
   // the correct groupings of clues
   groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)).isRequired
 }
 
-export default Game;
+export default GameWall;
