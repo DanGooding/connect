@@ -32,36 +32,34 @@ class GamePage extends React.Component {
     };
   }
 
-  wallSolved(foundGroupIndices, livesRemaining, timeRemaining) {
+  wallSolved(livesRemaining) {
+    // TODO: also take timeRemaining
     console.log('complete!');
     this.setState({
       wallFinished: true,
       finalWallState: {
         solved: true,
-        foundGroupIndices,
-        livesRemaining,
-        timeRemaining
+        livesRemaining
       }
     });
   }
-  wallFailed(foundGroupIndices, livesRemaining, timeRemaining) {
+  wallFailed(numFoundGroups, livesRemaining) {
     console.log('failed');
     this.setState({
       wallFinished: true,
       finalWallState: {
         solved: false,
-        foundGroupIndices,
-        livesRemaining,
-        timeRemaining
+        numFoundGroups,
+        livesRemaining
       }
     });
   }
 
   render() {
-    // TODO: resolve(): order of unfound clues should be consisitent in Wall & ConnectionsForm !!!
     return <GameWall 
       clues={this.state.clues} 
       groups={this.state.groups}
+      connections={this.state.connections}
       onSolve={this.wallSolved.bind(this)}
       onFail={this.wallFailed.bind(this)}
     />;

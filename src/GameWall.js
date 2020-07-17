@@ -5,6 +5,7 @@ import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
 import { setEq, shuffle } from './utils.js';
 import { groupSize, numGroups, maxLives } from './constants.js';
+import ConnectionsForm from './ConnectionsForm.js';
 
 class GameWall extends React.Component {
   constructor(props) {
@@ -23,7 +24,10 @@ class GameWall extends React.Component {
       // the number of lives remaining - null means unlimited
       lives: null,
       // whether input is accepted or ignored - set to true when out of lives or time
-      frozen: false
+      frozen: false,
+      // has the wall been won or lost?
+      completed: false, // TODO: combine these two?
+      failed: false
     };
     // TODO: 2:30 timer
   }
@@ -69,7 +73,8 @@ class GameWall extends React.Component {
         lives: Math.max(this.state.lives - 1, 0)
       };
       if (newState.lives === 0) {
-        this.props.onFail(this.state.foundGroupIndices.slice(), 0, null);
+        this.props.onFail(this.state.foundGroupIndices.length, 0);
+        newState.failed = true;
         newState.frozen = true;
       }
       this.setState(newState);
@@ -81,7 +86,8 @@ class GameWall extends React.Component {
     // TODO: swap order of these
     this.updateClueOrder(() => {
       if (this.state.foundGroupIndices.length === numGroups) {
-        this.props.onSolve(this.state.foundGroupIndices.slice(), this.state.lives, null);
+        this.props.onSolve(this.state.lives);
+        this.setState({completed: true});
       }else if (this.state.foundGroupIndices.length === numGroups - 2) {
         // when only two groups left, enable lives
         this.setState({lives: maxLives});
@@ -121,16 +127,28 @@ class GameWall extends React.Component {
 
   render() {
     const foundGroups = this.state.foundGroupIndices.map(i => this.props.groups[i]);
+    let connectionsForm;
+    if (this.state.completed || this.state.failed) {
+      connectionsForm = 
+        <ConnectionsForm 
+          groupIndices={this.state.foundGroupIndices}
+          connections={this.props.connections}
+          resolveWall={this.resolve.bind(this)}
+        />;
+    }
     return (
       <div>
-        <Wall 
-          clues={this.props.clues}
-          clueOrder={this.state.clueOrder} 
-          foundGroups={foundGroups}
-          handleGuess={this.handleGuess.bind(this)} 
-          frozen={this.state.frozen}
-        />
-        {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
+        <div>
+          <Wall
+            clues={this.props.clues}
+            clueOrder={this.state.clueOrder} 
+            foundGroups={foundGroups}
+            handleGuess={this.handleGuess.bind(this)} 
+            frozen={this.state.frozen}
+          />
+          {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
+        </div>
+        {connectionsForm}
       </div>
     );
   }
@@ -141,10 +159,12 @@ GameWall.propTypes = {
   clues: PropTypes.arrayOf(PropTypes.string).isRequired,
   // the correct groupings of clues
   groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)).isRequired,
+  // the connections for each group
+  connections: PropTypes.arrayOf(PropTypes.string).isRequired,
   // callback when all groups found
   onSolve: PropTypes.func.isRequired,
   // callback when out of time or lives
-  onFail: PropTypes.func.isRequired
+  onFail: PropTypes.func.isRequired,
 }
 
 export default GameWall;
