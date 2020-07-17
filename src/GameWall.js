@@ -16,8 +16,6 @@ class GameWall extends React.Component {
     shuffle(clueOrder);
 
     this.state = {
-      // currently selected clues
-      selected: new Set(),
       // the current order of clues in the wall (left to right, top to bottom)
       clueOrder: clueOrder, 
       // the indexes of found groups (in this.props.groups)
@@ -34,19 +32,18 @@ class GameWall extends React.Component {
   // updating state if so.
   // returns true if the guess was correct
   handleGuess(guess, callback) {
-
     if (guess.size < groupSize) return;
     
-    // check if any group matches the selection
+    // check if any group matches the guess
     const i = this.props.groups.findIndex(group => setEq(group, guess));
     if (i === -1 || this.state.foundGroupIndices.includes(i)) {
-      // haven't found a (new) group - deselect
+      // haven't found a (new) group
       this.incorrectGuess();
       setTimeout(callback, 500, false); // 'rate limit' guessing
       return;
     }
 
-    // group i matches the selection
+    // group i matches the guess
     let newFoundGroupIndices = this.state.foundGroupIndices.slice();
     newFoundGroupIndices.push(i);
     if (newFoundGroupIndices.length === this.props.groups.length - 1) {
@@ -72,7 +69,7 @@ class GameWall extends React.Component {
         lives: Math.max(this.state.lives - 1, 0)
       };
       if (newState.lives === 0) {
-        // TODO: game over
+        this.props.onFail(0, null);
         newState.frozen = true;
       }
       this.setState(newState);
@@ -84,10 +81,9 @@ class GameWall extends React.Component {
     // TODO: swap order of these
     this.updateClueOrder(() => {
       if (this.state.foundGroupIndices.length === numGroups) {
-        // TODO: game won
-      }
-      // when only two groups left, enable lives
-      if (this.state.foundGroupIndices.length === numGroups - 2) {
+        this.props.onSolve(this.state.lives, null);
+      }else if (this.state.foundGroupIndices.length === numGroups - 2) {
+        // when only two groups left, enable lives
         this.setState({lives: maxLives});
       }
     });
@@ -135,7 +131,6 @@ class GameWall extends React.Component {
           frozen={this.state.frozen}
         />
         {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
-        {this.state.lives === 0 && <button onClick={() => this.resolve()}>resolve</button>}
       </div>
     );
   }
@@ -145,7 +140,11 @@ GameWall.propTypes = {
   // all clues to appear in the wall
   clues: PropTypes.arrayOf(PropTypes.string).isRequired,
   // the correct groupings of clues
-  groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)).isRequired
+  groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)).isRequired,
+  // callback when all groups found
+  onSolve: PropTypes.func.isRequired,
+  // callback when out of time or lives
+  onFail: PropTypes.func.isRequired
 }
 
 export default GameWall;
