@@ -1,5 +1,5 @@
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { numGroups, numBonusPoints } from './constants.js';
 import { pluralise } from './utils.js';
@@ -8,19 +8,33 @@ function Results(props) {
   let score = props.numFoundGroups + props.numCorrectConnections;
   let bonus;
   if (props.numFoundGroups === numGroups && props.numCorrectConnections === numGroups) {
-    bonus = <Fragment>{numBonusPoints} bonus</Fragment>;
+    bonus = (
+      <tr>
+        <td className="result-value">+{numBonusPoints}</td>
+        <td className="result-description">bonus</td>
+      </tr>
+    );
     score += numBonusPoints;
   }
+  // colgroups for value & description
   return (
-    <div className="results">
-      {props.numFoundGroups} {pluralise('group', props.numFoundGroups)} found
-      <br/>
-      {props.numCorrectConnections} {pluralise('connection', props.numCorrectConnections)}
-      <br/>
-      {bonus}
-      <hr/>
-      {score}
-    </div>
+    <table className="results-table">
+      <tbody>
+        <tr>
+          <td className="result-value">{props.numFoundGroups}</td>
+          <td className="result-description">{pluralise('group', props.numFoundGroups)} found</td>
+        </tr>
+        <tr>
+          <td className="result-value">+{props.numCorrectConnections}</td>
+          <td className="result-description">{pluralise('connection', props.numCorrectConnections)} found</td>
+        </tr>
+        {bonus}
+        <tr className="result-total-row">
+          <td className="result-value">{score}</td>
+          <td className="result-description">{pluralise('point', score)}</td>
+        </tr>
+      </tbody>
+    </table>
   );
   // TODO: also num lives remaining & time
 }

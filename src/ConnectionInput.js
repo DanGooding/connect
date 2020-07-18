@@ -25,6 +25,7 @@ class ConnectionInput extends React.Component {
     // prevent button click from submitting form
     event.preventDefault();
     if (this.state.guess === '') return;
+    // TODO: fuzzy string comparison
     const answerCorrect = this.state.guess.toLowerCase() === this.props.connection.toLowerCase();
     this.setState({
       answerShown: true,

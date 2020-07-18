@@ -77,3 +77,19 @@
     padding: 10px;
     margin: 5px 0px;
 }
+
+
+.results-table {
+    /* border-spacing: 1em; */
+    border-collapse: collapse;
+}
+
+.result-total-row {
+    border-top: 2px solid black;
+}
+.result-value {
+    text-align: right;
+}
+.result-description {
+    text-align: left;
+}
