@@ -1,6 +1,6 @@
 
-export const numColumns = 4;
-export const numRows = 4;
+export const numColumns = 3;
+export const numRows = 3;
 export const groupSize = numRows;
 export const numGroups = numColumns;
-export const maxLives = 3;
+export const maxLives = 1;

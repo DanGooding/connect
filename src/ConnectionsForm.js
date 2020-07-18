@@ -4,33 +4,27 @@ import PropTypes from 'prop-types';
 import ConnectionInput from './ConnectionInput.js';
 import { numGroups } from './constants.js';
 
-class ConnectionsForm extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+function ConnectionsForm(props) {
+  let inputs = props.groupIndices.map(
+    (groupIndex, i) =>
+      <ConnectionInput key={i} groupNumber={i} connection={props.connections[groupIndex]} />);
 
-  render() {
-    let inputs = this.props.groupIndices.map(
-      (groupIndex, i) => 
-        <ConnectionInput key={i} groupNumber={i} connection={this.props.connections[groupIndex]} />);
-
-    let resolveButton; 
-    if (this.props.groupIndices.length < numGroups) {
-      resolveButton = <button onClick={this.props.resolveWall}>Resolve wall</button>;
-    }
-    // TODO: actual action once complete
-    // or have (next) button in GamePage
-    return (
-      <form onSubmit={() => {}}>
-        {inputs}
-        {resolveButton}
-      </form>
-    );
+  let resolveButton;
+  if (props.groupIndices.length < numGroups) {
+    resolveButton = <button onClick={props.resolveWall}>Resolve wall</button>;
   }
+  // TODO: actual action once complete, or have (next) button in GamePage
+  return (
+    <div className="connections-form">
+      {inputs}
+      {resolveButton}
+    </div>
+  );
+  // TODO: only allow submit & finish once all groups have been marked
 }
 
 ConnectionsForm.propTypes = {
-  // indices of the groups to display inputs for
+  // indices of the groups to display inputs for (in the order to display)
   groupIndices: PropTypes.arrayOf(PropTypes.number).isRequired,
   // connections for all groups. groupIndices index into here
   connections: PropTypes.arrayOf(PropTypes.string).isRequired,

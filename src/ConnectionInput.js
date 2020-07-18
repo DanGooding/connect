@@ -1,30 +1,102 @@
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 
 class ConnectionInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      guess: ""
+      guess: "",
+      answerShown: false,
+      answerCorrect: false
     };
+    this.handleChangeGuess = this.handleChangeGuess.bind(this);
+    this.checkGuess = this.checkGuess.bind(this);
+    this.handleChangeCorrectness = this.handleChangeCorrectness.bind(this);
   }
 
-  handleChange(event) {
+  handleChangeGuess(event) {
+    if (this.state.answerShown) return; // TODO: remove?
     this.setState({
       guess: event.target.value
     });
   }
 
+  checkGuess(event) {
+    // prevent button click from submitting form
+    event.preventDefault();
+    if (this.state.guess === '') return;
+    const answerCorrect = this.state.guess.toLowerCase() === this.props.connection.toLowerCase();
+    this.setState({
+      answerShown: true,
+      answerCorrect
+    });
+    
+  }
+
+  handleChangeCorrectness(event) {
+    this.setState({
+      answerCorrect: event.target.value === "correct"
+    });
+  }
+
   render() {
-    let className = `connection-input group_${this.props.groupNumber}`;
+    const className = `connection-input group_${this.props.groupNumber}`;
+
+    let checkButton;
+    if (!this.state.answerShown) {
+      checkButton = <button onClick={this.checkGuess}>Check</button>;
+    }
+
+    let answer;
+    if (this.state.answerShown) {
+      const radioName = `group_${this.props.groupNumber}_correct`;
+
+      // TODO: use <p> to group ?
+      answer = (
+        <Fragment>
+          <br/>
+          The connection is: <span className="connection-answer">{this.props.connection}</span>
+          <br/>
+          Were you right?
+          <br/>
+          <label>
+            <input 
+              type="radio" name={radioName} 
+              checked={this.state.answerCorrect} 
+              onChange={this.handleChangeCorrectness}
+              value="correct" />
+            Correct ✅
+          </label>
+          <br/>
+          <label>
+            <input 
+              type="radio" name={radioName} 
+              checked={!this.state.answerCorrect} 
+              onChange={this.handleChangeCorrectness}
+              value="incorrect" />
+            Incorrect ❌
+          </label>
+        </Fragment>
+      );
+    }
+
     return (
-      <div className={className}>
-        Group {this.props.groupNumber + 1}
-        <br/>
+      <form className={className} onSubmit={() => {}}>
+        <h2>Group {this.props.groupNumber + 1}</h2>
+
         <label>What is the connection?</label>
-        <input type="text" value={this.state.guess} onChange={this.handleChange.bind(this)} />
-      </div>
+        <input 
+          type="text" 
+          value={this.state.guess} 
+          onChange={this.handleChangeGuess} 
+          disabled={this.state.answerShown} 
+        />
+        {checkButton}
+
+        {answer}
+
+      </form>
     );
     // TODO: textarea instead? - just a looong text box
   }

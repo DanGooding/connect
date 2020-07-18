@@ -40,19 +40,19 @@
 /* these should have increase z index */
 .group_0 {
     color: white;
-    background-color: blue;
+    background-color: rgb(18, 18, 112);
 }
 .group_1 {
     color: white;
-    background-color: green;
+    background-color: rgb(67, 131, 67);
 }
 .group_2 {
     color: white;
-    background-color: red;
+    background-color: rgb(131, 41, 75);
 }
 .group_3 {
     color: white;
-    background-color: purple;
+    background-color: rgb(71, 111, 148);
 }
 
 .row_0 { top:  0%; }
@@ -71,4 +71,9 @@
          -moz-user-select: none;
           -ms-user-select: none;
               user-select: none;
+}
+
+.connection-input {
+    padding: 10px;
+    margin: 5px 0px;
 }

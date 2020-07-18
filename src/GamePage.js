@@ -9,22 +9,19 @@ class GamePage extends React.Component {
     this.state = {
       // TODO: fetch these & shuffle clues(?)
       clues: [
-        "A1", "A2", "A3", "A4",
-        "B1", "B2", "B3", "B4",
-        "C1", "C2", "C3", "C4",
-        "D1", "D2", "D3", "D4",
+        "A1", "A2", "A3",
+        "B1", "B2", "B3",
+        "C1", "C2", "C3",
       ],
       groups: [
-        new Set(["A1", "A2", "A3", "A4"]), 
-        new Set(["B1", "B2", "B3", "B4"]), 
-        new Set(["C1", "C2", "C3", "C4"]), 
-        new Set(["D1", "D2", "D3", "D4"])
+        new Set(["A1", "A2", "A3"]), 
+        new Set(["B1", "B2", "B3"]), 
+        new Set(["C1", "C2", "C3"])
       ],
       connections: [
         "all A",
         "all B",
-        "all C",
-        "all D"
+        "all C"
       ],
 
       wallFinished: false,
