@@ -3,15 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
+import ConnectionsForm from './ConnectionsForm.js';
 import { setEq, shuffle } from './utils.js';
 import { groupSize, numGroups, maxLives } from './constants.js';
-import ConnectionsForm from './ConnectionsForm.js';
 
 class GameWall extends React.Component {
   constructor(props) {
     super(props);
-    // this.props.clues - array of all clues (strings)
-    // this.props.groups - array of groups, each is a Set of clues
     
     let clueOrder = this.props.clues.slice();
     shuffle(clueOrder);
