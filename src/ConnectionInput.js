@@ -18,12 +18,14 @@ class ConnectionInput extends React.Component {
 
   render() {
     let className = `connection-input group_${this.props.groupNumber}`;
-    return <div className={className}>
-      Group {this.props.groupNumber + 1}
-      <br/>
-      <label>What is the connection?</label>
-      <input type="text" value={this.state.guess} onChange={this.handleChange.bind(this)} />
-    </div>;
+    return (
+      <div className={className}>
+        Group {this.props.groupNumber + 1}
+        <br/>
+        <label>What is the connection?</label>
+        <input type="text" value={this.state.guess} onChange={this.handleChange.bind(this)} />
+      </div>
+    );
     // TODO: textarea instead? - just a looong text box
   }
 }

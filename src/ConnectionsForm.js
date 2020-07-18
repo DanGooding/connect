@@ -20,10 +20,12 @@ class ConnectionsForm extends React.Component {
     }
     // TODO: actual action once complete
     // or have (next) button in GamePage
-    return <form onSubmit={() => {}}>
-      {inputs}
-      {resolveButton}
-    </form>;
+    return (
+      <form onSubmit={() => {}}>
+        {inputs}
+        {resolveButton}
+      </form>
+    );
   }
 }
 
