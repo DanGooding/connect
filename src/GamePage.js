@@ -1,6 +1,8 @@
 
 import React from 'react';
 import GameWall from './GameWall.js';
+import Results from './Results.js';
+import { numGroups } from './constants.js';
 
 class GamePage extends React.Component {
   constructor(props) {
@@ -23,43 +25,57 @@ class GamePage extends React.Component {
         "all B",
         "all C"
       ],
-
-      wallFinished: false,
-      finalWallState: null
+      gameFinished: false,
+      numFoundGroups: null,
+      numCorrectConnections: null,
+      livesRemaining: null
     };
+
+    this.wallSolved = this.wallSolved.bind(this);
+    this.wallFailed = this.wallFailed.bind(this);
+    this.gameFinished = this.gameFinished.bind(this);
   }
 
   wallSolved(livesRemaining) {
-    // TODO: also take timeRemaining
-    console.log('complete!');
     this.setState({
-      wallFinished: true,
-      finalWallState: {
-        solved: true,
-        livesRemaining
-      }
-    });
-  }
-  wallFailed(numFoundGroups, livesRemaining) {
-    console.log('failed');
-    this.setState({
-      wallFinished: true,
-      finalWallState: {
-        solved: false,
-        numFoundGroups,
-        livesRemaining
-      }
+      numFoundGroups: numGroups,
+      livesRemaining
     });
   }
 
+  wallFailed(numFoundGroups, livesRemaining) {
+    this.setState({
+      numFoundGroups,
+      livesRemaining
+    });
+  }
+
+  gameFinished(numCorrectConnections) {
+    this.setState({
+      gameFinished: true,
+      numCorrectConnections,
+    })
+  }
+
   render() {
-    return <GameWall 
-      clues={this.state.clues} 
-      groups={this.state.groups}
-      connections={this.state.connections}
-      onSolve={this.wallSolved.bind(this)}
-      onFail={this.wallFailed.bind(this)}
-    />;
+    if (this.state.gameFinished) {
+      return <Results
+        numFoundGroups={this.state.numFoundGroups}
+        numCorrectConnections={this.state.numCorrectConnections}
+      />;
+      // TODO: also an exit button?
+      // TODO: save (time / completed flag) for this wall? (cookies)
+    }else {
+      // TODO: ? one single callback that recives all info on finish
+      return <GameWall 
+        clues={this.state.clues} 
+        groups={this.state.groups}
+        connections={this.state.connections}
+        onSolve={this.wallSolved}
+        onFail={this.wallFailed}
+        onFinish={this.gameFinished}
+      />;
+    }
   }
 }
 

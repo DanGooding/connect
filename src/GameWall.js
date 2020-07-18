@@ -32,6 +32,7 @@ class GameWall extends React.Component {
       completed: false, // TODO: combine these two?
       failed: false,
       // was the entered connection correct for each group (same order as props.groups)
+      // null=unchecked, true/false=correct/incorrect
       connectionGuessCorrect
     };
     // TODO: 2:30 timer
@@ -39,6 +40,7 @@ class GameWall extends React.Component {
     this.resolve = this.resolve.bind(this);
     this.handleGuess = this.handleGuess.bind(this);
     this.onChangeCorrectness = this.onChangeCorrectness.bind(this);
+    this.onFinish = this.onFinish.bind(this);
   }
 
   // check whether the given set of clues is a group,
@@ -82,7 +84,7 @@ class GameWall extends React.Component {
         lives: Math.max(this.state.lives - 1, 0)
       };
       if (newState.lives === 0) {
-        this.props.onFail(this.state.foundGroupIndices.length, 0);
+        this.props.onFail(this.state.foundGroupIndices.length, newState.lives);
         newState.failed = true;
         newState.frozen = true;
       }
@@ -141,6 +143,11 @@ class GameWall extends React.Component {
     this.setState({connectionGuessCorrect});
   }
 
+  onFinish() {
+    const numCorrect = this.state.connectionGuessCorrect.filter(x => x === true).length;
+    this.props.onFinish(numCorrect);
+  }
+
   render() {
     const foundGroups = this.state.foundGroupIndices.map(i => this.props.groups[i]);
     let connectionsForm;
@@ -157,7 +164,7 @@ class GameWall extends React.Component {
 
         if (this.state.connectionGuessCorrect.every(x => x != null)) {
           // all answers marked
-          doneButton = <button onClick={() => console.log('finished!')}>Done</button>;
+          doneButton = <button onClick={this.onFinish}>Done</button>;
         }
     }
     return (
@@ -190,6 +197,9 @@ GameWall.propTypes = {
   onSolve: PropTypes.func.isRequired,
   // callback when out of time or lives
   onFail: PropTypes.func.isRequired,
+  // callback when completely over (wall finished, connections checked)
+  onFinish: PropTypes.func.isRequired
 }
+
 
 export default GameWall;

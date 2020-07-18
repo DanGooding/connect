@@ -23,7 +23,15 @@ function shuffle(a) {
   }
 }
 
+function pluralise(word, count, plural = null) {
+  if (plural == null) {
+    plural = `${word}s`;
+  }
+  return count === 1 ? word : plural;
+}
+
 export {
   setEq,
-  shuffle
+  shuffle,
+  pluralise
 }
