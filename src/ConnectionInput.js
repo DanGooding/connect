@@ -7,8 +7,7 @@ class ConnectionInput extends React.Component {
     super(props);
     this.state = {
       guess: "",
-      answerShown: false,
-      answerCorrect: false
+      answerShown: false
     };
     this.handleChangeGuess = this.handleChangeGuess.bind(this);
     this.checkGuess = this.checkGuess.bind(this);
@@ -29,15 +28,13 @@ class ConnectionInput extends React.Component {
     const answerCorrect = this.state.guess.toLowerCase() === this.props.connection.toLowerCase();
     this.setState({
       answerShown: true,
-      answerCorrect
     });
-    
+    // TODO: duplication
+    this.props.onChangeCorrectness(this.props.groupNumber, answerCorrect);
   }
 
   handleChangeCorrectness(event) {
-    this.setState({
-      answerCorrect: event.target.value === "correct"
-    });
+    this.props.onChangeCorrectness(this.props.groupNumber, event.target.value === "correct");
   }
 
   render() {
@@ -63,7 +60,7 @@ class ConnectionInput extends React.Component {
           <label>
             <input 
               type="radio" name={radioName} 
-              checked={this.state.answerCorrect} 
+              checked={this.props.answerCorrect} 
               onChange={this.handleChangeCorrectness}
               value="correct" />
             Correct ✅
@@ -72,7 +69,7 @@ class ConnectionInput extends React.Component {
           <label>
             <input 
               type="radio" name={radioName} 
-              checked={!this.state.answerCorrect} 
+              checked={!this.props.answerCorrect} 
               onChange={this.handleChangeCorrectness}
               value="incorrect" />
             Incorrect ❌
@@ -106,7 +103,11 @@ ConnectionInput.propTypes = {
   // when this group was found 0=first, 1=second etc.
   groupNumber: PropTypes.number.isRequired,
   // the expected answer
-  connection: PropTypes.string.isRequired
+  connection: PropTypes.string.isRequired,
+  // whether the current answer is correct
+  answerCorrect: PropTypes.bool,
+  // callback to change whether this clue is marked as correct
+  onChangeCorrectness: PropTypes.func,
 };
 
 export default ConnectionInput;

@@ -16,9 +16,14 @@ class GameWall extends React.Component {
     let clueOrder = this.props.clues.slice();
     shuffle(clueOrder);
 
+    let connectionGuessCorrect = [];
+    for (let i = 0; i < groupSize; i++) {
+      connectionGuessCorrect.push(null);
+    }
+
     this.state = {
       // the current order of clues in the wall (left to right, top to bottom)
-      clueOrder: clueOrder, 
+      clueOrder, 
       // the indexes of found groups (in this.props.groups)
       foundGroupIndices: [],
       // the number of lives remaining - null means unlimited
@@ -27,9 +32,15 @@ class GameWall extends React.Component {
       frozen: false,
       // has the wall been won or lost?
       completed: false, // TODO: combine these two?
-      failed: false
+      failed: false,
+      // was the entered connection correct for each group (same order as props.groups)
+      connectionGuessCorrect
     };
     // TODO: 2:30 timer
+
+    this.resolve = this.resolve.bind(this);
+    this.handleGuess = this.handleGuess.bind(this);
+    this.onChangeCorrectness = this.onChangeCorrectness.bind(this);
   }
 
   // check whether the given set of clues is a group,
@@ -125,16 +136,31 @@ class GameWall extends React.Component {
     }, () => this.updateClueOrder());
   }
 
+  onChangeCorrectness(i, newCorrectness) {
+    let connectionGuessCorrect = this.state.connectionGuessCorrect.slice();
+    connectionGuessCorrect[i] = newCorrectness;
+    // TODO: now if all non null, can proceed
+    this.setState({connectionGuessCorrect});
+  }
+
   render() {
     const foundGroups = this.state.foundGroupIndices.map(i => this.props.groups[i]);
     let connectionsForm;
+    let doneButton
     if (this.state.completed || this.state.failed) {
       connectionsForm = 
         <ConnectionsForm 
           groupIndices={this.state.foundGroupIndices}
           connections={this.props.connections}
-          resolveWall={this.resolve.bind(this)}
+          answersCorrect={this.state.connectionGuessCorrect}
+          onChangeCorrectness={this.onChangeCorrectness}
+          resolveWall={this.resolve}
         />;
+
+        if (this.state.connectionGuessCorrect.every(x => x != null)) {
+          // all answers marked
+          doneButton = <button onClick={() => console.log('finished!')}>Done</button>;
+        }
     }
     return (
       <div>
@@ -143,12 +169,13 @@ class GameWall extends React.Component {
             clues={this.props.clues}
             clueOrder={this.state.clueOrder} 
             foundGroups={foundGroups}
-            handleGuess={this.handleGuess.bind(this)} 
+            handleGuess={this.handleGuess} 
             frozen={this.state.frozen}
           />
           {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
         </div>
         {connectionsForm}
+        {doneButton}
       </div>
     );
   }
