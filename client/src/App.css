@@ -1,0 +1,25 @@
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+:root {
+    --group-color-0: rgb(18, 18, 112);
+    --group-color-1: rgb(67, 131, 67);
+    --group-color-2: rgb(131, 41, 75);
+    --group-color-3: rgb(71, 111, 148);
+}
+
+body {
+    /* TODO: pick a good font */
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+      -webkit-user-select: none;
+       -khtml-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
+}

@@ -1,0 +1,61 @@
+
+/* TODO: size dependent on page? */
+.wall {
+    position: relative;
+    width: 400px;
+    height: 320px;
+
+    background-color: lightgray;
+}
+
+.tile {
+    position: absolute;
+    width: 90px;
+    height: 70px;
+    margin: 5px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: gray;
+    color: black;
+
+    transition: top .5s ease, left .5s ease;
+}
+
+.clue {
+    text-align: center;
+}
+
+/* TODO: style selected as the next group */
+.selected {
+    border: 3px solid black;
+}
+
+.group {
+    color: white;
+}
+/* these should have increase z index */
+.group-0 {
+    background-color: var(--group-color-0);
+    /* gradient fill? */
+}
+.group-1 {
+    background-color: var(--group-color-1);
+}
+.group-2 {
+    background-color: var(--group-color-2);
+}
+.group-3 {
+    background-color: var(--group-color-3);
+}
+
+.row-0 { top:  0%; }
+.row-1 { top: 25%; }
+.row-2 { top: 50%; }
+.row-3 { top: 75%; }
+.column-0 { left:  0%; }
+.column-1 { left: 25%; }
+.column-2 { left: 50%; }
+.column-3 { left: 75%; }

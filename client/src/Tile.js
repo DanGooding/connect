@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 // a box for a single clue in a Wall
 function Tile(props) {
   let className = "tile";
-  className += ` column_${props.column} row_${props.row}`;
+  className += ` column-${props.column} row-${props.row}`;
   if (props.selected) {
     className += " selected";
   }
@@ -13,7 +13,7 @@ function Tile(props) {
   if (props.group == null) {
     onClick = props.onClick;
   }else {
-    className += ` group_${props.group}`;
+    className += ` group group-${props.group}`;
   }
   return (
     <div className={className} onClick={onClick}>

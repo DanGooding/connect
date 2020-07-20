@@ -39,7 +39,7 @@ class ConnectionInput extends React.Component {
   }
 
   render() {
-    const className = `connection-input group_${this.props.groupNumber}`;
+    const className = `connection-input group group-${this.props.groupNumber}`;
 
     let checkButton;
     if (!this.state.answerShown) {

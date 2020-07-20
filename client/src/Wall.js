@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Tile from './Tile.js';
 import { numColumns, groupSize } from './constants.js';
-import './style.css';
+import './Wall.css';
 
 class Wall extends React.Component {
   constructor(props) {
