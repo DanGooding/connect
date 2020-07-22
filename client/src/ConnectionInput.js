@@ -39,7 +39,7 @@ class ConnectionInput extends React.Component {
   }
 
   render() {
-    const className = `connection-input group group-${this.props.groupNumber}`;
+    const className = `connection-input`;
 
     let checkButton;
     if (!this.state.answerShown) {
@@ -81,18 +81,20 @@ class ConnectionInput extends React.Component {
 
     return (
       <form className={className} onSubmit={() => {}}>
-        <h2>Group {this.props.groupNumber + 1}</h2>
+        <h2 className={`connection-title group-${this.props.groupNumber}`}>Group {this.props.groupNumber + 1}</h2>
 
-        <label>What is the connection?</label>
-        <input 
-          type="text" 
-          value={this.state.guess} 
-          onChange={this.handleChangeGuess} 
-          disabled={this.state.answerShown} 
-        />
-        {checkButton}
+        <div>
+          <label>What is the connection?</label>
+          <input 
+            type="text" 
+            value={this.state.guess} 
+            onChange={this.handleChangeGuess} 
+            disabled={this.state.answerShown} 
+          />
+          {checkButton}
 
-        {answer}
+          {answer}
+        </div>
 
       </form>
     );

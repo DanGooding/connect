@@ -21,6 +21,8 @@
     background-color: gray;
     color: black;
 
+    border-radius: 5px;
+
     transition: top .5s ease, left .5s ease;
 }
 
@@ -59,3 +61,5 @@
 .column-1 { left: 25%; }
 .column-2 { left: 50%; }
 .column-3 { left: 75%; }
+
+/* TODO: resolve button */

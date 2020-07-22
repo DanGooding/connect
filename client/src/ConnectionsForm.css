@@ -1,5 +1,45 @@
 
 .connection-input {
-    padding: 10px;
+    /* padding: 10px; */
     margin: 5px 0px;
+    /* background-color: grey; */
+    /* padding: 0; */
+    /* border: 1px solid black; */
+    /* border-radius: 20px; */
 }
+
+.connection-title {
+    color: white;
+    margin: 0;
+}
+
+.connection-answer {
+    font-style: italic;
+}
+
+input, button {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+input[type=text] {
+    padding: 5px;
+    margin: 0 10px;
+    border: 1px solid black;
+    border-radius: 10px;
+    /* border: 0; */
+    /* border-bottom: 2px solid black; */
+}
+
+/* input[type=text].group-0 {
+    border-bottom: 2px solid var(--group-color-0);
+}
+input[type=text].group-1 {
+    border-bottom: 2px solid var(--group-color-1);
+}
+input[type=text].group-2 {
+    border-bottom: 2px solid var(--group-color-2);
+}
+input[type=text].group-3 {
+    border-bottom: 2px solid var(--group-color-3);
+} */
