@@ -2,29 +2,46 @@
 import React from 'react';
 import GameWall from './GameWall.js';
 import Results from './Results.js';
-import { numGroups } from './constants.js';
+import { numGroups, groupSize } from './constants.js';
+import { shuffle } from './utils.js';
 
 class GamePage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      // TODO: fetch these & shuffle clues(?)
-      clues: [
-        "A1", "A2", "A3",
-        "B1", "B2", "B3",
-        "C1", "C2", "C3",
-      ],
+    // TODO: fetch these
+    const wall = {
       groups: [
-        new Set(["A1", "A2", "A3"]), 
-        new Set(["B1", "B2", "B3"]), 
-        new Set(["C1", "C2", "C3"])
-      ],
-      connections: [
-        "all A",
-        "all B",
-        "all C"
-      ],
+        {
+          clues: ["A1", "A2", "A3", "A4"],
+          connection: "all A"
+        },
+        {
+          clues: ["B1", "B2", "B3", "B4"],
+          connection: "all B"
+        },
+        {
+          clues: ["C1", "C2", "C3", "C4"],
+          connection: "all C"
+        },
+        {
+          clues: ["D1", "D2", "D3", "D4"],
+          connection: "all D"
+        }
+      ]
+    };
+
+    let groups = wall.groups.slice(0, numGroups);
+    for (let i = 0; i < groups.length; i++) {
+      groups[i].clues = groups[i].clues.slice(0, groupSize);
+    }
+    let clues = groups.flatMap(({clues}) => clues);
+    shuffle(clues);
+      
+    this.state = {
+      clues,
+      groups: groups.map(({clues}) => new Set(clues)),
+      connections: groups.map(({connection}) => connection),
       gameFinished: false,
       numFoundGroups: null,
       numCorrectConnections: null,
