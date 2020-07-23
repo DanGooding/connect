@@ -5,66 +5,71 @@ import re
 import requests
 import time
 
-# get all episode links
-r = requests.get('https://ocdb.cc/episodes/')
-assert r.status_code == requests.codes.ok, 'episodes request should succeed'
-soup = BeautifulSoup(r.text, 'html.parser')
+def get_walls():
+    """ scrape both walls from every episode listed on
+        'the only connect database' ocdb.cc
+    """
 
-episode_urls = []
-for link_wrapper in soup.find_all(class_='episode_link'):
-    episode_urls.append(link_wrapper.a['href'])
-
-walls = []
-for i, episode_url in enumerate(episode_urls[:5]):
-    # get the walls for this episode
-    print(f'{i + 1} / {len(episode_urls)} : {episode_url}')
-
-    # be polite
-    time.sleep(1)
-    
-    r = requests.get(episode_url)
-    assert r.status_code == requests.codes.ok, 'episode request should succeed'
+    # get all episode links
+    r = requests.get('https://ocdb.cc/episodes/')
+    assert r.status_code == requests.codes.ok, 'episodes request should succeed'
     soup = BeautifulSoup(r.text, 'html.parser')
 
-    # get the episode and series
-    episode_meta = soup.find(class_='episode_meta')
-    match = re.search(r'Series\s+(\d+),\s+Episode\s+(\d+)', episode_meta.get_text())
-    assert match, f'series and episode number should be present'
-    series, episode = match.groups()
-    series = int(series)
-    episode = int(episode)
+    episode_urls = []
+    for link_wrapper in soup.find_all(class_='episode_link'):
+        episode_urls.append(link_wrapper.a['href'])
 
-    wall_wrappers = soup.find(id='round3').find_next_siblings(class_='question')
-    for wall_wrapper in itertools.islice(wall_wrappers, 2):
-        wall = {'series': series, 'episode': episode, 'groups': []}
+    walls = []
+    for i, episode_url in enumerate(episode_urls):
+        # get the walls for this episode
+        print(f'{i + 1:>4} / {len(episode_urls)} : {episode_url}')
 
-        # remove any unicode symbols to leave just the name
-        symbol_text = wall_wrapper.h3.get_text()
-        match = re.search(r'(?:alpha|beta|lion|water)+', symbol_text.lower())
-        assert match, 'wall should have a valid symbol'
-        wall['symbol'] = match.group()
+        # be polite
+        time.sleep(1)
 
-        for group_idx in range(4):
-            group = {'clues': []}
+        r = requests.get(episode_url)
+        assert r.status_code == requests.codes.ok, 'episode request should succeed'
+        soup = BeautifulSoup(r.text, 'html.parser')
 
-            group['connection'] = \
-                wall_wrapper.find(class_=f'group{group_idx + 1}-answer')\
-                            .find(class_='back')\
-                            .get_text()\
-                            .strip()
-            assert group['connection'], 'connection should not be empty'
+        # get the episode and series
+        episode_meta = soup.find(class_='episode_meta')
+        match = re.search(r'Series\s+(\d+),\s+Episode\s+(\d+)', episode_meta.get_text())
+        assert match, f'series and episode number should be present'
+        series, episode = match.groups()
+        series = int(series)
+        episode = int(episode)
 
-            for clue_idx in range(4):
-                group['clues'].append(
-                    wall_wrapper.find(class_=f'group{group_idx + 1}-clue{clue_idx + 1}')\
-                                .find(class_='clue')\
+        wall_wrappers = soup.find(id='round3').find_next_siblings(class_='question')
+        for wall_wrapper in itertools.islice(wall_wrappers, 2):
+            wall = {'series': series, 'episode': episode, 'groups': []}
+
+            # remove any unicode symbols to leave just the name
+            symbol_text = wall_wrapper.h3.get_text()
+            match = re.search(r'(?:alpha|beta|lion|water)+', symbol_text.lower())
+            assert match, 'wall should have a valid symbol'
+            wall['symbol'] = match.group()
+
+            for group_idx in range(4):
+                group = {'clues': []}
+
+                group['connection'] = \
+                    wall_wrapper.find(class_=f'group{group_idx + 1}-answer')\
+                                .find(class_='back')\
                                 .get_text()\
                                 .strip()
-                    )
-                assert group['clues'][clue_idx], 'clue should not be empty'
-    
-            wall['groups'].append(group)
+                assert group['connection'], 'connection should not be empty'
+
+                for clue_idx in range(4):
+                    group['clues'].append(
+                        wall_wrapper.find(class_=f'group{group_idx + 1}-clue{clue_idx + 1}')\
+                                    .find(class_='clue')\
+                                    .get_text()\
+                                    .strip()
+                        )
+                    assert group['clues'][clue_idx], 'clue should not be empty'
         
-        walls.append(wall)
+                wall['groups'].append(group)
+            
+            walls.append(wall)
 
-
+    return walls
