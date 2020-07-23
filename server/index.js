@@ -17,7 +17,11 @@ db.on('error', console.error.bind(console, 'connection error: '));
 app.get('/walls', async (req, res) => {
   try {
     // TODO: limit & paginate
-    const walls = await Wall.find({}, 'name');
+    const walls = 
+      await Wall
+        .find({})
+        .sort({'series': 'asc', 'episode': 'asc', 'symbolIndex': 'asc'})
+        .select(['series', 'episode', 'symbolName']);
     res.json(walls);
   }catch (err) {
     res.status(500).json({error: "failed to get walls"});

@@ -2,7 +2,10 @@
 const mongoose = require('mongoose');
 
 const wallSchema = new mongoose.Schema({
-  // name: String,  // TODO: there appears to be no good name!!!
+  series: Number,
+  episode: Number,
+  symbolIndex: Number,
+  symbolName: String,
   groups: [{
     clues: [String],
     connection: String
