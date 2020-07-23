@@ -8,6 +8,19 @@ import time
 def get_walls():
     """ scrape both walls from every episode listed on
         'the only connect database' ocdb.cc
+
+        returns a list of walls, all of the form:
+            {
+                'series': int,
+                'episode': int,
+                'symbol': str,
+                'groups': [
+                    {
+                        'connection': str,
+                        'clues': [str]
+                    }
+                ]
+            }
     """
 
     # get all episode links
