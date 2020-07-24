@@ -1,13 +1,22 @@
 
 import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 import GamePage from './GamePage.js';
 import HomePage from './HomePage.js';
 import './App.css';
 
 function App() {
   // TODO: navignation - home button
-  // return <GamePage wallId={'5f19a2e01acf1fdac8928c4f'}/>
-  return <HomePage />;
+  return (
+    <Switch>
+      <Route path="/walls/:id">
+        <GamePage />
+      </Route>
+      <Route path="/">
+        <HomePage />
+      </Route>
+    </Switch>
+  );
 }
 
 export default App;

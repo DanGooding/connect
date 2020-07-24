@@ -1,11 +1,14 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 function WallListItem(props) {
   return (
     <li className="wall-list-item">
-      Series {props.series} Episode {props.episode} {props.symbolName}
+      <Link to={`/walls/${props.id}`}>
+        Series {props.series} Episode {props.episode} - {props.symbolName}
+      </Link>
     </li>
   );
 }

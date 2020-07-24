@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import GameWall from './GameWall.js';
 import Results from './Results.js';
@@ -32,7 +33,7 @@ class GamePage extends React.Component {
   }
 
   componentDidMount() {
-    fetch(`/api/walls/${this.props.wallId}`)
+    fetch(`/api/walls/${this.props.match.params.id}`)
       .then(res => res.json())
       .then(
         wall => this.wallDataRecived(wall),
@@ -41,7 +42,7 @@ class GamePage extends React.Component {
             fetchError: error
           });
         }
-      ); 
+      );
   }
 
   wallDataRecived(wall) {
@@ -110,7 +111,9 @@ class GamePage extends React.Component {
 }
 
 GamePage.propTypes = {
-  wallId: PropTypes.string
+  // the url match of /walls/:id
+  // added by the `withRouter` wrapper
+  match: PropTypes.object.isRequired
 };
 
-export default GamePage;
+export default withRouter(GamePage);
