@@ -78,14 +78,15 @@ class GamePage extends React.Component {
     this.setState({
       gameFinished: true,
       numCorrectConnections,
-    })
+    });
   }
 
   render() {
-    if (!this.state.isLoaded) {
-      return <div>Loading...</div>
-    }else if (this.state.fetchError != null) {
-      return <div>Error: {this.state.fetchError.message}</div>
+    if (this.state.fetchError != null) {
+      return <div>Error: {this.state.fetchError.message}</div>;
+    
+    }else if (!this.state.isLoaded) {
+      return <div>Loading...</div>;
 
     }else if (this.state.gameFinished) {
       return <Results
