@@ -97,7 +97,6 @@ class GamePage extends React.Component {
       // TODO: also an exit button?
       // TODO: save (time / completed flag) for this wall? (cookies)
     }else {
-      // TODO: ? one single callback that recives all info on finish
       return <GameWall 
         clues={this.state.clues} 
         groups={this.state.groups}

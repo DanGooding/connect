@@ -1,0 +1,40 @@
+
+
+.wall-list {
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-around; */
+}
+
+.wall-list-item {
+    list-style-type: none;
+}
+
+.wall-list-item-wrapper {
+    margin: 10px;
+    padding: 5px 0;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    
+    background-color: #eee;
+    border-radius: 5px;
+}
+
+:visited .wall-list-item-wrapper {
+    background-color: #aaa;
+}
+
+.wall-list-item-section {
+    margin: 0 5px;
+    text-align: center;
+}
+
+/* .wall-list-item-label {
+
+} */
+
+.wall-list-item-value {
+    font-size: 25px;
+}

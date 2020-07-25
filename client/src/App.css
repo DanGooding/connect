@@ -10,10 +10,16 @@
     --group-color-3: rgb(71, 111, 148);
 }
 
-body {
-    /* TODO: pick a good font */
+h1, h2, h3, h4, h5, h6 {
+    /* TODO: pick good fonts */
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+p, div {
     font-family: Arial, Helvetica, sans-serif;
 }
+
+/* TODO: container class + media query for size */
 
 .noselect {
     -webkit-touch-callout: none;

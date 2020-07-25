@@ -1,6 +1,7 @@
 
 import React from 'react';
 import WallListItem from './WallListItem.js';
+import './WallList.css';
 
 class WallList extends React.Component {
   constructor(props) {
@@ -48,7 +49,7 @@ class WallList extends React.Component {
 
     return (
       <div>
-        <ul>
+        <ul className="wall-list">
           {items}
         </ul>
       </div>
