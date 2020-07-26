@@ -2,10 +2,22 @@
 const express = require('express');
 const router = express.Router();
 
+const mongoose = require('mongoose');
 const Wall = require('./Wall.js');
 
+mongoose.connection.once('open', () => console.log(`connected to: ${process.env.DB_URL}`));
+mongoose.connection.on('error', err => console.error('mongo error: ', err.message));
+
+mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
+  .catch(err => {
+    console.error(`failed to connect to: ${process.env.DB_URL}`);
+    console.error(err.message);
+  });
+
+// ensure we give an error response, rather than hanging waiting for the db
+mongoose.set('bufferCommands', false);
 router.use((req, res, next) => {
-  if (Wall.db.readyState != Wall.db.states.connected) {
+  if (mongoose.connection.readyState != mongoose.connection.states.connected) {
     res.status(503).json({error: "can't connect to database"});
   }else {
     next();
@@ -13,7 +25,6 @@ router.use((req, res, next) => {
 });
 
 router.get('/walls', async (req, res) => {
-  console.log('get of /walls');
   try {
     // TODO: limit & paginate
     const walls = 
