@@ -1,16 +1,21 @@
 
 .connection-input {
-    /* padding: 10px; */
     margin: 5px 0px;
-    /* background-color: grey; */
-    /* padding: 0; */
-    /* border: 1px solid black; */
-    /* border-radius: 20px; */
+}
+
+.connection-input > div {
+    background-color: white;
+    border-radius: 0 0 10px 10px;
+    border: 1px solid grey;
+    padding: 10px;
 }
 
 .connection-title {
     color: white;
     margin: 0;
+    border-radius: 10px 10px 0 0;
+    /* border-bottom: 5px solid black; */
+    padding: 10px;
 }
 
 .connection-answer {
@@ -26,7 +31,7 @@ input[type=text] {
     padding: 5px;
     margin: 0 10px;
     border: 1px solid black;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     /* border: 0; */
     /* border-bottom: 2px solid black; */
 }

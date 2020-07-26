@@ -26,6 +26,10 @@
     background-color: #aaa;
 }
 
+/* :hover > .wall-list-item-wrapper {
+    
+} */
+
 .wall-list-item-section {
     margin: 0 5px;
     text-align: center;
