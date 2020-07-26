@@ -14,27 +14,34 @@ class WallList extends React.Component {
   }
 
   componentDidMount() {
+    // TODO extract as a util
     fetch('/api/walls')
-      .then(res => res.json())
-      .then(
-        result => {
-          this.setState({
-            isLoaded: true,
-            walls: result
-          });
-        },
-        error => {
-          this.setState({
-            fetchError: error
-          });
+      .then(res => {
+        if (!res.ok) {
+          res.json()
+            .then(({error}) => 
+              this.setState({fetchError: error})
+            );
+          return;
         }
+        res.json()
+          .then(walls =>
+            this.setState({
+              isLoaded: true,
+              walls
+            }));
+      })
+      .catch(error =>
+        this.setState({
+          fetchError: `fetch error: ${error.message}`
+        })
       );
   }
 
   render() {
     // TODO: classNames 
     if (this.state.fetchError != null) {
-      return <div>Error: {this.state.fetchError.message}</div>;
+      return <div>Error: {this.state.fetchError}</div>;
     }else if (!this.state.isLoaded) {
       return <div>Loading...</div>;
     }

@@ -27,21 +27,40 @@ class GamePage extends React.Component {
       livesRemaining: null
     };
 
+    this.wallDataRecived = this.wallDataRecived.bind(this);
     this.wallSolved = this.wallSolved.bind(this);
     this.wallFailed = this.wallFailed.bind(this);
     this.gameFinished = this.gameFinished.bind(this);
   }
 
   componentDidMount() {
+    
+    // results of this request
+    // - no response   (error: "Failed to fetch")
+    // - non json response  -- .json() errors   *** will this ever happen in production?
+    // - API response
+    //   - failed: 404 or like (with json error explanation)
+    //   - success: got wall object
+
+    // TODO: don't return an error message form api?
+    // TODO: proper error page/component
+
     fetch(`/api/walls/${this.props.match.params.id}`)
-      .then(res => res.json())
-      .then(
-        wall => this.wallDataRecived(wall),
-        error => {
-          this.setState({
-            fetchError: error
-          });
+      .then(res => {
+        if (!res.ok) {
+          res.json()
+            .then(({error}) => 
+              this.setState({fetchError: error})
+            );
+          return;
         }
+        res.json()
+          .then(this.wallDataRecived);
+      })
+      .catch(error =>
+        this.setState({
+          fetchError: `fetch error: ${error.message}`
+        })
       );
   }
 
@@ -84,7 +103,7 @@ class GamePage extends React.Component {
 
   render() {
     if (this.state.fetchError != null) {
-      return <div>Error: {this.state.fetchError.message}</div>;
+      return <div>Error: {this.state.fetchError}</div>;
     
     }else if (!this.state.isLoaded) {
       return <div>Loading...</div>;
