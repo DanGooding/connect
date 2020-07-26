@@ -1,24 +1,26 @@
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 const express = require('express');
 const app = express();
 const apiRouter = require('./api.js');
 
 const mongoose = require('mongoose');
-// TODO: environment variables
-const db_url = 'mongodb://localhost/connect';
 
 // so api requests can 503 rather than hanging when not connected
 mongoose.set('bufferCommands', false);
 
-mongoose.connection.once('open', () => console.log(`connected to: ${db_url}`));
+mongoose.connection.once('open', () => console.log(`connected to: ${process.env.DB_URL}`));
 mongoose.connection.on('error', err => console.error('mongo error: ', err.message));
 
-mongoose.connect(db_url, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
   .catch(err => {
-    console.error(`failed to connect to: ${db_url}`);
+    console.error(`failed to connect to: ${process.env.DB_URL}`);
     console.error(err.message);
   });
 
 app.use('/api', apiRouter);
 
-app.listen(3001);
+app.listen(process.env.PORT);
