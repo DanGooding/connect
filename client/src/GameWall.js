@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
@@ -150,22 +150,34 @@ class GameWall extends React.Component {
 
   render() {
     const foundGroups = this.state.foundGroupIndices.map(i => this.props.groups[i]);
-    let connectionsForm;
-    let doneButton
+    let wallFinishedComponents;
     if (this.state.completed || this.state.failed) {
-      connectionsForm = 
-        <ConnectionsForm 
-          groupIndices={this.state.foundGroupIndices}
-          connections={this.props.connections}
-          answersCorrect={this.state.connectionGuessCorrect}
-          onChangeCorrectness={this.onChangeCorrectness}
-          resolveWall={this.resolve}
-        />;
+      let reason;
+      if (this.state.completed) {
+        reason = "You've solved the wall";
+      }else if (this.state.lives == 0) {
+        reason = 'Out of lives';
+      }
+      // TODO: out of time
 
-        if (this.state.connectionGuessCorrect.every(x => x != null)) {
-          // all answers marked
-          doneButton = <button onClick={this.onFinish}>Done</button>;
-        }
+      let doneButton;
+      if (this.state.connectionGuessCorrect.every(x => x != null)) {
+        // all answers marked
+        doneButton = <button onClick={this.onFinish}>Done</button>;
+      }
+
+      wallFinishedComponents = 
+        <Fragment>
+          <h2>{reason}</h2>
+          <ConnectionsForm 
+            groupIndices={this.state.foundGroupIndices}
+            connections={this.props.connections}
+            answersCorrect={this.state.connectionGuessCorrect}
+            onChangeCorrectness={this.onChangeCorrectness}
+            resolveWall={this.resolve}
+          />
+          {doneButton}
+        </Fragment>
     }
     return (
       <div>
@@ -179,8 +191,7 @@ class GameWall extends React.Component {
           />
           {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
         </div>
-        {connectionsForm}
-        {doneButton}
+        {wallFinishedComponents}
       </div>
     );
   }
