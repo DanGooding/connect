@@ -22,7 +22,7 @@ function ConnectionsForm(props) {
 
   let resolveButton;
   if (props.groupIndices.length < numGroups) {
-    resolveButton = <button className="resolve" onClick={props.resolveWall}>Resolve wall</button>;
+    resolveButton = <button className="centered-button" onClick={props.resolveWall}>Resolve wall</button>;
   }
   return (
     <div className="connections-form">

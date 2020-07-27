@@ -76,7 +76,10 @@ class GamePage extends React.Component {
       isLoaded: true,
       clues,
       groups: groups.map(({clues}) => new Set(clues)),
-      connections: groups.map(({connection}) => connection)
+      connections: groups.map(({connection}) => connection),
+      series: wall.series,
+      episode: wall.episode,
+      symbol: wall.symbolName
     });
   }
 
@@ -123,6 +126,9 @@ class GamePage extends React.Component {
         onSolve={this.wallSolved}
         onFail={this.wallFailed}
         onFinish={this.gameFinished}
+        series={this.state.series}
+        episode={this.state.episode}
+        symbol={this.state.symbol}
       />;
     }
   }

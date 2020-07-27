@@ -13,6 +13,7 @@
 h1, h2, h3, h4, h5, h6 {
     /* TODO: pick good fonts */
     font-family: Georgia, 'Times New Roman', Times, serif;
+    text-align: center;
 }
 
 p, div {
@@ -20,8 +21,9 @@ p, div {
     line-height: 1.4;
 }
 
-button {
+.centered-button {
     margin: 0 auto;
+    display: block;
 }
 
 .noselect {

@@ -30,8 +30,13 @@ function pluralise(word, count, plural = null) {
   return count === 1 ? word : plural;
 }
 
+function capitalise(word) {
+  return word[0].toUpperCase() + word.slice(1);
+}
+
 export {
   setEq,
   shuffle,
-  pluralise
-}
+  pluralise,
+  capitalise
+};

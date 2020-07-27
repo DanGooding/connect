@@ -4,9 +4,8 @@ import PropTypes from 'prop-types';
 import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
 import ConnectionsForm from './ConnectionsForm.js';
-import { setEq, shuffle } from './utils.js';
+import { setEq, shuffle, capitalise } from './utils.js';
 import { groupSize, numGroups, maxLives } from './constants.js';
-import './GameWall.css';
 
 class GameWall extends React.Component {
   constructor(props) {
@@ -150,6 +149,7 @@ class GameWall extends React.Component {
   }
 
   render() {
+    const title = `Series ${this.props.series} - Episode ${this.props.episode} - ${capitalise(this.props.symbol)} wall`;
     const foundGroups = this.state.foundGroupIndices.map(i => this.props.groups[i]);
     let wallFinishedComponents;
     if (this.state.completed || this.state.failed) {
@@ -164,7 +164,7 @@ class GameWall extends React.Component {
       let doneButton;
       if (this.state.connectionGuessCorrect.every(x => x != null)) {
         // all answers marked
-        doneButton = <button className="connections-done" onClick={this.onFinish}>Done</button>;
+        doneButton = <button className="centered-button" onClick={this.onFinish}>Done</button>;
       }
 
       wallFinishedComponents = 
@@ -183,6 +183,7 @@ class GameWall extends React.Component {
     return (
       <div>
         <div className="wall-container">
+          <h2>{title}</h2>
           <Wall
             clues={this.props.clues}
             clueOrder={this.state.clueOrder} 
@@ -205,12 +206,19 @@ GameWall.propTypes = {
   groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)).isRequired,
   // the connections for each group
   connections: PropTypes.arrayOf(PropTypes.string).isRequired,
+
   // callback when all groups found
   onSolve: PropTypes.func.isRequired,
   // callback when out of time or lives
   onFail: PropTypes.func.isRequired,
   // callback when completely over (wall finished, connections checked)
-  onFinish: PropTypes.func.isRequired
+  onFinish: PropTypes.func.isRequired,
+
+  // the series & episode this wall is from
+  series: PropTypes.number.isRequired,
+  episode: PropTypes.number.isRequired,
+  // which wall within that episode this is (alpha | beta | lion | water)
+  symbol: PropTypes.string.isRequired
 }
 
 
