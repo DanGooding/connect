@@ -9,7 +9,7 @@ function WallListItem(props) {
   const values = [props.series, props.episode, props.symbolName[0].toUpperCase()];
   const sections = values.map(
     (value, i) => 
-      <div className="wall-list-item-section">
+      <div className="wall-list-item-section" key={labels[i]}>
         <div className="wall-list-item-label">{labels[i]}</div>
         <div className="wall-list-item-value">{value}</div>
       </div>
