@@ -1,11 +1,12 @@
 
 import React from 'react';
 import WallList from './WallList';
+import './HomePage.css';
 
 function HomePage(props) {
   return (
-    <div>
-      <h1>Connect</h1>
+    <div className="home-container">
+      <h1 className="home-title">Connect</h1>
       <WallList />
     </div>
   );

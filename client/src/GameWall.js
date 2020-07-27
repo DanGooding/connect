@@ -1,11 +1,12 @@
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
 import ConnectionsForm from './ConnectionsForm.js';
 import { setEq, shuffle } from './utils.js';
 import { groupSize, numGroups, maxLives } from './constants.js';
+import './GameWall.css';
 
 class GameWall extends React.Component {
   constructor(props) {
@@ -155,7 +156,7 @@ class GameWall extends React.Component {
       let reason;
       if (this.state.completed) {
         reason = "You've solved the wall";
-      }else if (this.state.lives == 0) {
+      }else if (this.state.lives === 0) {
         reason = 'Out of lives';
       }
       // TODO: out of time
@@ -163,12 +164,12 @@ class GameWall extends React.Component {
       let doneButton;
       if (this.state.connectionGuessCorrect.every(x => x != null)) {
         // all answers marked
-        doneButton = <button onClick={this.onFinish}>Done</button>;
+        doneButton = <button className="connections-done" onClick={this.onFinish}>Done</button>;
       }
 
       wallFinishedComponents = 
-        <Fragment>
-          <h2>{reason}</h2>
+        <div>
+          <h2 className="game-over-reason">{reason}</h2>
           <ConnectionsForm 
             groupIndices={this.state.foundGroupIndices}
             connections={this.props.connections}
@@ -177,11 +178,11 @@ class GameWall extends React.Component {
             resolveWall={this.resolve}
           />
           {doneButton}
-        </Fragment>
+        </div>
     }
     return (
       <div>
-        <div>
+        <div className="wall-container">
           <Wall
             clues={this.props.clues}
             clueOrder={this.state.clueOrder} 

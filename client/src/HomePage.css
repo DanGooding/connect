@@ -1,0 +1,19 @@
+
+.home-container {
+    margin: 0 auto;
+    width: 80%;
+}
+@media (min-width: 1000px) {
+    .home-container {
+        width: 60%;
+    }
+}
+@media (max-width: 500px) {
+    .home-container {
+        width: 100%;
+    }
+}
+
+.home-title {
+    text-align: center;
+}

@@ -1,9 +1,10 @@
 
-
 .wall-list {
-    display: flex;
-    flex-wrap: wrap;
-    /* justify-content: space-around; */
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-gap: 1rem;
 }
 
 .wall-list-item {
@@ -16,16 +17,18 @@
 
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     
     background-color: #eee;
     border-radius: 5px;
 }
 
+/* TODO: this is fragile? */
 :visited .wall-list-item-wrapper {
     background-color: #aaa;
 }
 
+/* this is definitely fragile */
 /* :hover > .wall-list-item-wrapper {
     
 } */

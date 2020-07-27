@@ -20,7 +20,9 @@ p, div {
     line-height: 1.4;
 }
 
-/* TODO: container class + media query for size */
+button {
+    margin: 0 auto;
+}
 
 .noselect {
     -webkit-touch-callout: none;
