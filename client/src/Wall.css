@@ -33,6 +33,7 @@
     justify-content: center;
 
     background-color: lightgrey;
+    /* background-color: var(--tile-color); */
     color: black;
 
     border-radius: 4px;
@@ -42,11 +43,6 @@
 
 .clue {
     text-align: center;
-}
-
-/* TODO: style selected as the next group */
-.selected {
-    border: 2px solid black;
 }
 
 .group {

@@ -20,7 +20,8 @@
     justify-content: space-around;
     
     background-color: #eee;
-    border-radius: 5px;
+    border-radius: 10px;
+    /* border: 1px solid black; */
 }
 
 /* TODO: this is fragile? */

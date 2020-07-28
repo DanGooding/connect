@@ -42,16 +42,24 @@ class Wall extends React.Component {
     for (const clue of this.props.clues) {
       const i = this.props.clueOrder.indexOf(clue);
 
+      let clickable = false;
       let group = this.props.foundGroups.findIndex(group => group.has(clue));
-      if (group === -1) group = null;
+      if (group === -1) {
+        group = null;
+        clickable = true;
+      }
+
+      if (this.state.selected.has(clue)) {
+        group = this.props.foundGroups.length;
+      }
 
       tiles.push(
         <Tile
           clue={clue}
           key={clue}
-          selected={this.state.selected.has(clue)}
           group={group}
           column={i % numColumns} row={Math.floor(i / numColumns)}
+          clickable={clickable}
           onClick={() => this.tileClicked(clue)}
         />);
     }

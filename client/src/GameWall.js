@@ -155,9 +155,9 @@ class GameWall extends React.Component {
     if (this.state.completed || this.state.failed) {
       let reason;
       if (this.state.completed) {
-        reason = "You've solved the wall";
+        reason = "You've solved the wall!";
       }else if (this.state.lives === 0) {
-        reason = 'Out of lives';
+        reason = 'Out of lives...';
       }
       // TODO: out of time
 
@@ -169,7 +169,7 @@ class GameWall extends React.Component {
 
       wallFinishedComponents = 
         <div>
-          <h2 className="game-over-reason">{reason}</h2>
+          <h3 className="game-over-reason">{reason}</h3>
           <ConnectionsForm 
             groupIndices={this.state.foundGroupIndices}
             connections={this.props.connections}
