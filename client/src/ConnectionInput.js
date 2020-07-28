@@ -42,7 +42,7 @@ class ConnectionInput extends React.Component {
     const radioName = `group_${this.props.groupNumber}_correct`;
 
     return (
-      <form className={'connection-input'} onSubmit={() => {}}>
+      <form className="connection-input" onSubmit={e => e.preventDefault()}>
         <h2 className={`connection-title group-${this.props.groupNumber}`}>Group {this.props.groupNumber + 1}</h2>
 
         <div>
