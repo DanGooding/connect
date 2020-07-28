@@ -24,8 +24,10 @@ p, div {
 }
 
 .centered-button {
-    margin: 0 auto;
-    display: block;
+    /* margin: 0 auto; */
+    /* display: block; */
+    padding: 5px 0;
+    width: 100%;
 }
 
 .noselect {
