@@ -15,7 +15,7 @@ class GameWall extends React.Component {
     shuffle(clueOrder);
 
     let connectionGuessCorrect = [];
-    for (let i = 0; i < groupSize; i++) {
+    for (let i = 0; i < numGroups; i++) {
       connectionGuessCorrect.push(null);
     }
 
