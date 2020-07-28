@@ -20,14 +20,14 @@ function ConnectionsForm(props) {
       />
   );
 
-  let resolveButton;
-  if (props.groupIndices.length < numGroups) {
-    resolveButton = <button className="centered-button" onClick={props.resolveWall}>Resolve wall</button>;
-  }
   return (
     <div className="connections-form">
       {inputs}
-      {resolveButton}
+      {props.groupIndices.length < numGroups &&
+        <button className="centered-button" onClick={props.resolveWall}>
+          Resolve wall
+        </button>
+      }
     </div>
   );
 }

@@ -39,48 +39,10 @@ class ConnectionInput extends React.Component {
   }
 
   render() {
-    const className = `connection-input`;
-
-    let checkButton;
-    if (!this.state.answerShown) {
-      checkButton = <button onClick={this.checkGuess}>Check</button>;
-    }
-
-    let answer;
-    if (this.state.answerShown) {
-      const radioName = `group_${this.props.groupNumber}_correct`;
-
-      // TODO: use <p> to group ?
-      answer = (
-        <Fragment>
-          <br/>
-          The connection is: <span className="connection-answer">{this.props.connection}</span>
-          <br/>
-          Were you right?
-          <br/>
-          <label>
-            <input 
-              type="radio" name={radioName} 
-              checked={this.props.answerCorrect} 
-              onChange={this.handleChangeCorrectness}
-              value="correct" />
-            Correct ✅
-          </label>
-          <br/>
-          <label>
-            <input 
-              type="radio" name={radioName} 
-              checked={!this.props.answerCorrect} 
-              onChange={this.handleChangeCorrectness}
-              value="incorrect" />
-            Incorrect ❌
-          </label>
-        </Fragment>
-      );
-    }
+    const radioName = `group_${this.props.groupNumber}_correct`;
 
     return (
-      <form className={className} onSubmit={() => {}}>
+      <form className={'connection-input'} onSubmit={() => {}}>
         <h2 className={`connection-title group-${this.props.groupNumber}`}>Group {this.props.groupNumber + 1}</h2>
 
         <div>
@@ -91,9 +53,36 @@ class ConnectionInput extends React.Component {
             onChange={this.handleChangeGuess} 
             disabled={this.state.answerShown} 
           />
-          {checkButton}
+          {!this.state.answerShown && 
+            <button onClick={this.checkGuess}>Check</button>
+          }
 
-          {answer}
+          {this.state.answerShown &&
+            <Fragment>
+              <br/>
+              The connection is: <span className="connection-answer">{this.props.connection}</span>
+              <br/>
+              Were you right?
+              <br/>
+              <label>
+                <input 
+                  type="radio" name={radioName} 
+                  checked={this.props.answerCorrect} 
+                  onChange={this.handleChangeCorrectness}
+                  value="correct" />
+                Correct ✅
+              </label>
+              <br/>
+              <label>
+                <input 
+                  type="radio" name={radioName} 
+                  checked={!this.props.answerCorrect} 
+                  onChange={this.handleChangeCorrectness}
+                  value="incorrect" />
+                Incorrect ❌
+              </label>
+            </Fragment>
+          }
         </div>
 
       </form>

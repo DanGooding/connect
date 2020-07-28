@@ -10,7 +10,7 @@ function Tile(props) {
     className += ` group group-${props.group}`;
   }
   return (
-    <div className={className} onClick={props.clickable && props.onClick}>
+    <div className={className} onClick={props.clickable ? props.onClick : null}>
       <div className="clue noselect">
         {props.clue}
       </div>

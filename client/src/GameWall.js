@@ -151,35 +151,17 @@ class GameWall extends React.Component {
   render() {
     const title = `Series ${this.props.series} - Episode ${this.props.episode} - ${capitalise(this.props.symbol)} wall`;
     const foundGroups = this.state.foundGroupIndices.map(i => this.props.groups[i]);
-    let wallFinishedComponents;
-    if (this.state.completed || this.state.failed) {
-      let reason;
-      if (this.state.completed) {
-        reason = "You've solved the wall!";
-      }else if (this.state.lives === 0) {
-        reason = 'Out of lives...';
-      }
-      // TODO: out of time
 
-      let doneButton;
-      if (this.state.connectionGuessCorrect.every(x => x != null)) {
-        // all answers marked
-        doneButton = <button className="centered-button" onClick={this.onFinish}>Done</button>;
-      }
-
-      wallFinishedComponents = 
-        <div>
-          <h3 className="game-over-reason">{reason}</h3>
-          <ConnectionsForm 
-            groupIndices={this.state.foundGroupIndices}
-            connections={this.props.connections}
-            answersCorrect={this.state.connectionGuessCorrect}
-            onChangeCorrectness={this.onChangeCorrectness}
-            resolveWall={this.resolve}
-          />
-          {doneButton}
-        </div>
+    let reason;
+    if (this.state.completed) {
+      reason = "You've solved the wall!";
+    }else if (this.state.lives === 0) {
+      reason = 'Out of lives...';
     }
+    // TODO: out of time
+
+    const allMarked = this.state.connectionGuessCorrect.every(x => x != null);
+    
     return (
       <div>
         <div className="wall-container">
@@ -193,7 +175,22 @@ class GameWall extends React.Component {
           />
           {this.state.lives != null && <HealthBar lives={this.state.lives} maxLives={maxLives}/>}
         </div>
-        {wallFinishedComponents}
+        
+        {(this.state.completed || this.state.failed) &&
+          <div>
+            <h3 className="game-over-reason">{reason}</h3>
+            <ConnectionsForm 
+              groupIndices={this.state.foundGroupIndices}
+              connections={this.props.connections}
+              answersCorrect={this.state.connectionGuessCorrect}
+              onChangeCorrectness={this.onChangeCorrectness}
+              resolveWall={this.resolve}
+            />
+            {allMarked &&
+              <button className="centered-button" onClick={this.onFinish}>Done</button>
+            }
+          </div>
+        }
       </div>
     );
   }
