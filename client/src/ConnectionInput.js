@@ -1,5 +1,5 @@
 
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 class ConnectionInput extends React.Component {
@@ -12,6 +12,7 @@ class ConnectionInput extends React.Component {
     this.handleChangeGuess = this.handleChangeGuess.bind(this);
     this.checkGuess = this.checkGuess.bind(this);
     this.handleChangeCorrectness = this.handleChangeCorrectness.bind(this);
+    this.setCorrectness = this.setCorrectness.bind(this);
   }
 
   handleChangeGuess(event) {
@@ -30,61 +31,70 @@ class ConnectionInput extends React.Component {
     this.setState({
       answerShown: true,
     });
-    // TODO: duplication
-    this.props.onChangeCorrectness(this.props.groupNumber, answerCorrect);
+    this.setCorrectness(answerCorrect);
   }
 
   handleChangeCorrectness(event) {
-    this.props.onChangeCorrectness(this.props.groupNumber, event.target.value === "correct");
+    this.setCorrectness(event.target.value === "correct");
+  }
+
+  setCorrectness(correct) {
+    this.props.onChangeCorrectness(this.props.groupNumber, correct);
   }
 
   render() {
+    // name of the set of radio inputs, unique in the page
     const radioName = `group_${this.props.groupNumber}_correct`;
 
     return (
       <form className="connection-input" onSubmit={e => e.preventDefault()}>
         <h2 className={`connection-title group-${this.props.groupNumber}`}>Group {this.props.groupNumber + 1}</h2>
 
-        <div>
-          <label>What is the connection?</label>
-          <input 
-            type="text" 
-            value={this.state.guess} 
-            onChange={this.handleChangeGuess} 
-            disabled={this.state.answerShown} 
-          />
-          {!this.state.answerShown && 
-            <button onClick={this.checkGuess}>Check</button>
-          }
+        <div className="connection-input-wrapper">
+          <div className="connection-input-grid">
+            <label className="connection-input-label">Connection</label>
+            <input 
+              type="text" 
+              value={this.state.guess} 
+              onChange={this.handleChangeGuess} 
+              disabled={this.state.answerShown} 
+            />
+            {this.state.answerShown 
+              ? (this.props.answerCorrect ? '✅' : '❌')
+              : <button className="connection-check" onClick={this.checkGuess}>Check</button>
+            }
 
-          {this.state.answerShown &&
-            <Fragment>
-              <br/>
-              The connection is: <span className="connection-answer">{this.props.connection}</span>
-              <br/>
-              Were you right?
-              <br/>
-              <label>
-                <input 
-                  type="radio" name={radioName} 
-                  checked={this.props.answerCorrect} 
-                  onChange={this.handleChangeCorrectness}
-                  value="correct" />
-                Correct ✅
-              </label>
-              <br/>
-              <label>
-                <input 
-                  type="radio" name={radioName} 
-                  checked={!this.props.answerCorrect} 
-                  onChange={this.handleChangeCorrectness}
-                  value="incorrect" />
-                Incorrect ❌
-              </label>
-            </Fragment>
-          }
+            {this.state.answerShown &&
+              <>
+                <span className="connection-input-label">Answer</span>
+                <span className="connection-answer">{this.props.connection}</span>
+                
+                <span></span>
+                <span className="connection-input-label">Mark</span>
+
+                <div className="connection-correct-radio">
+
+                  <label htmlFor={`radio_${radioName}_correct`}>Correct</label>
+                  <input 
+                    type="radio" name={radioName} 
+                    id={`radio_${radioName}_correct`}
+                    checked={this.props.answerCorrect} 
+                    onChange={this.handleChangeCorrectness}
+                    value="correct"
+                  />
+                  <label htmlFor={`radio_${radioName}_incorrect`}>Incorrect</label>
+                  <input 
+                    type="radio" name={radioName} 
+                    id={`radio_${radioName}_incorrect`}
+                    checked={!this.props.answerCorrect} 
+                    onChange={this.handleChangeCorrectness}
+                    value="incorrect"
+                  />
+                </div>
+              </>
+            }
+          </div>
         </div>
-
       </form>
     );
     // TODO: textarea instead? - just a looong text box
