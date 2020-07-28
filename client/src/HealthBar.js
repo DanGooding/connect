@@ -1,14 +1,18 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHeart as fasFaHeart } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as farFaHeart } from '@fortawesome/free-regular-svg-icons';
+import './HealthBar.css';
 
 function HealthBar(props) {
   let lives = [];
   for (let i = 0; i < props.maxLives; i++) {
     if (i < props.lives) {
-      lives.push(<span key={i} aria-label="life" role="img">💙</span>);
+      lives.push(<FontAwesomeIcon icon={fasFaHeart} size="lg" className="life" key={i} />);
     }else {
-      lives.push(<span key={i} aria-label="lost life" role="img">🤍</span>);
+      lives.push(<FontAwesomeIcon icon={farFaHeart} size="lg" className="lost-life" key={i} />);
     }
   }
   return <div className="health-bar">{lives}</div>;

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import MarkIcon from './MarkIcon.js';
 
 class ConnectionInput extends React.Component {
   constructor(props) {
@@ -59,18 +60,22 @@ class ConnectionInput extends React.Component {
               onChange={this.handleChangeGuess} 
               disabled={this.state.answerShown} 
             />
-            {this.state.answerShown 
-              ? (this.props.answerCorrect ? '✅' : '❌')
-              : <button className="connection-check" onClick={this.checkGuess}>Check</button>
+            {!this.state.answerShown &&
+              <button className="connection-check" onClick={this.checkGuess}>Check</button>
             }
 
             {this.state.answerShown &&
               <>
+                <MarkIcon 
+                  correct={this.props.answerCorrect} 
+                  onClick={() => this.setCorrectness(!this.props.answerCorrect)}
+                />
+
                 <span className="connection-input-label">Answer</span>
                 <span className="connection-answer">{this.props.connection}</span>
                 
                 <span></span>
-                <span className="connection-input-label">Mark</span>
+                <span className="connection-input-label">Were you right?</span>
 
                 <div className="connection-correct-radio">
 

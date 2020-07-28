@@ -35,7 +35,7 @@
 
 .connection-input-grid {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr minmax(22px, auto);
 
     align-items: center;
 

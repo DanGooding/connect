@@ -1,0 +1,16 @@
+
+/* .health-bar {} */
+
+.life, .lost-life {
+    margin: 0 2px;
+}
+
+.life {
+    /* color: var(--group-color-0); */
+    color: red;
+}
+
+.lost-life {
+    color: grey;
+}
+
