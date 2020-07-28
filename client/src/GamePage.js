@@ -69,7 +69,8 @@ class GamePage extends React.Component {
     for (let i = 0; i < groups.length; i++) {
       groups[i].clues = groups[i].clues.slice(0, groupSize);
     }
-    let clues = groups.flatMap(({clues}) => clues);
+    // const clues = groups.flatMap(({clues}) => clues);
+    const clues = groups.reduce((acc, {clues}) => acc.concat(clues), []);
     shuffle(clues);
 
     this.setState({
