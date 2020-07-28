@@ -9,7 +9,7 @@ import Results from './Results.js';
 import { setEq, shuffle, repeat, capitalise } from './utils.js';
 import { groupSize, numGroups, maxLives } from './constants.js';
 
-class GameWall extends React.Component {
+class Game extends React.Component {
   constructor(props) {
     super(props);
 
@@ -289,10 +289,10 @@ class GameWall extends React.Component {
   }
 }
 
-GameWall.propTypes = {
+Game.propTypes = {
   // the url match of /walls/:id
   // added by the `withRouter` wrapper
   match: PropTypes.object.isRequired
 }
 
-export default withRouter(GameWall);
+export default withRouter(Game);
