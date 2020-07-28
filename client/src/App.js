@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import GamePage from './GamePage.js';
+import GameWall from './GameWall.js';
 import HomePage from './HomePage.js';
 import './App.css';
 
@@ -10,7 +10,7 @@ function App() {
   return (
     <Switch>
       <Route path="/walls/:id">
-        <GamePage />
+        <GameWall />
       </Route>
       <Route path="/">
         <HomePage />

@@ -30,7 +30,7 @@ class Wall extends React.Component {
       newSelected.add(clue);
       this.setState({selected: newSelected}, () => {
         if (this.state.selected.size === groupSize) {
-          this.props.handleGuess(this.state.selected, 
+          this.props.onGuess(this.state.selected, 
             () => this.setState({selected: new Set()}));
         }
       });
@@ -82,7 +82,7 @@ Wall.propTypes = {
     // if truthy, click input is ignored
     frozen: PropTypes.bool,
     // given a guess, updates game state, returns true if correct
-    handleGuess: PropTypes.func.isRequired,
+    onGuess: PropTypes.func.isRequired,
 }
 
 export default Wall;

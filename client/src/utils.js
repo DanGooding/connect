@@ -23,6 +23,14 @@ function shuffle(a) {
   }
 }
 
+function repeat(value, num) {
+  let arr = [];
+  for (let i = 0; i < num; i++) {
+    arr.push(value);
+  }
+  return arr;
+}
+
 function pluralise(word, count, plural = null) {
   if (plural == null) {
     plural = `${word}s`;
@@ -37,6 +45,7 @@ function capitalise(word) {
 export {
   setEq,
   shuffle,
+  repeat,
   pluralise,
   capitalise
 };

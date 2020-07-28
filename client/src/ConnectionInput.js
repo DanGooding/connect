@@ -75,7 +75,7 @@ class ConnectionInput extends React.Component {
                 <span className="connection-answer">{this.props.connection}</span>
                 
                 <span></span>
-                <span className="connection-input-label">Were you right?</span>
+                <span className="connection-input-label">Mark it:</span>
 
                 <div className="connection-correct-radio">
 
