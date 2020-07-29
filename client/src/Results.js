@@ -13,31 +13,33 @@ function Results(props) {
     score += numBonusPoints;
   }
   return (
-    <div className="results">
-      <h2 className="results-title">Results</h2>
-      <div className="results-content">
-        <table className="results-table">
-          <tbody>
-            <tr>
-              <td className="result-value">{props.numFoundGroups}</td>
-              <td className="result-description">{pluralise('group', props.numFoundGroups)} found</td>
-            </tr>
-            <tr>
-              <td className="result-value">+ {props.numCorrectConnections}</td>
-              <td className="result-description">{pluralise('connection', props.numCorrectConnections)} found</td>
-            </tr>
+    <div className="results-wrapper">
+      <div className="results">
+        <h2 className="results-title">Results</h2>
+        <div className="results-content">
+          <div className="results-grid">
+
+            <span className="result-value">{props.numFoundGroups}</span>
+            <span className="result-description">{pluralise('group', props.numFoundGroups)} found</span>
+            
+            <span className="result-plus">+</span>
+            <span className="result-value">{props.numCorrectConnections}</span>
+            <span className="result-description">{pluralise('connection', props.numCorrectConnections)} found</span>
+            
             {addBonusPoints &&
-              <tr>
-                <td className="result-value">+ {numBonusPoints}</td>
-                <td className="result-description">bonus</td>
-              </tr>
+              <>
+                <span className="result-plus">+</span>
+                <span className="result-value">{numBonusPoints}</span>
+                <span className="result-description">bonus</span>
+              </>
             }
-            <tr className="result-total-row">
-              <td className="result-value">{score}</td>
-              <td className="result-description">{pluralise('point', score)}</td>
-            </tr>
-          </tbody>
-        </table>
+
+            <hr className="result-underline" />
+
+            <span className="result-value">{score}</span>
+            <span className="result-description">{pluralise('point', score)}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
