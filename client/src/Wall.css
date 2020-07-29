@@ -27,7 +27,10 @@
     width: calc(25% - 10px);
     height: calc(25% - 10px);
     margin: 5px;
+    padding: 10px;
 
+    font-size: medium;
+    
     display: flex;
     align-items: center;
     justify-content: center;

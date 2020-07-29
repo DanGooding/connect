@@ -22,18 +22,18 @@
     
     background-color: #eee;
     border-radius: 10px;
-    /* border: 1px solid black; */
+    border: 1px solid grey;
 }
 
 /* TODO: this is fragile? */
-:visited .wall-list-item-wrapper {
+/* :visited .wall-list-item-wrapper {
     background-color: #aaa;
-}
+} */
 
 /* this is definitely fragile */
-/* :hover > .wall-list-item-wrapper {
-    
-} */
+:hover > .wall-list-item-wrapper {
+    background-color: lightgray;
+}
 
 .wall-list-item-section {
     margin: 0 5px;
@@ -46,4 +46,5 @@
 
 .wall-list-item-value {
     font-size: 25px;
+    font-family: 'Roboto Slab', serif;
 }

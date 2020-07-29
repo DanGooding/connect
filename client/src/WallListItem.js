@@ -2,11 +2,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import WallSymbol from './WallSymbol';
 
 const labels = ['series', 'episode', 'wall'];
 
 function WallListItem(props) {
-  const values = [props.series, props.episode, props.symbolName[0].toUpperCase()];
+  const values = [props.series, props.episode, <WallSymbol symbol={props.symbol} />];
   const sections = values.map(
     (value, i) => 
       <div className="wall-list-item-section" key={labels[i]}>
@@ -28,7 +29,7 @@ function WallListItem(props) {
 WallListItem.propTypes = {
   series: PropTypes.number.isRequired,
   episode: PropTypes.number.isRequired,
-  symbolName: PropTypes.string.isRequired,
+  symbol: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired
 };
 

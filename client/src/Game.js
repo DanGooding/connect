@@ -8,6 +8,7 @@ import ConnectionsForm from './ConnectionsForm.js';
 import Results from './Results.js';
 import { setEq, shuffle, repeat, capitalise } from './utils.js';
 import { groupSize, numGroups, maxLives } from './constants.js';
+import WallSymbol from './WallSymbol.js';
 
 class Game extends React.Component {
   constructor(props) {
@@ -235,9 +236,6 @@ class Game extends React.Component {
       // TODO: save (time / completed flag) for this wall? (cookies)
     }
 
-    const title = 
-      `Series ${this.state.series} - Episode ${this.state.episode} - ${capitalise(this.state.symbol)} wall`;
-
     const shownGroupIndices = this.getShownGroupIndices();
     const shownGroups = shownGroupIndices.map(i => this.state.groups[i]);
     console.log(shownGroups);
@@ -247,7 +245,7 @@ class Game extends React.Component {
     return (
       <div>
         <div className="wall-container">
-          <h2>{title}</h2>
+          <h2>Series {this.state.series} - Episode {this.state.episode} - <WallSymbol symbol={this.state.symbol} /> wall</h2>
           <Wall
             clues={this.state.clues}
             clueOrder={this.state.clueOrder} 

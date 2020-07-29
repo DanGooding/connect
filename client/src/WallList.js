@@ -51,7 +51,7 @@ class WallList extends React.Component {
       <WallListItem 
         key={wall._id} id={wall._id} 
         series={wall.series} episode={wall.episode} 
-        symbolName={wall.symbolName} 
+        symbol={wall.symbolName} 
       />);
 
     return (
