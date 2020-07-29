@@ -102,7 +102,6 @@ class ConnectionInput extends React.Component {
         </div>
       </form>
     );
-    // TODO: textarea instead? - just a looong text box
   }
 }
 

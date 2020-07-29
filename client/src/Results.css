@@ -1,7 +1,31 @@
 
+.results {
+    display: inline-block;
+    /* margin: 0 auto; */
+}
+
+.results-title {
+    margin: 0;
+    padding: 10px;
+    color: black;
+    border: 1px solid grey;
+    background-color: var(--idle-grey);
+    /* color: white;
+    background-color: var(--group-color-0); */
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+}
+
+.results-content {
+    padding: 5px;
+    border-radius: 0 0 10px 10px;
+    border: 1px solid grey;
+    border-top: none;
+}
+
 .results-table {
     border-collapse: collapse;
-    margin: 0 auto;
+    /* margin: 0 auto; */
 }
 
 .result-total-row {
@@ -10,7 +34,9 @@
 .result-value {
     text-align: right;
     font-size: 25px;
+    font-family: 'Roboto Slab', serif;
 }
 .result-description {
     text-align: left;
+    /* vertical-align: bottom; */
 }

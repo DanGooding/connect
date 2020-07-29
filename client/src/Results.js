@@ -7,36 +7,41 @@ import './Results.css';
 
 function Results(props) {
   let score = props.numFoundGroups + props.numCorrectConnections;
-  let bonus;
+  let addBonusPoints = false;
   if (props.numFoundGroups === numGroups && props.numCorrectConnections === numGroups) {
-    bonus = (
-      <tr>
-        <td className="result-value">+{numBonusPoints}</td>
-        <td className="result-description">bonus</td>
-      </tr>
-    );
+    addBonusPoints = true;
     score += numBonusPoints;
   }
-  // colgroups for value & description
   return (
-    <table className="results-table">
-      <tbody>
-        <tr>
-          <td className="result-value">{props.numFoundGroups}</td>
-          <td className="result-description">{pluralise('group', props.numFoundGroups)} found</td>
-        </tr>
-        <tr>
-          <td className="result-value">+{props.numCorrectConnections}</td>
-          <td className="result-description">{pluralise('connection', props.numCorrectConnections)} found</td>
-        </tr>
-        {bonus}
-        <tr className="result-total-row">
-          <td className="result-value">{score}</td>
-          <td className="result-description">{pluralise('point', score)}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div className="results">
+      <h2 className="results-title">Results</h2>
+      <div className="results-content">
+        <table className="results-table">
+          <tbody>
+            <tr>
+              <td className="result-value">{props.numFoundGroups}</td>
+              <td className="result-description">{pluralise('group', props.numFoundGroups)} found</td>
+            </tr>
+            <tr>
+              <td className="result-value">+ {props.numCorrectConnections}</td>
+              <td className="result-description">{pluralise('connection', props.numCorrectConnections)} found</td>
+            </tr>
+            {addBonusPoints &&
+              <tr>
+                <td className="result-value">+ {numBonusPoints}</td>
+                <td className="result-description">bonus</td>
+              </tr>
+            }
+            <tr className="result-total-row">
+              <td className="result-value">{score}</td>
+              <td className="result-description">{pluralise('point', score)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
+  // TODO: 'well done!' message?
   // TODO: also num lives remaining & time
 }
 
