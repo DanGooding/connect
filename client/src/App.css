@@ -9,6 +9,9 @@
     --group-color-2: rgb(131, 41, 75);
     --group-color-3: rgb(71, 111, 148);
 
+    --idle-grey: #eee;
+    --hover-grey: lightgray;
+
     /* --tile-color: rgb(218, 240, 255); */
 }
 
@@ -25,11 +28,11 @@ p, div {
     line-height: 1.4;
 }
 
-.centered-button {
-    /* margin: 0 auto; */
-    /* display: block; */
+.wide-button {
     padding: 5px 0;
     width: 100%;
+    border-radius: 5px;
+    border: 1px solid grey;
 }
 
 .noselect {

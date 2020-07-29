@@ -35,13 +35,15 @@
     align-items: center;
     justify-content: center;
 
-    background-color: lightgrey;
-    /* background-color: var(--tile-color); */
+    background-color: var(--idle-grey);
     color: black;
 
     border-radius: 4px;
 
-    transition: top .5s ease, left .5s ease;
+    transition: top .5s ease, left .5s ease; /*, background-color .1s linear*/
+}
+.tile:hover:not(.group) {
+    background-color: var(--hover-grey);
 }
 
 .clue {

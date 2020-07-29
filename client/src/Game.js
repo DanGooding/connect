@@ -6,7 +6,7 @@ import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
 import ConnectionsForm from './ConnectionsForm.js';
 import Results from './Results.js';
-import { setEq, shuffle, repeat, capitalise } from './utils.js';
+import { setEq, shuffle, repeat } from './utils.js';
 import { groupSize, numGroups, maxLives } from './constants.js';
 import WallSymbol from './WallSymbol.js';
 
@@ -238,9 +238,6 @@ class Game extends React.Component {
 
     const shownGroupIndices = this.getShownGroupIndices();
     const shownGroups = shownGroupIndices.map(i => this.state.groups[i]);
-    console.log(shownGroups);
-
-    const allMarked = this.state.connectionMarks.every(x => x != null);
 
     return (
       <div>
@@ -273,13 +270,11 @@ class Game extends React.Component {
             <ConnectionsForm 
               groupIndices={shownGroupIndices}
               connections={this.state.connections}
-              answersCorrect={this.state.connectionMarks}
+              answerMarks={this.state.connectionMarks}
               onChangeCorrectness={this.handleChangeMark}
               resolveWall={this.resolveWall}
+              finishGame={this.handleFinishGame}
             />
-            {allMarked &&
-              <button className="centered-button" onClick={this.handleFinishGame}>Done</button>
-            }
           </div>
         }
       </div>
