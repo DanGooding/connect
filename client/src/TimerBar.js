@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import './TimerBar.css';
 
 function TimerBar(props) {
+  // TODO: storing state in the DOM like this is bad
   return (
     <div className="timer-bar">
       <div 

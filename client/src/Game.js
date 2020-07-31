@@ -33,6 +33,8 @@ class Game extends React.Component {
       // GAME STATE
         // the current order of clues in the wall (left to right, top to bottom)
         clueOrder: null, 
+        // the selected clues
+        selection: new Set(),
         // the indexes of found groups (in this.state.groups)
         foundGroupIndices: [],
         // the indices of groups not found by the player
@@ -62,6 +64,7 @@ class Game extends React.Component {
     };
 
     this.wallDataRecived = this.wallDataRecived.bind(this);
+    this.handleTileClick = this.handleTileClick.bind(this);
     this.handleGuess = this.handleGuess.bind(this);
     this.handleTimeUp = this.handleTimeUp.bind(this);
     this.resolveWall = this.resolveWall.bind(this);
@@ -112,18 +115,38 @@ class Game extends React.Component {
     });
   }
 
-  // check whether the given set of clues is a group, updating state if so, 
-  // finally calling callback  once state has updated
-  handleGuess(guess, callback) {
-    if (guess.size < groupSize) return;
+  handleTileClick(clue) {
+    if (this.state.wallCompleted || this.state.wallFailed) return;
+    if (this.state.selection.size === groupSize) return;  // TODO: this is a hack
+  
+    let newSelection = new Set(this.state.selection);
+  
+    if (this.state.selection.has(clue)) { // deselect this clue
+      // TODO: delay
+      newSelection.delete(clue);
+      this.setState({selection: newSelection});
+      
+    }else { // select this clue
+      newSelection.add(clue);
+      this.setState({selection: newSelection}, () => {
+        if (this.state.selection.size === groupSize) {
+          this.handleGuess();
+        }
+      });
+    }
+  }
+
+  // check whether the selection is a group, updating state if so, 
+  handleGuess() {
+    if (this.state.selection.size < groupSize) return;
     
     // check if any group matches the guess
-    const i = this.state.groups.findIndex(group => setEq(group, guess));
+    const i = this.state.groups.findIndex(group => setEq(group, this.state.selection));
     if (i === -1 || this.state.foundGroupIndices.includes(i)) {
       // haven't found a (new) group
       setTimeout(() => {
-        this.handleIncorrectGuess();
-        callback();
+        this.didGuessWrong();
+        this.setState({selection: new Set()});
       }, 500); // 'rate limit' guessing
       return;
     }
@@ -142,14 +165,13 @@ class Game extends React.Component {
     }
 
     this.setState({
-      foundGroupIndices: newFoundGroupIndices
-    }, () => this.handleCorrectGuess());
-    callback();
+      foundGroupIndices: newFoundGroupIndices,
+      selection: new Set()
+    }, () => this.didGuessRight());
   }
 
-  handleIncorrectGuess() {
+  didGuessWrong() {
     if (this.state.lives != null) {
-
       let newState = {
         lives: Math.max(this.state.lives - 1, 0)
       };
@@ -161,8 +183,7 @@ class Game extends React.Component {
   }
 
   // called when a group has been found
-  handleCorrectGuess() {
-    // TODO: swap order of these
+  didGuessRight() {
     if (this.state.foundGroupIndices.length === numGroups) {
       this.setState({wallCompleted: true});
     }else if (this.state.foundGroupIndices.length === numGroups - 2) {
@@ -209,9 +230,9 @@ class Game extends React.Component {
         remainingGroupIndices.push(i);
       }
     }
-
     this.setState({
-      resolvedGroupIndices: remainingGroupIndices
+      resolvedGroupIndices: remainingGroupIndices,
+      selection: new Set()
     }, () => this.updateClueOrder());
   }
 
@@ -256,9 +277,10 @@ class Game extends React.Component {
           <Wall
             clues={this.state.clues}
             clueOrder={this.state.clueOrder} 
-            foundGroups={shownGroups}
-            onGuess={this.handleGuess} 
+            selection={this.state.selection}
+            foundGroups={shownGroups} 
             frozen={wallOver}
+            onTileClick={this.handleTileClick}
           />
           <TimerBar 
             duration={wallDuration} 
