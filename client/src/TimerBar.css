@@ -1,0 +1,24 @@
+
+.timer-bar {
+    height: 10px;
+    background-color: lightgray;
+}
+
+.timer-bar-inner {
+    height: 100%;
+    width: 100%;
+    background-color: gray;
+    /* transition: width .1s linear; */
+    transform-origin: left;
+    
+}
+
+/* TODO: vendor prefixes */
+@keyframes grow {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
+}

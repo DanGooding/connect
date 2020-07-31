@@ -4,11 +4,12 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
+import WallSymbol from './WallSymbol.js';
+import TimerBar from './TimerBar.js';
 import ConnectionsForm from './ConnectionsForm.js';
 import Results from './Results.js';
 import { setEq, shuffle, repeat } from './utils.js';
-import { groupSize, numGroups, maxLives } from './constants.js';
-import WallSymbol from './WallSymbol.js';
+import { groupSize, numGroups, maxLives, wallDuration } from './constants.js';
 
 class Game extends React.Component {
   constructor(props) {
@@ -59,10 +60,10 @@ class Game extends React.Component {
         // which wall within that episode this is (alpha | beta | lion | water)
         symbol: null
     };
-    // TODO: 2:30 timer
 
     this.wallDataRecived = this.wallDataRecived.bind(this);
     this.handleGuess = this.handleGuess.bind(this);
+    this.handleTimeUp = this.handleTimeUp.bind(this);
     this.resolveWall = this.resolveWall.bind(this);
     this.handleChangeMark = this.handleChangeMark.bind(this);
     this.handleFinishGame = this.handleFinishGame.bind(this);
@@ -171,6 +172,13 @@ class Game extends React.Component {
     this.updateClueOrder();
   }
 
+  // time for the wall has run out
+  handleTimeUp() {
+    this.setState({
+      wallFailed: true
+    });
+  }
+
   // get the indices of all found and resolved groups
   getShownGroupIndices() {
     return this.state.foundGroupIndices.concat(this.state.resolvedGroupIndices);
@@ -239,6 +247,8 @@ class Game extends React.Component {
     const shownGroupIndices = this.getShownGroupIndices();
     const shownGroups = shownGroupIndices.map(i => this.state.groups[i]);
 
+    const wallOver = this.state.wallCompleted || this.state.wallFailed;
+
     return (
       <div>
         <div className="wall-container">
@@ -248,14 +258,19 @@ class Game extends React.Component {
             clueOrder={this.state.clueOrder} 
             foundGroups={shownGroups}
             onGuess={this.handleGuess} 
-            frozen={this.state.wallCompleted || this.state.wallFailed}
+            frozen={wallOver}
+          />
+          <TimerBar 
+            duration={wallDuration} 
+            paused={wallOver}
+            onFinish={this.handleTimeUp} 
           />
           {this.state.lives != null && 
             <HealthBar lives={this.state.lives} maxLives={maxLives}/>
           }
         </div>
         
-        {(this.state.wallCompleted || this.state.wallFailed) &&
+        {wallOver &&
           <div>
             <h3 className="game-over-reason">
               {(() => {
@@ -263,8 +278,9 @@ class Game extends React.Component {
                   return 'You\'ve solved the wall!';
                 }else if (this.state.lives === 0) {
                   return 'Out of lives...';
+                }else {
+                  return 'Out of time...';
                 }
-                // TODO: out of time
               })()}
             </h3>
             <ConnectionsForm 
