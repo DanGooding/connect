@@ -11,6 +11,7 @@ import Results from './Results.js';
 import LoadingIndicator from './LoadingIndicator.js';
 import { setEq, shuffle, repeat } from './utils.js';
 import { groupSize, numGroups, maxLives, wallDuration } from './constants.js';
+import ErrorMessage from './ErrorMessage.js';
 
 class Game extends React.Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class Game extends React.Component {
       // API
         // has the wall data been loaded from the api?
         isLoaded: false,
-        // error message returned by the api
+        // error returned from the api request { code, message }
         fetchError: null,
 
       // ANSWERS
@@ -77,20 +78,31 @@ class Game extends React.Component {
     // TODO: don't return an error message form api?
     // TODO: proper error page/component
     fetch(`/api/walls/${this.props.match.params.id}`)
+      // got response
       .then(res => {
         if (!res.ok) {
           res.json()
+            // api responded with error message
             .then(({error}) => 
-              this.setState({fetchError: error})
-            );
+              this.setState({fetchError: {code: res.status, message: error}})
+            )
+            // didn't get through to api server
+            .catch(() => {
+              this.setState({fetchError: {code: res.status, message: res.statusText}})
+            });
           return;
         }
         res.json()
+          // successful response from api
           .then(this.wallDataRecived);
       })
+      // network failure
       .catch(error =>
         this.setState({
-          fetchError: `fetch error: ${error.message}`
+          fetchError: {
+            // code: ?
+            message: 'Network disconnected'
+          }
         })
       );
   }
@@ -250,7 +262,7 @@ class Game extends React.Component {
 
   render() {
     if (this.state.fetchError != null) {
-      return <div>Error: {this.state.fetchError}</div>;
+      return <ErrorMessage code={this.state.fetchError.code} message={this.state.fetchError.message} />;
     
     }else if (!this.state.isLoaded) {
       return <LoadingIndicator />;
