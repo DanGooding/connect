@@ -8,6 +8,7 @@ import WallSymbol from './WallSymbol.js';
 import TimerBar from './TimerBar.js';
 import ConnectionsForm from './ConnectionsForm.js';
 import Results from './Results.js';
+import LoadingIndicator from './LoadingIndicator.js';
 import { setEq, shuffle, repeat } from './utils.js';
 import { groupSize, numGroups, maxLives, wallDuration } from './constants.js';
 
@@ -252,7 +253,7 @@ class Game extends React.Component {
       return <div>Error: {this.state.fetchError}</div>;
     
     }else if (!this.state.isLoaded) {
-      return <div>Loading...</div>;
+      return <LoadingIndicator />;
 
     }else if (this.state.allFinished) {
       return (

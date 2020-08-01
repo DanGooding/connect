@@ -1,6 +1,7 @@
 
 import React from 'react';
 import WallListItem from './WallListItem.js';
+import LoadingIndicator from './LoadingIndicator.js';
 import './WallList.css';
 
 class WallList extends React.Component {
@@ -43,7 +44,7 @@ class WallList extends React.Component {
     if (this.state.fetchError != null) {
       return <div>Error: {this.state.fetchError}</div>;
     }else if (!this.state.isLoaded) {
-      return <div>Loading...</div>;
+      return <LoadingIndicator />;
     }
 
     // TODO: change _id to id in api ?
