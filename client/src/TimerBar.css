@@ -1,15 +1,19 @@
 
 .timer-bar {
     height: 10px;
+    margin: 0 5px;
+    padding: 0;
     background-color: lightgray;
 }
 
 .timer-bar-inner {
     height: 100%;
     width: 100%;
-    background-color: gray;
+    margin: 0;
+    padding: 0;
+    background-color: rgb(107, 143, 221);
     /* transition: width .1s linear; */
-    transform-origin: left;
+    transform-origin: top left;
     
 }
 

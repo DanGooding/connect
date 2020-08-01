@@ -1,8 +1,14 @@
 
-/* .health-bar {} */
+.health-bar {
+    margin: 5px;
+}
 
 .life, .lost-life {
     margin: 0 2px;
+}
+
+.life:first-child, .lost-life:first-child {
+    margin-left: 0;
 }
 
 .life {
