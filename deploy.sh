@@ -8,7 +8,8 @@ git merge master
 cd client
 npm run build
 cd ..
-mv -f client/build server/static
+rm -rf server/static
+mv client/build server/static
 
 git add .
 git commit -m"deploy"
