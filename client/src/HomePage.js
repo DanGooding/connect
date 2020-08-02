@@ -1,13 +1,13 @@
 
 import React from 'react';
-import WallList from './WallList';
 import './HomePage.css';
+import WallListFetcher from './WallListFetcher';
 
-function HomePage(props) {
+function HomePage() {
   return (
     <div className="home-container">
       <h1 className="home-title">Connect</h1>
-      <WallList />
+      <WallListFetcher />
     </div>
   );
 }

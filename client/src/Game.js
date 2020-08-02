@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
@@ -8,124 +7,48 @@ import WallSymbol from './WallSymbol.js';
 import TimerBar from './TimerBar.js';
 import ConnectionsForm from './ConnectionsForm.js';
 import Results from './Results.js';
-import LoadingIndicator from './LoadingIndicator.js';
 import { setEq, shuffle, repeat } from './utils.js';
 import { groupSize, numGroups, maxLives, wallDuration } from './constants.js';
-import ErrorMessage from './ErrorMessage.js';
 
 class Game extends React.Component {
   constructor(props) {
     super(props);
 
+    let clueOrder = props.clues.slice();
+    shuffle(clueOrder);
+
     this.state = {
-      // API
-        // has the wall data been loaded from the api?
-        isLoaded: false,
-        // error returned from the api request { code, message }
-        fetchError: null,
+      // the current order of clues in the wall (left to right, top to bottom)
+      clueOrder,
+      // the selected clues
+      selection: new Set(),
+      // the indexes of found groups (in this.props.groups)
+      foundGroupIndices: [],
+      // the indices of groups not found by the player
+      // but resolved once they failed the wall
+      resolvedGroupIndices: [],
 
-      // ANSWERS
-        // all clues that appear in the wall, in a fixed order
-        clues: null,
-        // the correct clue groupings, an array of Sets of strings
-        groups: null,
-        // the connection for each group
-        connections: null,
+      // the number of lives remaining - null means currently unlimited
+      lives: null,
 
-      // GAME STATE
-        // the current order of clues in the wall (left to right, top to bottom)
-        clueOrder: null, 
-        // the selected clues
-        selection: new Set(),
-        // the indexes of found groups (in this.state.groups)
-        foundGroupIndices: [],
-        // the indices of groups not found by the player
-        // but resolved once they failed the wall
-        resolvedGroupIndices: [],
+      // whether the wall has been won or lost? (else it's still being played)
+      wallCompleted: false, // TODO: combine these two?
+      wallFailed: false,
 
-        // the number of lives remaining - null means currently unlimited
-        lives: null,
+      // was the entered connection correct for each group (same order as props.groups)
+      // undefined=unchecked, true/false=correct/incorrect
+      connectionMarks: repeat(null, numGroups),
 
-        // whether the wall has been won or lost? (else it's still being played)
-        wallCompleted: false, // TODO: combine these two?
-        wallFailed: false,
-
-        // was the entered connection correct for each group (same order as state.groups)
-        // undefined=unchecked, true/false=correct/incorrect
-        connectionMarks: repeat(null, numGroups),
-
-        // has the entire game (wall + connections) finished
-        allFinished: false,
-
-      // WALL METADATA
-        // the series & episode this wall is from
-        series: null,
-        episode: null,
-        // which wall within that episode this is (alpha | beta | lion | water)
-        symbol: null
+      // has the entire game (wall + connections) finished
+      allFinished: false,
     };
 
-    this.wallDataRecived = this.wallDataRecived.bind(this);
     this.handleTileClick = this.handleTileClick.bind(this);
     this.handleGuess = this.handleGuess.bind(this);
     this.handleTimeUp = this.handleTimeUp.bind(this);
     this.resolveWall = this.resolveWall.bind(this);
     this.handleChangeMark = this.handleChangeMark.bind(this);
     this.handleFinishGame = this.handleFinishGame.bind(this);
-  }
-
-  componentDidMount() {
-    // TODO: don't return an error message form api?
-    // TODO: proper error page/component
-    fetch(`/api/walls/${this.props.match.params.id}`)
-      // got response
-      .then(res => {
-        if (!res.ok) {
-          res.json()
-            // api responded with error message
-            .then(({error}) => 
-              this.setState({fetchError: {code: res.status, message: error}})
-            )
-            // didn't get through to api server
-            .catch(() => {
-              this.setState({fetchError: {code: res.status, message: res.statusText}})
-            });
-          return;
-        }
-        res.json()
-          // successful response from api
-          .then(this.wallDataRecived);
-      })
-      // network failure
-      .catch(error =>
-        this.setState({
-          fetchError: {
-            // code: ?
-            message: 'Network disconnected'
-          }
-        })
-      );
-  }
-
-  wallDataRecived(wall) {
-    let groups = wall.groups.slice(0, numGroups);
-    for (let i = 0; i < groups.length; i++) {
-      groups[i].clues = groups[i].clues.slice(0, groupSize);
-    }
-    // let clues = groups.flatMap(({clues}) => clues);
-    let clues = groups.reduce((acc, {clues}) => acc.concat(clues), []);
-    shuffle(clues);
-
-    this.setState({
-      isLoaded: true,
-      clues: clues,
-      clueOrder: clues.slice(),
-      groups: groups.map(({clues}) => new Set(clues)),
-      connections: groups.map(({connection}) => connection),
-      series: wall.series,
-      episode: wall.episode,
-      symbol: wall.symbolName
-    });
   }
 
   handleTileClick(clue) {
@@ -154,7 +77,7 @@ class Game extends React.Component {
     if (this.state.selection.size < groupSize) return;
     
     // check if any group matches the guess
-    const i = this.state.groups.findIndex(group => setEq(group, this.state.selection));
+    const i = this.props.groups.findIndex(group => setEq(group, this.state.selection));
     if (i === -1 || this.state.foundGroupIndices.includes(i)) {
       // haven't found a (new) group
       setTimeout(() => {
@@ -167,9 +90,9 @@ class Game extends React.Component {
     // group i matches the guess
     let newFoundGroupIndices = this.state.foundGroupIndices.slice();
     newFoundGroupIndices.push(i);
-    if (newFoundGroupIndices.length === this.state.groups.length - 1) {
+    if (newFoundGroupIndices.length === this.props.groups.length - 1) {
       // finding penultimate also finds final
-      for (let j = 0; j < this.state.groups.length; j++) {
+      for (let j = 0; j < this.props.groups.length; j++) {
         if (!newFoundGroupIndices.includes(j)) {
           newFoundGroupIndices.push(j);
           break;
@@ -223,7 +146,7 @@ class Game extends React.Component {
     // put the found group(s) at the top
     let newClueOrder = [];
     for (const i of this.getShownGroupIndices()) {
-      newClueOrder = newClueOrder.concat(Array.from(this.state.groups[i]));
+      newClueOrder = newClueOrder.concat(Array.from(this.props.groups[i]));
     }
     // preserve the order of remaining clues
     for (const clue of this.state.clueOrder) {
@@ -238,7 +161,7 @@ class Game extends React.Component {
   // shuffling the wall and adding them to this.state.resolvedGroupIndices
   resolveWall() {
     let remainingGroupIndices = [];
-    for (let i = 0; i < this.state.groups.length; i++) {
+    for (let i = 0; i < this.props.groups.length; i++) {
       if (!this.state.foundGroupIndices.includes(i)) {
         remainingGroupIndices.push(i);
       }
@@ -261,13 +184,7 @@ class Game extends React.Component {
   }
 
   render() {
-    if (this.state.fetchError != null) {
-      return <ErrorMessage code={this.state.fetchError.code} message={this.state.fetchError.message} />;
-    
-    }else if (!this.state.isLoaded) {
-      return <LoadingIndicator />;
-
-    }else if (this.state.allFinished) {
+    if (this.state.allFinished) {
       return (
         <Results
           numFoundGroups={this.state.foundGroupIndices.length}
@@ -279,16 +196,16 @@ class Game extends React.Component {
     }
 
     const shownGroupIndices = this.getShownGroupIndices();
-    const shownGroups = shownGroupIndices.map(i => this.state.groups[i]);
+    const shownGroups = shownGroupIndices.map(i => this.props.groups[i]);
 
     const wallOver = this.state.wallCompleted || this.state.wallFailed;
 
     return (
       <div>
         <div className="wall-container">
-          <h2>Series {this.state.series} - Episode {this.state.episode} - <WallSymbol symbol={this.state.symbol} /> wall</h2>
+          <h2>Series {this.props.series} - Episode {this.props.episode} - <WallSymbol symbol={this.props.symbol} /> wall</h2>
           <Wall
-            clues={this.state.clues}
+            clues={this.props.clues}
             clueOrder={this.state.clueOrder} 
             selection={this.state.selection}
             foundGroups={shownGroups} 
@@ -320,7 +237,7 @@ class Game extends React.Component {
             </h3>
             <ConnectionsForm 
               groupIndices={shownGroupIndices}
-              connections={this.state.connections}
+              connections={this.props.connections}
               answerMarks={this.state.connectionMarks}
               onChangeCorrectness={this.handleChangeMark}
               resolveWall={this.resolveWall}
@@ -334,9 +251,17 @@ class Game extends React.Component {
 }
 
 Game.propTypes = {
-  // the url match of /walls/:id
-  // added by the `withRouter` wrapper
-  match: PropTypes.object.isRequired
+  // all clues that appear in the wall, in a fixed order
+  clues: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // the correct clue groupings, an array of Sets of strings
+  groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)),
+  // the connection for each group
+  connections: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // the series & episode this wall is from
+  series: PropTypes.number.isRequired,
+  episode: PropTypes.number.isRequired,
+  // which wall within that episode this is (alpha | beta | lion | water)
+  symbol: PropTypes.string.isRequired
 }
 
-export default withRouter(Game);
+export default Game;
