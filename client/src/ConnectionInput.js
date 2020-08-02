@@ -58,6 +58,7 @@ class ConnectionInput extends React.Component {
           <div className="connection-input-grid">
             <label className="connection-input-label">Connection</label>
             <input 
+              className="connection-input-textbox"
               type="text" 
               value={this.state.guess} 
               onChange={this.handleChangeGuess} 

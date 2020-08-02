@@ -4,8 +4,7 @@
     margin: 0;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    grid-gap: 1rem;
-    gap: 1rem;
+    grid-gap: 1rem; gap: 1rem;
 }
 
 .wall-list-item {
@@ -27,6 +26,11 @@
 
     border-radius: 10px;
     border: 1px solid grey;
+}
+@media (max-width: 500px) {
+    .wall-list {
+        grid-column-gap: 0; column-gap: 0;
+    }
 }
 
 /* TODO: this is fragile? */

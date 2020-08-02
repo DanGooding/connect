@@ -11,16 +11,6 @@
     /* background-color: rgb(3, 13, 59); */
     /* border: 1px solid grey; */
 }
-@media (max-width: 500px) {
-    .wall-container {
-        width: 400px;
-    }
-    .wall {
-        height: 280px;
-        font-size: smaller;
-    }
-}
-
 
 .tile {
     position: absolute;
@@ -44,6 +34,31 @@
 }
 .tile.selectable:hover {
     background-color: var(--hover-grey);
+}
+
+@media (max-width: 520px) {
+    .wall-container {
+        width: 400px;
+    }
+    .wall {
+        height: 280px;
+    }
+    .tile {
+        font-size: medium;
+    }
+}
+@media (max-width: 420px) {
+    .wall-container {
+        width: 350px;
+    }
+    .wall {
+        height: 245px;
+    }
+    .tile {
+        padding: 2px;
+        margin: 2px;
+        font-size: small;
+    }
 }
 
 .clue {
