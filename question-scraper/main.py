@@ -1,6 +1,9 @@
 
 import pymongo
 from scraper import get_walls
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 symbol_indices = {
     'alpha': 0,
@@ -11,8 +14,9 @@ symbol_indices = {
 
 if __name__ == '__main__':
 
-    client = pymongo.MongoClient('mongodb://localhost:27017')
+    client = pymongo.MongoClient(os.getenv('DB_URL') or 'mongodb://localhost:27017')
     db = client['connect']
+    print(f'connected to {client}')
 
     # idempotent: no risk of duplicate index
     db.walls.create_index([

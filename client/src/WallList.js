@@ -1,67 +1,36 @@
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import WallListItem from './WallListItem.js';
 import './WallList.css';
 
-class WallList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoaded: false,
-      fetchError: null,
-      walls: null
-    };
-  }
+function WallList(props) {
+  // TODO: change _id to id in api ?
+  const items = props.walls.map(wall => 
+    <WallListItem 
+      key={wall._id} id={wall._id} 
+      series={wall.series} episode={wall.episode} 
+      symbol={wall.symbolName} 
+    />);
 
-  componentDidMount() {
-    // TODO extract as a util
-    fetch('/api/walls')
-      .then(res => {
-        if (!res.ok) {
-          res.json()
-            .then(({error}) => 
-              this.setState({fetchError: error})
-            );
-          return;
-        }
-        res.json()
-          .then(walls =>
-            this.setState({
-              isLoaded: true,
-              walls
-            }));
-      })
-      .catch(error =>
-        this.setState({
-          fetchError: `fetch error: ${error.message}`
-        })
-      );
-  }
-
-  render() {
-    // TODO: classNames 
-    if (this.state.fetchError != null) {
-      return <div>Error: {this.state.fetchError}</div>;
-    }else if (!this.state.isLoaded) {
-      return <div>Loading...</div>;
-    }
-
-    // TODO: change _id to id in api ?
-    const items = this.state.walls.map(wall => 
-      <WallListItem 
-        key={wall._id} id={wall._id} 
-        series={wall.series} episode={wall.episode} 
-        symbol={wall.symbolName} 
-      />);
-
-    return (
-      <div>
-        <ul className="wall-list">
-          {items}
-        </ul>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <ul className="wall-list">
+        {items}
+      </ul>
+    </div>
+  );
 }
+
+WallList.propTypes = {
+  // array of objects describing each wall
+  walls: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      series: PropTypes.number.isRequired,
+      episode: PropTypes.number.isRequired,
+      symbolName: PropTypes.string.isRequired
+    })).isRequired
+};
 
 export default WallList;

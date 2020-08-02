@@ -4,22 +4,23 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import WallSymbol from './WallSymbol';
 
-const labels = ['series', 'episode', 'wall'];
-
 function WallListItem(props) {
-  const values = [props.series, props.episode, <WallSymbol symbol={props.symbol} />];
-  const sections = values.map(
-    (value, i) => 
-      <div className="wall-list-item-section" key={labels[i]}>
-        <div className="wall-list-item-label">{labels[i]}</div>
-        <div className="wall-list-item-value">{value}</div>
-      </div>
-    );
   return (
     <li className="wall-list-item">
       <Link to={`/walls/${props.id}`} style={{textDecoration: 'inherit', color: 'inherit'}}>
         <div className="wall-list-item-wrapper">
-          {sections}
+          
+          <div className="wall-list-item-label">series</div>
+          <div className="wall-list-item-value">{props.series}</div>
+
+          <div className="wall-list-item-label">episode</div>
+          <div className="wall-list-item-value">{props.episode}</div>
+
+          <div className="wall-list-item-label">wall</div>
+          <div className="wall-list-item-value">
+            <WallSymbol symbol={props.symbol} />
+          </div>
+
         </div>
       </Link>
     </li>

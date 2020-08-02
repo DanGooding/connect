@@ -18,7 +18,7 @@ mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology:
 mongoose.set('bufferCommands', false);
 router.use((req, res, next) => {
   if (mongoose.connection.readyState != mongoose.connection.states.connected) {
-    res.status(503).json({error: "can't connect to database"});
+    res.sendStatus(503);
   }else {
     next();
   }
@@ -34,7 +34,7 @@ router.get('/walls', async (req, res) => {
         .select(['series', 'episode', 'symbolName']);
     res.json(walls);
   }catch (err) {
-    res.status(404).json({error: 'failed to get walls'});
+    res.status(404).json({error: 'Unable to get list of walls'});
   }
 });
 
@@ -43,7 +43,7 @@ router.get('/walls/:id', async (req, res) => {
     const wall = await Wall.findById(req.params.id);
     res.json(wall);
   }catch (err) {
-    res.status(404).json({ error: 'failed to find that wall' });
+    res.status(404).json({ error: 'That wall does not exist' });
   }
 });
 

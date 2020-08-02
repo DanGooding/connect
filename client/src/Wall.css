@@ -42,7 +42,7 @@
 
     transition: top .5s ease, left .5s ease; /*, background-color .1s linear*/
 }
-.tile:hover:not(.group) {
+.tile.selectable:hover {
     background-color: var(--hover-grey);
 }
 

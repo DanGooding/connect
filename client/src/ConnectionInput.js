@@ -2,6 +2,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import MarkIcon from './MarkIcon.js';
+import markConnectionGuess from './markConnectionGuess.js';
+
+const maxGuessLength = 100;
 
 class ConnectionInput extends React.Component {
   constructor(props) {
@@ -19,20 +22,20 @@ class ConnectionInput extends React.Component {
   handleChangeGuess(event) {
     if (this.state.answerShown) return; // TODO: remove?
     this.setState({
-      guess: event.target.value
+      guess: event.target.value.substring(0, maxGuessLength)
     });
   }
 
   checkGuess(event) {
     // prevent button click from submitting form
     event.preventDefault();
+    // prevent accidental marking
     if (this.state.guess === '') return;
-    // TODO: fuzzy string comparison
-    const answerCorrect = this.state.guess.toLowerCase() === this.props.connection.toLowerCase();
+
+    this.setCorrectness(markConnectionGuess(this.state.guess, this.props.connection));
     this.setState({
       answerShown: true,
     });
-    this.setCorrectness(answerCorrect);
   }
 
   handleChangeCorrectness(event) {
