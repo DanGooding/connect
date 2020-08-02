@@ -30,7 +30,7 @@ class Game extends React.Component {
         // the correct clue groupings, an array of Sets of strings
         groups: null,
         // the connection for each group
-        connection: null,
+        connections: null,
 
       // GAME STATE
         // the current order of clues in the wall (left to right, top to bottom)
