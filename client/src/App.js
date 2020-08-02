@@ -1,21 +1,30 @@
 
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import GameFetcher from './GameFetcher.js';
+import NavBar from './NavBar.js';
 import HomePage from './HomePage.js';
+import GameFetcher from './GameFetcher.js';
+import RandomGameRedirect from './RandomGameRedirect.js';
 import './App.css';
 
 function App() {
-  // TODO: navignation - home button
   return (
-    <Switch>
-      <Route path="/walls/:id">
-        <GameFetcher />
-      </Route>
-      <Route path="/">
-        <HomePage />
-      </Route>
-    </Switch>
+    <>
+      <NavBar />
+      <div className="content">
+        <Switch>
+          <Route path="/walls/random">
+            <RandomGameRedirect />
+          </Route>
+          <Route path="/walls/:id">
+            <GameFetcher />
+          </Route>
+          <Route path="/">
+            <HomePage />
+          </Route>
+        </Switch>
+      </div>
+    </>
   );
 }
 

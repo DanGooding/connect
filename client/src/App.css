@@ -8,23 +8,32 @@
     --group-color-1: rgb(67, 131, 67);
     --group-color-2: rgb(131, 41, 75);
     --group-color-3: rgb(71, 111, 148);
-
+    
+    --main-blue: rgb(107, 143, 221);
+    
     --idle-grey: #eee;
     --hover-grey: lightgray;
-
+    
     /* --tile-color: rgb(218, 240, 255); */
 }
 
+html, body, #root {
+    margin: 0;
+    padding: 0;
+}
+
+.content {
+    padding: 5px;
+}
+
+
 h1, h2, h3, h4, h5, h6 {
-    /* TODO: pick good fonts */
-    /* font-family: Georgia, 'Times New Roman', Times, serif; */
     font-family: 'Roboto Slab', serif;
     text-align: center;
 }
 
 p, div {
     font-family: 'Open Sans', sans-serif;
-    /* font-family: Arial, Helvetica, sans-serif; */
     line-height: 1.4;
 }
 

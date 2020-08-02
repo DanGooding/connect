@@ -34,7 +34,18 @@ router.get('/walls', async (req, res) => {
         .select(['series', 'episode', 'symbolName']);
     res.json(walls);
   }catch (err) {
+    console.error('/walls :', err);
     res.status(404).json({error: 'Unable to get list of walls'});
+  }
+});
+
+router.get('/walls/random', async (req, res) => {
+  try {
+    const [wall] = await Wall.aggregate([{ $sample: { size: 1 } }]);
+    res.json(wall);
+  }catch (err) {
+    console.error('/walls/random :', err);
+    res.status(404).json({error: 'Unable to get a random wall'});
   }
 });
 
@@ -46,5 +57,9 @@ router.get('/walls/:id', async (req, res) => {
     res.status(404).json({ error: 'That wall does not exist' });
   }
 });
+
+router.get('*', (req, res) => {
+  res.status(404).json({ error: 'That endpoint does not exist'});
+})
 
 module.exports = router;

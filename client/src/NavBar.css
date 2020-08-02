@@ -1,0 +1,24 @@
+
+nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 5px 10px;
+    margin-bottom: 5px;
+
+    background-color: var(--main-blue);
+    color: white;
+}
+
+.app-title {
+    margin: 0;
+}
+
+.home-link:hover, .random-link:hover {
+    opacity: 0.5;
+}
+
+
+
