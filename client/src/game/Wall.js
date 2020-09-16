@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Tile from './Tile.js';
-import { numColumns } from './constants.js';
+import { numColumns } from '../common/constants.js';
 import './Wall.css';
 
 function Wall(props) {

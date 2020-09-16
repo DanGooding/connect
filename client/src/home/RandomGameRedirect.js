@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Fetcher from './Fetcher';
+import Fetcher from '../common/Fetcher.js';
 import { Redirect } from 'react-router-dom';
 
 function buildProps(wall) {

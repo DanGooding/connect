@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import WallSymbol from './WallSymbol';
+import WallSymbol from '../common/WallSymbol';
 
 function WallListItem(props) {
   return (

@@ -3,12 +3,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Wall from './Wall.js';
 import HealthBar from './HealthBar.js';
-import WallSymbol from './WallSymbol.js';
+import WallSymbol from '../common/WallSymbol.js';
 import TimerBar from './TimerBar.js';
 import ConnectionsForm from './ConnectionsForm.js';
 import Results from './Results.js';
-import { setEq, shuffle, repeat } from './utils.js';
-import { groupSize, numGroups, maxLives, wallDuration } from './constants.js';
+import { setEq, shuffle, repeat } from '../common/utils.js';
+import { groupSize, numGroups, maxLives, wallDuration } from '../common/constants.js';
 
 class Game extends React.Component {
   constructor(props) {

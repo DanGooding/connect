@@ -1,8 +1,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { numGroups, numBonusPoints } from './constants.js';
-import { pluralise } from './utils.js';
+import { numGroups, numBonusPoints } from '../common/constants.js';
+import { pluralise } from '../common/utils.js';
 import './Results.css';
 
 function Results(props) {

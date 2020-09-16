@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ConnectionInput from './ConnectionInput.js';
-import { numGroups } from './constants.js';
+import { numGroups } from '../common/constants.js';
 import './ConnectionsForm.css';
 
 function ConnectionsForm(props) {

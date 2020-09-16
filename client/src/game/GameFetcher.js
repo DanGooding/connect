@@ -2,10 +2,10 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Fetcher from './Fetcher.js';
+import Fetcher from '../common/Fetcher.js';
 import Game from './Game.js';
-import { numGroups, groupSize } from './constants.js';
-import { shuffle } from './utils.js';
+import { numGroups, groupSize } from '../common/constants.js';
+import { shuffle } from '../common/utils.js';
 
 // take api response data, and trasform into the props `Game` expects
 function buildProps(wall) {
