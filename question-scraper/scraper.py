@@ -25,7 +25,7 @@ def get_walls():
 
     # get all episode links
     r = requests.get('https://ocdb.cc/episodes/')
-    assert r.status_code == requests.codes.ok, 'episodes request should succeed'
+    assert r.status_code == requests.codes.ok, 'episodes request should succeed'  # pylint: disable=no-member
     soup = BeautifulSoup(r.text, 'html.parser')
 
     episode_urls = []
@@ -41,7 +41,7 @@ def get_walls():
         time.sleep(1)
 
         r = requests.get(episode_url)
-        assert r.status_code == requests.codes.ok, 'episode request should succeed'
+        assert r.status_code == requests.codes.ok, 'episode request should succeed'  # pylint: disable=no-member
         soup = BeautifulSoup(r.text, 'html.parser')
 
         # get the episode and series
