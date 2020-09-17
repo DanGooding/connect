@@ -16,8 +16,10 @@ nav {
     margin: 0;
 }
 
-.home-link:hover, .random-link:hover {
-    opacity: 0.5;
+@media (hover: hover){
+    .home-link:hover, .random-link:hover {
+        opacity: 0.5;
+    }
 }
 
 

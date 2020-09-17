@@ -39,10 +39,11 @@
 } */
 
 /* this is definitely fragile */
-:hover > .wall-list-item-wrapper {
-    background-color: var(--hover-grey);
+@media (hover: hover) {
+    :hover > .wall-list-item-wrapper {
+        background-color: var(--hover-grey);
+    }
 }
-
 .wall-list-item-section {
     margin: 0 5px;
     text-align: center;
