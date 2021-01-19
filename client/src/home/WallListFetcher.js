@@ -1,6 +1,6 @@
 
 import React from 'react';
-import Fetcher from '../common/Fetcher.js';
+import Fetcher from '../common/Fetcher.tsx';
 import WallList from './WallList.js';
 
 function WallListFetcher() {

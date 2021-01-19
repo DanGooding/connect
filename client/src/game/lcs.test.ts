@@ -1,5 +1,5 @@
 
-import lcs from './lcs.js';
+import lcs from './lcs';
 
 it('returns zero for empty strings', () => {
   expect(lcs('', '')).toBe(0);

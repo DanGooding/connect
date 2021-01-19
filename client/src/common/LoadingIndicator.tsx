@@ -4,22 +4,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import './LoadingIndicator.css';
 
-class LoadingIndicator extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showSpinner: false
-    };
-  }
+type LoadingIndicatorState = {
+  showSpinner: boolean
+};
+
+class LoadingIndicator extends React.Component<any, LoadingIndicatorState> {
+  timeoutId: number|undefined;
+  state: LoadingIndicatorState = {
+    showSpinner: false
+  };
 
   componentDidMount() {
-    this.timeoutId = setTimeout(
+    this.timeoutId = window.setTimeout(
       () => this.setState({showSpinner: true}), 
       500);
   }
 
   componentWillUnmount() {
-    clearTimeout(this.timeoutId);
+    window.clearTimeout(this.timeoutId);
   }
 
   render() {

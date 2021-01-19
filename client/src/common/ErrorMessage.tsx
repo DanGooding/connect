@@ -1,11 +1,17 @@
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import './ErrorMessage.css';
 
-function ErrorMessage(props) {
+type ErrorMessageProps = {
+  // http status code, if applicable
+  message: string,
+  // description of the problem in user language
+  code?: number
+};
+
+function ErrorMessage(props: ErrorMessageProps) {
   // TODO: retry option
   return (
     <div className="error-message">
@@ -15,12 +21,5 @@ function ErrorMessage(props) {
     </div>
   );
 }
-
-ErrorMessage.propTypes = {
-  // http status code, if applicable
-  code: PropTypes.number,
-  // description of the problem in user language
-  message: PropTypes.string.isRequired
-};
 
 export default ErrorMessage;

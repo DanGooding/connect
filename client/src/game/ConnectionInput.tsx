@@ -1,32 +1,49 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import MarkIcon from './MarkIcon.js';
-import markConnectionGuess from './markConnectionGuess.js';
+import MarkIcon from './MarkIcon';
+import markConnectionGuess from './markConnectionGuess';
 
 const maxGuessLength = 100;
 
-class ConnectionInput extends React.Component {
-  constructor(props) {
+type ConnectionInputProps = {
+  // when this group was found 0=first, 1=second etc.
+  groupNumber: number,
+  // the expected answer
+  connection: string,
+  // whether the current answer is correct
+  answerCorrect: boolean | null | undefined,
+  // callback to change whether this clue is marked as correct
+  onChangeCorrectness: (groupNumber: number, newCorrectness: boolean) => void
+};
+
+type ConnectionInputState = {
+  guess: string,
+  answerShown: boolean
+};
+
+class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionInputState> {
+  state: ConnectionInputState = {
+    guess: "",
+    answerShown: false
+  };
+
+  constructor(props: ConnectionInputProps) {
     super(props);
-    this.state = {
-      guess: "",
-      answerShown: false
-    };
     this.handleChangeGuess = this.handleChangeGuess.bind(this);
     this.checkGuess = this.checkGuess.bind(this);
     this.handleChangeCorrectness = this.handleChangeCorrectness.bind(this);
     this.setCorrectness = this.setCorrectness.bind(this);
   }
 
-  handleChangeGuess(event) {
+  handleChangeGuess(event: React.ChangeEvent<HTMLInputElement>) {
     if (this.state.answerShown) return; // TODO: remove?
     this.setState({
       guess: event.target.value.substring(0, maxGuessLength)
     });
   }
 
-  checkGuess(event) {
+  checkGuess(event: React.MouseEvent) {
     // prevent button click from submitting form
     event.preventDefault();
     // prevent accidental marking
@@ -38,11 +55,11 @@ class ConnectionInput extends React.Component {
     });
   }
 
-  handleChangeCorrectness(event) {
+  handleChangeCorrectness(event: React.ChangeEvent<HTMLInputElement>) {
     this.setCorrectness(event.target.value === "correct");
   }
 
-  setCorrectness(correct) {
+  setCorrectness(correct: boolean) {
     this.props.onChangeCorrectness(this.props.groupNumber, correct);
   }
 
@@ -71,7 +88,7 @@ class ConnectionInput extends React.Component {
             {this.state.answerShown &&
               <>
                 <MarkIcon 
-                  correct={this.props.answerCorrect} 
+                  correct={this.props.answerCorrect || false} 
                   onClick={() => this.setCorrectness(!this.props.answerCorrect)}
                 />
 
@@ -87,7 +104,7 @@ class ConnectionInput extends React.Component {
                   <input 
                     type="radio" name={radioName} 
                     id={`radio_${radioName}_correct`}
-                    checked={this.props.answerCorrect} 
+                    checked={this.props.answerCorrect || false} 
                     onChange={this.handleChangeCorrectness}
                     value="correct"
                   />
@@ -109,15 +126,15 @@ class ConnectionInput extends React.Component {
   }
 }
 
-ConnectionInput.propTypes = {
-  // when this group was found 0=first, 1=second etc.
-  groupNumber: PropTypes.number.isRequired,
-  // the expected answer
-  connection: PropTypes.string.isRequired,
-  // whether the current answer is correct
-  answerCorrect: PropTypes.bool,
-  // callback to change whether this clue is marked as correct
-  onChangeCorrectness: PropTypes.func,
-};
+// ConnectionInput.propTypes = {
+//   // when this group was found 0=first, 1=second etc.
+//   groupNumber: PropTypes.number.isRequired,
+//   // the expected answer
+//   connection: PropTypes.string.isRequired,
+//   // whether the current answer is correct
+//   answerCorrect: PropTypes.bool,
+//   // callback to change whether this clue is marked as correct
+//   onChangeCorrectness: PropTypes.func,
+// };
 
 export default ConnectionInput;

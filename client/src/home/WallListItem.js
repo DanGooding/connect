@@ -18,7 +18,7 @@ function WallListItem(props) {
 
           <div className="wall-list-item-label">wall</div>
           <div className="wall-list-item-value">
-            <WallSymbol symbol={props.symbol} />
+            <WallSymbol symbolName={props.symbolName} />
           </div>
 
         </div>
@@ -30,7 +30,7 @@ function WallListItem(props) {
 WallListItem.propTypes = {
   series: PropTypes.number.isRequired,
   episode: PropTypes.number.isRequired,
-  symbol: PropTypes.string.isRequired,
+  symbolName: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired
 };
 

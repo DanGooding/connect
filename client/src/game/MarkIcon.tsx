@@ -4,7 +4,12 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
-function MarkIcon(props) {
+type MarkIconProps = {
+  correct: boolean,
+  onClick: React.MouseEventHandler
+}
+
+function MarkIcon(props: MarkIconProps) {
   return (
     <span onClick={props.onClick} style={{textAlign: "center"}}>
       {props.correct

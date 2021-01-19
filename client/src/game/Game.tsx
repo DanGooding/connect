@@ -1,47 +1,78 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Wall from './Wall.js';
-import HealthBar from './HealthBar.js';
-import WallSymbol from '../common/WallSymbol.js';
-import TimerBar from './TimerBar.js';
-import ConnectionsForm from './ConnectionsForm.js';
-import Results from './Results.js';
-import { setEq, shuffle, repeat } from '../common/utils.js';
-import { groupSize, numGroups, maxLives, wallDuration } from '../common/constants.js';
+import Wall from './Wall';
+import HealthBar from './HealthBar';
+import WallSymbol, { WallSymbolName } from '../common/WallSymbol';
+import TimerBar from './TimerBar';
+import ConnectionsForm from './ConnectionsForm';
+import Results from './Results';
+import { setEq, shuffle, repeat } from '../common/utils';
+import { groupSize, numGroups, maxLives, wallDuration } from '../common/constants';
 
-class Game extends React.Component {
-  constructor(props) {
+type GameProps = {
+  // all clues that appear in the wall, in a fixed order
+  clues: string[],
+  // the correct clue groupings, an array of Sets of strings
+  groups: Array<Set<string>>,
+  // the connection for each group
+  connections: Array<string>,
+  // the series & episode this wall is from
+  series: number,
+  episode: number,
+  // which wall within that episode this is (alpha | beta | lion | water)
+  symbolName: WallSymbolName
+};
+
+type GameState = {
+  // the current order of clues in the wall (left to right, top to bottom)
+  clueOrder: string[],
+  // the selected clues
+  selection: Set<string>,
+  // the indexes of found groups (in this.props.groups)
+  foundGroupIndices: number[],
+  // the indices of groups not found by the player
+  // but resolved once they failed the wall
+  resolvedGroupIndices: number[],
+
+  // the number of lives remaining - null means currently unlimited
+  lives: number | null,
+  // whether the wall has been won or lost? (else it's still being played)
+  wallCompleted: boolean, // TODO: combine these two?
+  wallFailed: boolean,
+  
+  // was the entered connection correct for each group (same order as props.groups)
+  // undefined=unchecked, true/false=correct/incorrect
+  connectionMarks: (boolean | undefined | null)[],
+
+  // has the entire game (wall + connections) finished
+  allFinished: boolean
+};
+
+class Game extends React.Component<GameProps, GameState> {
+  state: GameState = {
+    clueOrder: [],
+    selection: new Set(),
+    foundGroupIndices: [],
+    resolvedGroupIndices: [],
+
+    lives: null,
+
+    wallCompleted: false,
+    wallFailed: false,
+
+    connectionMarks: repeat(null, numGroups),
+
+    allFinished: false,
+  };
+
+  constructor(props: GameProps) {
     super(props);
 
     let clueOrder = props.clues.slice();
     shuffle(clueOrder);
 
-    this.state = {
-      // the current order of clues in the wall (left to right, top to bottom)
-      clueOrder,
-      // the selected clues
-      selection: new Set(),
-      // the indexes of found groups (in this.props.groups)
-      foundGroupIndices: [],
-      // the indices of groups not found by the player
-      // but resolved once they failed the wall
-      resolvedGroupIndices: [],
-
-      // the number of lives remaining - null means currently unlimited
-      lives: null,
-
-      // whether the wall has been won or lost? (else it's still being played)
-      wallCompleted: false, // TODO: combine these two?
-      wallFailed: false,
-
-      // was the entered connection correct for each group (same order as props.groups)
-      // undefined=unchecked, true/false=correct/incorrect
-      connectionMarks: repeat(null, numGroups),
-
-      // has the entire game (wall + connections) finished
-      allFinished: false,
-    };
+    this.state.clueOrder = clueOrder;
 
     this.handleTileClick = this.handleTileClick.bind(this);
     this.handleGuess = this.handleGuess.bind(this);
@@ -51,7 +82,7 @@ class Game extends React.Component {
     this.handleFinishGame = this.handleFinishGame.bind(this);
   }
 
-  handleTileClick(clue) {
+  handleTileClick(clue: string) {
     if (this.state.wallCompleted || this.state.wallFailed) return;
     if (this.state.selection.size === groupSize) return;  // TODO: this is a hack
   
@@ -108,13 +139,11 @@ class Game extends React.Component {
 
   didGuessWrong() {
     if (this.state.lives != null) {
-      let newState = {
-        lives: Math.max(this.state.lives - 1, 0)
-      };
-      if (newState.lives === 0) {
-        newState.wallFailed = true;
-      }
-      this.setState(newState);
+      const newLives = Math.max(this.state.lives - 1, 0);
+      this.setState({
+        lives: newLives,
+        wallFailed: newLives === 0
+      });
     }
   }
 
@@ -144,7 +173,7 @@ class Game extends React.Component {
   // update the order of clues in the wall to reflect changes in foundGroups
   updateClueOrder() {
     // put the found group(s) at the top
-    let newClueOrder = [];
+    let newClueOrder: string[] = [];
     for (const i of this.getShownGroupIndices()) {
       newClueOrder = newClueOrder.concat(Array.from(this.props.groups[i]));
     }
@@ -172,7 +201,7 @@ class Game extends React.Component {
     }, () => this.updateClueOrder());
   }
 
-  handleChangeMark(i, newMark) {
+  handleChangeMark(i: number, newMark: boolean) {
     let connectionMarks = this.state.connectionMarks.slice();
     connectionMarks[i] = newMark;
     this.setState({connectionMarks});
@@ -203,7 +232,7 @@ class Game extends React.Component {
     return (
       <div>
         <div className="wall-container">
-          <h2>Series {this.props.series} - Episode {this.props.episode} - <WallSymbol symbol={this.props.symbol} /> wall</h2>
+          <h2>Series {this.props.series} - Episode {this.props.episode} - <WallSymbol symbolName={this.props.symbolName} /> wall</h2>
           <Wall
             clues={this.props.clues}
             clueOrder={this.state.clueOrder} 
@@ -250,18 +279,18 @@ class Game extends React.Component {
   }
 }
 
-Game.propTypes = {
-  // all clues that appear in the wall, in a fixed order
-  clues: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // the correct clue groupings, an array of Sets of strings
-  groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)),
-  // the connection for each group
-  connections: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // the series & episode this wall is from
-  series: PropTypes.number.isRequired,
-  episode: PropTypes.number.isRequired,
-  // which wall within that episode this is (alpha | beta | lion | water)
-  symbol: PropTypes.string.isRequired
-}
+// Game.propTypes = {
+//   // all clues that appear in the wall, in a fixed order
+//   clues: PropTypes.arrayOf(PropTypes.string).isRequired,
+//   // the correct clue groupings, an array of Sets of strings
+//   groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)),
+//   // the connection for each group
+//   connections: PropTypes.arrayOf(PropTypes.string).isRequired,
+//   // the series & episode this wall is from
+//   series: PropTypes.number.isRequired,
+//   episode: PropTypes.number.isRequired,
+//   // which wall within that episode this is (alpha | beta | lion | water)
+//   symbolName: PropTypes.string.isRequired
+// }
 
 export default Game;

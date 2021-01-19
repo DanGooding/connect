@@ -3,7 +3,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './TimerBar.css';
 
-function TimerBar(props) {
+type TimerBarProps = {
+  duration: number,
+  paused: boolean,
+  onFinish: React.AnimationEventHandler
+};
+
+function TimerBar(props: TimerBarProps) {
   // TODO: storing state in the DOM like this is bad
   return (
     <div className="timer-bar">

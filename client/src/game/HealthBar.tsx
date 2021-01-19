@@ -6,7 +6,14 @@ import { faHeart as fasFaHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as farFaHeart } from '@fortawesome/free-regular-svg-icons';
 import './HealthBar.css';
 
-function HealthBar(props) {
+type HealthBarProps = {
+  // the current number of lives
+  lives: number,
+  // the total number of life symbols shown
+  maxLives: number
+};
+
+function HealthBar(props: HealthBarProps) {
   let lives = [];
   for (let i = 0; i < props.maxLives; i++) {
     if (i < props.lives) {

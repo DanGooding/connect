@@ -2,10 +2,10 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Fetcher from '../common/Fetcher.js';
-import Game from './Game.js';
-import { numGroups, groupSize } from '../common/constants.js';
-import { shuffle } from '../common/utils.js';
+import Fetcher from '../common/Fetcher.tsx';
+import Game from './Game.tsx';
+import { numGroups, groupSize } from '../common/constants.ts';
+import { shuffle } from '../common/utils.ts';
 
 // take api response data, and trasform into the props `Game` expects
 function buildProps(wall) {
@@ -25,7 +25,7 @@ function buildProps(wall) {
     connections: groups.map(({connection}) => connection),
     series: wall.series,
     episode: wall.episode,
-    symbol: wall.symbolName
+    symbolName: wall.symbolName
   };
 }
 

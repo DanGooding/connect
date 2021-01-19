@@ -1,17 +1,26 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import Tile from './Tile.js';
-import { numColumns } from '../common/constants.js';
+import Tile from './Tile';
+import { numColumns } from '../common/constants';
 import './Wall.css';
 
-function Wall(props) {
+type WallProps = {
+  clues: string[],
+  clueOrder: string[],
+  selection: Set<string>,
+  foundGroups: Array<Set<string>>,
+  frozen: boolean,
+  onTileClick: (clue: string) => void
+};
+
+function Wall(props: WallProps) {
   const tiles = [];
   for (const clue of props.clues) {
     const i = props.clueOrder.indexOf(clue);
 
     let clickable = false;
-    let group = props.foundGroups.findIndex(group => group.has(clue));
+    let group: number | null = props.foundGroups.findIndex(group => group.has(clue));
     if (group === -1) {
       group = null;
       clickable = true;

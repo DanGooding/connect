@@ -1,20 +1,34 @@
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import LoadingIndicator from './LoadingIndicator.js';
-import ErrorMessage from './ErrorMessage.js';
+import LoadingIndicator from './LoadingIndicator';
+import ErrorMessage from './ErrorMessage';
 
-class Fetcher extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      // true if request has completed successfully
-      isLoaded: false,
-      // { message, code } when request has failed
-      fetchError: null,
-      // the response data transformed into the props to pass to the component
-      props: null
-    };
+type FetcherProps = {
+  // the type of the component to render once fetched
+  // i.e. MyComponent for <MyComponent />
+  component: any, // PropTypes.elementType.isRequired,
+  // where to fetch from
+  url: string,
+  // takes the response data (parsed from json)
+  // and produces an object with the props to pass to the component
+  // if not present, the data is spread directly into props
+  buildProps: (data: any) => any
+};
+
+type FetcherState = {
+  isLoaded: boolean,
+  fetchError: { message: string, code?: number } | null,
+  props: any
+};
+
+class Fetcher extends React.Component<FetcherProps, FetcherState> {
+  state: FetcherState = {
+    // true if request has completed successfully
+    isLoaded: false,
+    // { message, code } when request has failed
+    fetchError: null,
+    // the response data transformed into the props to pass to the component
+    props: null
   }
 
   componentDidMount() {
@@ -71,17 +85,5 @@ class Fetcher extends React.Component {
     return <Component {...this.state.props}/>;
   }
 }
-
-Fetcher.propTypes = {
-  // the type of the component to render once fetched
-  // i.e. MyComponent for <MyComponent />
-  component: PropTypes.elementType.isRequired,
-  // where to fetch from
-  url: PropTypes.string.isRequired,
-  // takes the response data (parsed from json)
-  // and produces an object with the props to pass to the component
-  // if not present, the data is spread directly into props
-  buildProps: PropTypes.func
-};
 
 export default Fetcher;

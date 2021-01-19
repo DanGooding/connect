@@ -1,13 +1,22 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import ConnectionInput from './ConnectionInput.js';
-import { numGroups } from '../common/constants.js';
+import ConnectionInput from './ConnectionInput';
+import { numGroups } from '../common/constants';
 import './ConnectionsForm.css';
 
-function ConnectionsForm(props) {
+type ConnectionsFormProps = {
+  groupIndices: number[],
+  connections: string[],
+  answerMarks: (boolean | null | undefined)[],
+  resolveWall: React.MouseEventHandler,
+  finishGame: React.MouseEventHandler,
+  onChangeCorrectness: (i: number, newCorrectness: boolean) => void
+};
 
-  const onChangeCorrectness = (i, newCorrectness) =>
+function ConnectionsForm(props: ConnectionsFormProps) {
+
+  const onChangeCorrectness = (i: number, newCorrectness: boolean) =>
     props.onChangeCorrectness(props.groupIndices[i], newCorrectness);
 
   const inputs = props.groupIndices.map(

@@ -1,11 +1,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { numGroups, numBonusPoints } from '../common/constants.js';
-import { pluralise } from '../common/utils.js';
+import { numGroups, numBonusPoints } from '../common/constants';
+import { pluralise } from '../common/utils';
 import './Results.css';
 
-function Results(props) {
+type ResultsProps = {
+  numFoundGroups: number,
+  numCorrectConnections: number
+};
+
+function Results(props: ResultsProps) {
   let score = props.numFoundGroups + props.numCorrectConnections;
   let addBonusPoints = false;
   if (props.numFoundGroups === numGroups && props.numCorrectConnections === numGroups) {

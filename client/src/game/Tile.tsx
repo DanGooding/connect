@@ -2,8 +2,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+type TileProps = {
+  clue: string,
+  column: number,
+  row: number,
+  group: number | null | undefined,
+  clickable: boolean,
+  onClick: React.MouseEventHandler<HTMLElement>
+};
+
 // a box for a single clue in a Wall
-function Tile(props) {
+function Tile(props: TileProps) {
   let className = "tile";
   className += ` column-${props.column} row-${props.row}`;
   if (props.group != null) {
@@ -12,7 +21,7 @@ function Tile(props) {
     className += ' selectable';
   }
   return (
-    <div className={className} onClick={props.clickable ? props.onClick : null}>
+    <div className={className} onClick={props.clickable ? props.onClick : undefined}>
       <div className="clue noselect">
         {props.clue}
       </div>

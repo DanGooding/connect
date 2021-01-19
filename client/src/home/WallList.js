@@ -10,7 +10,7 @@ function WallList(props) {
     <WallListItem 
       key={wall._id} id={wall._id} 
       series={wall.series} episode={wall.episode} 
-      symbol={wall.symbolName} 
+      symbolName={wall.symbolName} 
     />);
 
   return (

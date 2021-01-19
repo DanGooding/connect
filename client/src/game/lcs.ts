@@ -1,9 +1,9 @@
 
 // return the length of the longest common subsequence of two strings
-function lcs(s, t) {
+function lcs(s: string, t: string): number {
 
   // lcs_prefix[i][j] is lcs(s[:i], t[:j])
-  let lcs_prefix = [];
+  let lcs_prefix: number[][] = [];
   for (let i = 0; i < s.length + 1; i++) {
     lcs_prefix.push([])
     for (let j = 0; j < t.length + 1; j++) {
