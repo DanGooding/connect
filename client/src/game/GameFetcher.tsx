@@ -9,7 +9,7 @@ import { shuffle } from '../common/utils';
 import { WallSymbolName } from '../common/WallSymbol';
 
 // api wall object type
-export type WallModel = {
+type WallModel = {
   _id: string,
   series: number,
   episode: number,
@@ -22,7 +22,7 @@ export type WallModel = {
 };
 
 // take api response data, and trasform into the props `Game` expects
-function buildProps(wall: WallModel): GameProps {
+export function buildProps(wall: WallModel): GameProps {
   let groups = wall.groups.slice(0, numGroups);
   for (let i = 0; i < groups.length; i++) {
     groups[i].clues = groups[i].clues.slice(0, groupSize);

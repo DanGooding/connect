@@ -4,7 +4,7 @@ import { Switch, Route } from 'react-router-dom';
 import NavBar from './NavBar';
 import HomePage from '../home/HomePage';
 import GameFetcher from '../game/GameFetcher';
-import RandomGameRedirect from '../home/RandomGameRedirect';
+import RandomGameFetcher from '../game/RandomGameFetcher';
 import './App.css';
 
 function App() {
@@ -14,7 +14,7 @@ function App() {
       <div className="content">
         <Switch>
           <Route path="/walls/random">
-            <RandomGameRedirect />
+            <RandomGameFetcher />
           </Route>
           <Route path="/walls/:id">
             <GameFetcher />

@@ -50,6 +50,7 @@ class Fetcher extends React.Component<FetcherProps, FetcherState> {
         res.json()
           // successful response from api
           .then(data =>
+            // TODO: avoid setting state after unmount
             this.setState({
               isLoaded: true,
               props: 
