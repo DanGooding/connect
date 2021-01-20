@@ -5,7 +5,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 type MarkIconProps = {
+  // should a tick or cross be rendered
   correct: boolean,
+  // callback
   onClick: React.MouseEventHandler
 }
 
@@ -22,9 +24,7 @@ function MarkIcon(props: MarkIconProps) {
 }
 
 MarkIcon.propTypes = {
-  // should a tick or cross be rendered
   correct: PropTypes.bool,
-  // callback
   onClick: PropTypes.func
 };
 

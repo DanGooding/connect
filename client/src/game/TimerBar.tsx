@@ -4,8 +4,11 @@ import PropTypes from 'prop-types';
 import './TimerBar.css';
 
 type TimerBarProps = {
+  // how long to take
   duration: number,
+  // is the timer counting down
   paused: boolean,
+  // callback for when the time runs out
   onFinish: React.AnimationEventHandler
 };
 
@@ -26,11 +29,8 @@ function TimerBar(props: TimerBarProps) {
 }
 
 TimerBar.propTypes = {
-  // how long to take
   duration: PropTypes.number.isRequired,
-  // is the timer counting down
   paused: PropTypes.bool,
-  // callback for when the time runs out
   onFinish: PropTypes.func.isRequired
 };
 

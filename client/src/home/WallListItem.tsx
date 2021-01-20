@@ -35,10 +35,10 @@ function WallListItem(props: WallListItemProps) {
 }
 
 WallListItem.propTypes = {
+  id: PropTypes.string.isRequired,
   series: PropTypes.number.isRequired,
   episode: PropTypes.number.isRequired,
-  symbolName: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired
+  symbolName: PropTypes.string.isRequired
 };
 
 export default WallListItem;

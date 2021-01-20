@@ -26,9 +26,7 @@ function HealthBar(props: HealthBarProps) {
 }
 
 HealthBar.propTypes = {
-  // the current number of lives
   lives: PropTypes.number.isRequired,
-  // the total number of life symbols shown
   maxLives: PropTypes.number.isRequired
 }
 

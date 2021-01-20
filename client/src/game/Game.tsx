@@ -50,6 +50,15 @@ type GameState = {
 };
 
 class Game extends React.Component<GameProps, GameState> {
+  propTypes = {
+    clues: PropTypes.arrayOf(PropTypes.string).isRequired,
+    groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)),
+    connections: PropTypes.arrayOf(PropTypes.string).isRequired,
+    series: PropTypes.number.isRequired,
+    episode: PropTypes.number.isRequired,
+    symbolName: PropTypes.string.isRequired
+  }
+
   state: GameState = {
     clueOrder: [],
     selection: new Set(),
@@ -278,19 +287,5 @@ class Game extends React.Component<GameProps, GameState> {
     );
   }
 }
-
-// Game.propTypes = {
-//   // all clues that appear in the wall, in a fixed order
-//   clues: PropTypes.arrayOf(PropTypes.string).isRequired,
-//   // the correct clue groupings, an array of Sets of strings
-//   groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)),
-//   // the connection for each group
-//   connections: PropTypes.arrayOf(PropTypes.string).isRequired,
-//   // the series & episode this wall is from
-//   series: PropTypes.number.isRequired,
-//   episode: PropTypes.number.isRequired,
-//   // which wall within that episode this is (alpha | beta | lion | water)
-//   symbolName: PropTypes.string.isRequired
-// }
 
 export default Game;

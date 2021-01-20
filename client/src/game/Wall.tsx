@@ -6,11 +6,18 @@ import { numColumns } from '../common/constants';
 import './Wall.css';
 
 type WallProps = {
+  // all clues, in the order they appear in the DOM.
+  // this is unchanged even when clueOrder changes, so the css transitions work correctly
   clues: string[],
+  // all clues specified left to right, top to bottom
   clueOrder: string[],
+  // the selected clues
   selection: Set<string>,
+  // the groups found so far, in order of discovery each group is a Set of clues
   foundGroups: Array<Set<string>>,
+  // if truthy, click input is ignored
   frozen: boolean,
+  // callback when a tile is clicked
   onTileClick: (clue: string) => void
 };
 
@@ -49,18 +56,11 @@ function Wall(props: WallProps) {
 }
 
 Wall.propTypes = {
-    // all clues, in the order they appear in the DOM.
-    // this is unchanged even when clueOrder changes, so the css transitions work correctly
     clues: PropTypes.arrayOf(PropTypes.string).isRequired,
-    // all clues specified left to right, top to bottom
     clueOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
-    // the selected clues
     selection: PropTypes.instanceOf(Set),
-    // the groups found so far, in order of discovery each group is a Set of clues
     foundGroups: PropTypes.arrayOf(PropTypes.instanceOf(Set)).isRequired,
-    // if truthy, click input is ignored
     frozen: PropTypes.bool,
-    // callback when a tile is clicked
     onTileClick: PropTypes.func.isRequired,
 }
 

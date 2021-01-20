@@ -4,7 +4,8 @@ import Fetcher from '../common/Fetcher';
 import { Redirect } from 'react-router-dom';
 import { WallModel } from '../game/GameFetcher';
 
-function buildProps(wall: WallModel) {
+type RedirectProps = { to: string }
+function buildProps(wall: WallModel): RedirectProps {
   return { to: `/walls/${wall._id}` };
 }
 

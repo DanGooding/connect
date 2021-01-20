@@ -6,11 +6,17 @@ import { numGroups } from '../common/constants';
 import './ConnectionsForm.css';
 
 type ConnectionsFormProps = {
+  // indices of the groups to display inputs for (in the order to display)
   groupIndices: number[],
+  // connections for _all_ groups. groupIndices index into here
   connections: string[],
+  // whether the given connection for each group is correct
   answerMarks: (boolean | null | undefined)[],
+  // function to reveal remaining groups
   resolveWall: React.MouseEventHandler,
+  // function to call once all connections have been marked
   finishGame: React.MouseEventHandler,
+  // function to call when a group's mark is changed
   onChangeCorrectness: (i: number, newCorrectness: boolean) => void
 };
 
@@ -47,16 +53,12 @@ function ConnectionsForm(props: ConnectionsFormProps) {
 }
 
 ConnectionsForm.propTypes = {
-  // indices of the groups to display inputs for (in the order to display)
   groupIndices: PropTypes.arrayOf(PropTypes.number).isRequired,
-  // connections for _all_ groups. groupIndices index into here
   connections: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // whether the given connection for each group is correct
   answerMarks: PropTypes.arrayOf(PropTypes.bool).isRequired,
-  // function to reveal remaining groups
   resolveWall: PropTypes.func.isRequired,
-  // function to call once all connections have been marked
-  finishGame: PropTypes.func.isRequired
+  finishGame: PropTypes.func.isRequired,
+  onChangeCorrectness: PropTypes.func.isRequired
 };
 
 export default ConnectionsForm;

@@ -6,6 +6,7 @@ import './WallList.css';
 import { WallSymbolName } from '../common/WallSymbol';
 
 export type WallListProps = {
+  // array of objects describing each wall
   walls: Array<{
     id: string,
     series: number,
@@ -32,7 +33,6 @@ function WallList(props: WallListProps) {
 }
 
 WallList.propTypes = {
-  // array of objects describing each wall
   walls: PropTypes.arrayOf(
     PropTypes.shape({
       _id: PropTypes.string.isRequired,

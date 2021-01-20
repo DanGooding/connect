@@ -6,7 +6,9 @@ import { pluralise } from '../common/utils';
 import './Results.css';
 
 type ResultsProps = {
+  // how many groups were found
   numFoundGroups: number,
+  // how many connections were correct
   numCorrectConnections: number
 };
 
@@ -53,9 +55,7 @@ function Results(props: ResultsProps) {
 }
 
 Results.propTypes = {
-  // how many groups were found
   numFoundGroups: PropTypes.number,
-  // how many connections were correct
   numCorrectConnections: PropTypes.number,
 };
 

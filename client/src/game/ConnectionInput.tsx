@@ -23,6 +23,13 @@ type ConnectionInputState = {
 };
 
 class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionInputState> {
+  propTypes = {
+    groupNumber: PropTypes.number.isRequired,
+    connection: PropTypes.string.isRequired,
+    answerCorrect: PropTypes.bool,
+    onChangeCorrectness: PropTypes.func,
+  };
+
   state: ConnectionInputState = {
     guess: "",
     answerShown: false
@@ -125,16 +132,5 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
     );
   }
 }
-
-// ConnectionInput.propTypes = {
-//   // when this group was found 0=first, 1=second etc.
-//   groupNumber: PropTypes.number.isRequired,
-//   // the expected answer
-//   connection: PropTypes.string.isRequired,
-//   // whether the current answer is correct
-//   answerCorrect: PropTypes.bool,
-//   // callback to change whether this clue is marked as correct
-//   onChangeCorrectness: PropTypes.func,
-// };
 
 export default ConnectionInput;
