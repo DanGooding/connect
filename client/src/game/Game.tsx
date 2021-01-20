@@ -50,7 +50,7 @@ type GameState = {
 };
 
 class Game extends React.Component<GameProps, GameState> {
-  propTypes = {
+  static propTypes = {
     clues: PropTypes.arrayOf(PropTypes.string).isRequired,
     groups: PropTypes.arrayOf(PropTypes.instanceOf(Set)),
     connections: PropTypes.arrayOf(PropTypes.string).isRequired,

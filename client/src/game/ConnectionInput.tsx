@@ -23,7 +23,7 @@ type ConnectionInputState = {
 };
 
 class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionInputState> {
-  propTypes = {
+  static propTypes = {
     groupNumber: PropTypes.number.isRequired,
     connection: PropTypes.string.isRequired,
     answerCorrect: PropTypes.bool,

@@ -35,7 +35,7 @@ function WallList(props: WallListProps) {
 WallList.propTypes = {
   walls: PropTypes.arrayOf(
     PropTypes.shape({
-      _id: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
       series: PropTypes.number.isRequired,
       episode: PropTypes.number.isRequired,
       symbolName: PropTypes.string.isRequired
