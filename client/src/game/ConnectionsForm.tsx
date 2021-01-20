@@ -17,13 +17,13 @@ type ConnectionsFormProps = {
   // function to call once all connections have been marked
   finishGame: React.MouseEventHandler,
   // function to call when a group's mark is changed
-  onChangeCorrectness: (i: number, newCorrectness: boolean) => void
+  onChangeMark: (i: number, newMark: boolean) => void
 };
 
 function ConnectionsForm(props: ConnectionsFormProps) {
 
-  const onChangeCorrectness = (i: number, newCorrectness: boolean) =>
-    props.onChangeCorrectness(props.groupIndices[i], newCorrectness);
+  const onChangeMark = (i: number, newMark: boolean) =>
+    props.onChangeMark(props.groupIndices[i], newMark);
 
   const inputs = props.groupIndices.map(
     (groupIndex, i) =>
@@ -31,7 +31,7 @@ function ConnectionsForm(props: ConnectionsFormProps) {
         key={i} groupNumber={i} 
         connection={props.connections[groupIndex]} 
         answerCorrect={props.answerMarks[groupIndex]}
-        onChangeCorrectness={onChangeCorrectness}
+        onChangeMark={onChangeMark}
       />
   );
 
@@ -58,7 +58,7 @@ ConnectionsForm.propTypes = {
   answerMarks: PropTypes.arrayOf(PropTypes.bool).isRequired,
   resolveWall: PropTypes.func.isRequired,
   finishGame: PropTypes.func.isRequired,
-  onChangeCorrectness: PropTypes.func.isRequired
+  onChangeMark: PropTypes.func.isRequired
 };
 
 export default ConnectionsForm;

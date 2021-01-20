@@ -277,7 +277,7 @@ class Game extends React.Component<GameProps, GameState> {
               groupIndices={shownGroupIndices}
               connections={this.props.connections}
               answerMarks={this.state.connectionMarks}
-              onChangeCorrectness={this.handleChangeMark}
+              onChangeMark={this.handleChangeMark}
               resolveWall={this.resolveWall}
               finishGame={this.handleFinishGame}
             />

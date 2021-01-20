@@ -14,7 +14,7 @@ type ConnectionInputProps = {
   // whether the current answer is correct
   answerCorrect: boolean | null | undefined,
   // callback to change whether this clue is marked as correct
-  onChangeCorrectness: (groupNumber: number, newCorrectness: boolean) => void
+  onChangeMark: (groupNumber: number, newMark: boolean) => void
 };
 
 type ConnectionInputState = {
@@ -27,7 +27,7 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
     groupNumber: PropTypes.number.isRequired,
     connection: PropTypes.string.isRequired,
     answerCorrect: PropTypes.bool,
-    onChangeCorrectness: PropTypes.func,
+    onChangeMark: PropTypes.func,
   };
 
   state: ConnectionInputState = {
@@ -39,8 +39,8 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
     super(props);
     this.handleChangeGuess = this.handleChangeGuess.bind(this);
     this.checkGuess = this.checkGuess.bind(this);
-    this.handleChangeCorrectness = this.handleChangeCorrectness.bind(this);
-    this.setCorrectness = this.setCorrectness.bind(this);
+    this.handleChangeMark = this.handleChangeMark.bind(this);
+    this.setMark = this.setMark.bind(this);
   }
 
   handleChangeGuess(event: React.ChangeEvent<HTMLInputElement>) {
@@ -56,18 +56,18 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
     // prevent accidental marking
     if (this.state.guess === '') return;
 
-    this.setCorrectness(markConnectionGuess(this.state.guess, this.props.connection));
+    this.setMark(markConnectionGuess(this.state.guess, this.props.connection));
     this.setState({
       answerShown: true,
     });
   }
 
-  handleChangeCorrectness(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setCorrectness(event.target.value === "correct");
+  handleChangeMark(event: React.ChangeEvent<HTMLInputElement>) {
+    this.setMark(event.target.value === "correct");
   }
 
-  setCorrectness(correct: boolean) {
-    this.props.onChangeCorrectness(this.props.groupNumber, correct);
+  setMark(correct: boolean) {
+    this.props.onChangeMark(this.props.groupNumber, correct);
   }
 
   render() {
@@ -96,7 +96,7 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
               <>
                 <MarkIcon 
                   correct={this.props.answerCorrect || false} 
-                  onClick={() => this.setCorrectness(!this.props.answerCorrect)}
+                  onClick={() => this.setMark(!this.props.answerCorrect)}
                 />
 
                 <span className="connection-input-label">Answer</span>
@@ -112,7 +112,7 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
                     type="radio" name={radioName} 
                     id={`radio_${radioName}_correct`}
                     checked={this.props.answerCorrect || false} 
-                    onChange={this.handleChangeCorrectness}
+                    onChange={this.handleChangeMark}
                     value="correct"
                   />
                   <label htmlFor={`radio_${radioName}_incorrect`}>Incorrect</label>
@@ -120,7 +120,7 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
                     type="radio" name={radioName} 
                     id={`radio_${radioName}_incorrect`}
                     checked={!this.props.answerCorrect} 
-                    onChange={this.handleChangeCorrectness}
+                    onChange={this.handleChangeMark}
                     value="incorrect"
                   />
                 </div>
