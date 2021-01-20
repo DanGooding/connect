@@ -10,7 +10,7 @@ import Results from './Results';
 import { setEq, shuffle, repeat } from '../common/utils';
 import { groupSize, numGroups, maxLives, wallDuration } from '../common/constants';
 
-type GameProps = {
+export type GameProps = {
   // all clues that appear in the wall, in a fixed order
   clues: string[],
   // the correct clue groupings, an array of Sets of strings

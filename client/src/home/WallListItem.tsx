@@ -2,9 +2,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import WallSymbol from '../common/WallSymbol';
+import WallSymbol, { WallSymbolName } from '../common/WallSymbol';
 
-function WallListItem(props) {
+type WallListItemProps = {
+  id: string,
+  series: number,
+  episode: number,
+  symbolName: WallSymbolName
+};
+
+function WallListItem(props: WallListItemProps) {
   return (
     <li className="wall-list-item">
       <Link to={`/walls/${props.id}`} style={{textDecoration: 'inherit', color: 'inherit'}}>

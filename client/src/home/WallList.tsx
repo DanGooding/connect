@@ -1,14 +1,23 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import WallListItem from './WallListItem.js';
+import WallListItem from './WallListItem';
 import './WallList.css';
+import { WallSymbolName } from '../common/WallSymbol';
 
-function WallList(props) {
-  // TODO: change _id to id in api ?
+export type WallListProps = {
+  walls: Array<{
+    id: string,
+    series: number,
+    episode: number,
+    symbolName: WallSymbolName
+  }>
+};
+
+function WallList(props: WallListProps) {
   const items = props.walls.map(wall => 
     <WallListItem 
-      key={wall._id} id={wall._id} 
+      key={wall.id} id={wall.id} 
       series={wall.series} episode={wall.episode} 
       symbolName={wall.symbolName} 
     />);
