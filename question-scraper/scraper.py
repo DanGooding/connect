@@ -52,12 +52,15 @@ def get_walls():
         series = int(series)
         episode = int(episode)
 
-        wall_wrappers = soup.find(id='round3').find_next_siblings(class_='question')
-        for wall_wrapper in itertools.islice(wall_wrappers, 2):
+        wall_round = soup.find(id='round3')
+        wall_wrappers = wall_round.find_next_siblings(class_='question')
+        symbol_headings = wall_round.find_next_siblings('h3')
+        walls_and_symbols = list(zip(symbol_headings, wall_wrappers))[:2]
+        for symbol_heading, wall_wrapper in walls_and_symbols:
             wall = {'series': series, 'episode': episode, 'groups': []}
 
             # remove any unicode symbols to leave just the name
-            symbol_text = wall_wrapper.h3.get_text()
+            symbol_text = symbol_heading.get_text()
             match = re.search(r'(?:alpha|beta|lion|water)+', symbol_text.lower())
             assert match, 'wall should have a valid symbol'
             wall['symbol'] = match.group()
