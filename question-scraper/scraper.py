@@ -57,6 +57,7 @@ def get_walls():
         symbol_headings = wall_round.find_next_siblings('h3')
         walls_and_symbols = list(zip(symbol_headings, wall_wrappers))[:2]
         for symbol_heading, wall_wrapper in walls_and_symbols:
+            skip_wall = False
             wall = {'series': series, 'episode': episode, 'groups': []}
 
             # remove any unicode symbols to leave just the name
@@ -73,7 +74,12 @@ def get_walls():
                                 .find(class_='back')\
                                 .get_text()\
                                 .strip()
-                assert group['connection'], 'connection should not be empty'
+                
+                if not group['connection']:
+                    # for at least one group the connection is just blank - handle somewhat gracefully
+                    print(f'missing connection - skipping {wall['symbol']} group {group_idx + 1}')
+                    skip_wall = True
+                    break
 
                 for clue_idx in range(4):
                     group['clues'].append(
@@ -86,6 +92,7 @@ def get_walls():
         
                 wall['groups'].append(group)
             
-            walls.append(wall)
+            if not skip_wall:
+                walls.append(wall)
 
     return walls
