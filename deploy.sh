@@ -2,17 +2,11 @@
 
 set -ex
 
-git checkout production
-git merge master
+rm -rf build
+rm -f build.zip
 
-cd client
-npm run build
-cd ..
-rm -rf server/static
-mv client/build server/static
+rsync -av server/* build --exclude node_modules --exclude .env --exclude .gitignore
+(cd client; npm run build)
+cp -r client/build build/static
 
-git add .
-git commit -m"deploy"
-git subtree push --prefix server heroku master
-git checkout master
-    
+(cd build; zip -r ../build.zip .)
