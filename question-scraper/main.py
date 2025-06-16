@@ -1,4 +1,4 @@
-
+import certifi
 import pymongo
 from scraper import get_walls
 import os
@@ -14,7 +14,8 @@ symbol_indices = {
 
 if __name__ == '__main__':
 
-    client = pymongo.MongoClient(os.getenv('DB_URL') or 'mongodb://localhost:27017')
+    connection_string = os.getenv('DB_URL') or 'mongodb://localhost:27017'
+    client = pymongo.MongoClient(connection_string, tlsCAFile=certifi.where())
     db = client['connect']
     print(f'connected to {client}')
 
