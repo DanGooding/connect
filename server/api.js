@@ -5,12 +5,12 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Wall = require('./Wall.js');
 
-mongoose.connection.once('open', () => console.log(`connected to: ${process.env.DB_URL}`));
+mongoose.connection.once('open', () => console.log(`connected to mongodb`));
 mongoose.connection.on('error', err => console.error('mongo error: ', err.message));
 
-mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(process.env.DB_URL, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true })
   .catch(err => {
-    console.error(`failed to connect to: ${process.env.DB_URL}`);
+    console.error(`failed to connect to mongodb`);
     console.error(err.message);
   });
 
@@ -19,7 +19,7 @@ mongoose.set('bufferCommands', false);
 router.use((req, res, next) => {
   if (mongoose.connection.readyState != mongoose.connection.states.connected) {
     res.sendStatus(503);
-  }else {
+  } else {
     next();
   }
 });
@@ -27,15 +27,15 @@ router.use((req, res, next) => {
 router.get('/walls', async (req, res) => {
   try {
     // TODO: limit & paginate
-    const walls = 
+    const walls =
       await Wall
         .find({})
-        .sort({'series': 'asc', 'episode': 'asc', 'symbolIndex': 'asc'})
+        .sort({ 'series': 'asc', 'episode': 'asc', 'symbolIndex': 'asc' })
         .select(['series', 'episode', 'symbolName']);
     res.json(walls);
-  }catch (err) {
+  } catch (err) {
     console.error('/walls :', err);
-    res.status(404).json({error: 'Unable to get list of walls'});
+    res.status(404).json({ error: 'Unable to get list of walls' });
   }
 });
 
@@ -43,9 +43,9 @@ router.get('/walls/random', async (req, res) => {
   try {
     const [wall] = await Wall.aggregate([{ $sample: { size: 1 } }]);
     res.json(wall);
-  }catch (err) {
+  } catch (err) {
     console.error('/walls/random :', err);
-    res.status(404).json({error: 'Unable to get a random wall'});
+    res.status(404).json({ error: 'Unable to get a random wall' });
   }
 });
 
@@ -53,13 +53,13 @@ router.get('/walls/:id', async (req, res) => {
   try {
     const wall = await Wall.findById(req.params.id);
     res.json(wall);
-  }catch (err) {
+  } catch (err) {
     res.status(404).json({ error: 'That wall does not exist' });
   }
 });
 
 router.get('*', (req, res) => {
-  res.status(404).json({ error: 'That endpoint does not exist'});
+  res.status(404).json({ error: 'That endpoint does not exist' });
 })
 
 module.exports = router;
