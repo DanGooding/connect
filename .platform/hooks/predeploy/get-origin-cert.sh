@@ -14,7 +14,8 @@ aws ssm get-parameter \
   --with-decryption \
   > $private_key
 
-chmod 0400 $certificate $private_key
+chmod 0444 $certificate
+chmod 0440 $private_key
 chown nginx $certificate $private_key
 
-echo $(whoami)
+cat $certificate
