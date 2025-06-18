@@ -9,6 +9,5 @@ rsync -av server/* build --exclude node_modules --exclude .env --exclude .gitign
 (cd client; npm run build)
 cp -r client/build build/static
 cp -r .platform build
-cp -r .ebextensions build
 
 (cd build; zip -r ../build.zip .)
