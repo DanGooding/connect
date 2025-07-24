@@ -8,11 +8,16 @@ const Wall = require('./Wall.js');
 mongoose.connection.once('open', () => console.log(`connected to mongodb`));
 mongoose.connection.on('error', err => console.error('mongo error: ', err.message));
 
-mongoose.connect(process.env.DB_URL, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true })
-  .catch(err => {
-    console.error(`failed to connect to mongodb`);
-    console.error(err.message);
-  });
+if (process.env.DB_URL == null) {
+  console.error(`missing mongodb configuration: db:${process.env.DB_NAME} url:${process.env.DB_URL}`);
+} else {
+  mongoose.connect(process.env.DB_URL, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true })
+    .catch(err => {
+      console.error('failed to connect to mongodb');
+      console.error(err.message);
+    });
+}
+
 
 // ensure we give an error response, rather than hanging waiting for the db
 mongoose.set('bufferCommands', false);
