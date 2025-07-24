@@ -12,12 +12,11 @@ mongoose.connection.on('error', err => console.error('mongo error: ', err.messag
 fs.readFile(process.env.DB_URL_FILE)
   .catch(err => console.error('missing mongodb configuration', err))
   .then(db_url => db_url.toString().trim())
-  .then(db_url => {
-    mongoose.connect(db_url, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true })
-      .catch(err => {
-        console.error('failed to connect to mongodb');
-        console.error(err);
-      });
+  .then(db_url =>
+    mongoose.connect(db_url, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true }))
+  .catch(err => {
+    console.error('failed to connect to mongodb');
+    console.error(err);
   });
 
 // ensure we give an error response, rather than hanging waiting for the db
