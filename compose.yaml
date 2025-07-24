@@ -1,15 +1,32 @@
 services:
-  server:
+  api-server:
     build:
-      context: .
+      context: server
+    image: api
     environment:
       - NODE_ENV=production
       - DB_NAME=connect
       - DB_URL_FILE=/run/secrets/db_url
     secrets:
       - db_url
+    networks:
+      - app-network
+
+  proxy:
+    build:
+      context: .
+    image: proxy
+    networks:
+      - app-network
     ports:
-      - 3000:3000
+      - 80:80
+      - 443:443
+    depends_on:
+      - api-server
+
+networks:
+  app-network:
+    driver: bridge
 
 secrets:
   db_url:
