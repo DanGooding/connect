@@ -1,6 +1,7 @@
 ARG NODE_VERSION=22.17
+ARG NGINX_VERSION=1.29
 
-FROM node:${NODE_VERSION}-alpine AS build
+FROM node:${NODE_VERSION}-alpine AS build-static
 WORKDIR /app
 COPY client/package.json client/package-lock.json ./
 RUN \
@@ -9,20 +10,7 @@ RUN \
 COPY client/ ./
 RUN npm run build
 
-FROM node:${NODE_VERSION}-alpine AS production
-
-ENV NODE_ENV=production
-
+FROM nginx:${NGINX_VERSION}-alpine AS proxy
 WORKDIR /app
-COPY server/package.json server/package-lock.json ./
-RUN \
-  --mount=type=cache,target=/root/.npm \
-  npm clean-install --omit=dev
-COPY server/ .
-COPY --from=build /app/build static/
-
-ARG PORT=3000
-EXPOSE ${PORT}
-ENV PORT=${PORT}
-
-CMD ["npm", "start"]
+COPY --from=build-static /app/build static/
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
