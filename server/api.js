@@ -14,7 +14,7 @@ if (process.env.DB_URL == null) {
   mongoose.connect(process.env.DB_URL, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true })
     .catch(err => {
       console.error('failed to connect to mongodb');
-      console.error(err.message);
+      console.error(err);
     });
 }
 
