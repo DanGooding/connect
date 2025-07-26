@@ -1,2 +1,5 @@
 build/
 build.zip
+
+.terraform/
+terraform.tfstate*
