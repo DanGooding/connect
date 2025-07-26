@@ -62,3 +62,23 @@ resource "aws_eip" "public_ip" {
   }
   depends_on = [module.vpc]
 }
+
+resource "aws_ecr_repository" "api_server_container_repo" {
+  name = "connect-api-server"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  tags = {
+    project_name = var.project_name
+  }
+}
+
+resource "aws_ecr_repository" "proxy_container_repo" {
+  name = "connect-proxy"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  tags = {
+    project_name = var.project_name
+  }
+}
