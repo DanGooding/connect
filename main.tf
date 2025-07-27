@@ -71,7 +71,7 @@ module "proxy_service" {
   cluster_arn = module.cluster.arn
 
   cpu                        = 256 // 0.25 vCPU
-  memory                     = 512 // 512 GB
+  memory                     = 512 // MB
   desired_count              = 1
   deployment_maximum_percent = 200
   enable_autoscaling         = false
@@ -90,15 +90,13 @@ module "proxy_service" {
       portMappings = [{
         containerPort = 80
         protocol      = "tcp"
+        name          = "proxy-service"
       }]
 
       // nginx writes to /etc and /var
       readonlyRootFilesystem = false
     }
-
   }
-
-  // TODO: service connect
 
   load_balancer = {
     service = {
@@ -112,8 +110,10 @@ module "proxy_service" {
 
   security_group_ingress_rules = {
     from_alb = {
-      ip_protocol                  = "tcp"
+      ip_protocol = "tcp"
+      // note 'from_port/to_port' in this context define a range of allowed _destination_ ports (in this case a one-element range)
       from_port                    = 80
+      to_port                      = 80
       referenced_security_group_id = module.alb.security_group_id
     }
   }
@@ -128,6 +128,108 @@ module "proxy_service" {
     Name         = "proxy-ecs-service"
     project_name = var.project_name
   }
+}
+
+resource "aws_secretsmanager_secret" "db_password" {
+  name = "connect-db-password"
+  tags = {
+    project_name = var.project_name
+  }
+}
+
+module "api_service" {
+  source = "terraform-aws-modules/ecs/aws//modules/service"
+
+  name        = "api-service"
+  cluster_arn = module.cluster.arn
+
+  cpu                        = 256
+  memory                     = 512
+  desired_count              = 1
+  deployment_maximum_percent = 200
+  enable_autoscaling         = false
+
+  assign_public_ip = true
+
+  // ssh in for debugging
+  enable_execute_command = true
+
+  container_definitions = {
+    api_service_container = {
+      cpu       = 256
+      memory    = 512
+      essential = true
+      image     = "${aws_ecr_repository.api_server_container_repo.repository_url}:latest"
+      portMappings = [{
+        name          = "api-service"
+        containerPort = 3000
+        protocol      = "tcp"
+      }]
+      secrets = [
+        {
+          name      = "DB_URL"
+          valueFrom = aws_secretsmanager_secret.db_url_with_token.arn
+        }
+      ]
+      environment = [
+        {
+          name  = "DB_NAME"
+          value = "connect"
+        }
+      ]
+    }
+  }
+
+  load_balancer = {
+    service = {
+      target_group_arn = module.alb.target_groups["api"].arn
+      container_name   = "api_service_container"
+      container_port   = 3000
+    }
+  }
+
+  subnet_ids = module.vpc.public_subnets
+
+  security_group_ingress_rules = {
+    from_alb = {
+      ip_protocol                  = "tcp"
+      from_port                    = 80
+      to_port                      = 80
+      referenced_security_group_id = module.alb.security_group_id
+    }
+  }
+  security_group_egress_rules = {
+    all = {
+      ip_protocol = "-1"
+      cidr_ipv4   = "0.0.0.0/0"
+    }
+  }
+
+  tags = {
+    Name         = "proxy-ecs-service"
+    project_name = var.project_name
+  }
+}
+
+data "aws_iam_policy_document" "access_secrets_for_api_service" {
+  statement {
+    effect    = "Allow"
+    actions   = ["secretsmanager:GetSecretValue"]
+    resources = [aws_secretsmanager_secret.db_url_with_token.arn]
+  }
+}
+
+resource "aws_iam_policy" "access_secrets_for_api_service" {
+  name   = "connect-access-runtime-secrets"
+  policy = data.aws_iam_policy_document.access_secrets_for_api_service.json
+  tags = {
+    project_name = var.project_name
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "api_sevice_can_access_secrets" {
+  role       = module.api_service.task_exec_iam_role_name
+  policy_arn = aws_iam_policy.access_secrets_for_api_service.arn
 }
 
 module "alb" {
@@ -167,6 +269,26 @@ module "alb" {
     proxy = {
       port     = 80
       protocol = "HTTP"
+
+      rules = {
+        api = {
+          conditions = [
+            {
+              path_pattern = {
+                values = ["/api/*"]
+              }
+            }
+          ]
+          actions = [
+            {
+              type             = "forward"
+              target_group_key = "api"
+            }
+          ]
+        }
+      }
+
+      // default rule
       forward = {
         target_group_key = "proxy"
       }
@@ -174,12 +296,16 @@ module "alb" {
   }
 
   target_groups = {
-    proxy = {
-      protocol    = "HTTP"
-      port        = 80
+    static = {
       target_type = "ip"
 
       // ECS will attach services to the group dynamically
+      create_attachment = false
+    }
+
+    api = {
+      target_type = "ip"
+
       create_attachment = false
 
       // TODO: health check
