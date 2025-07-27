@@ -76,7 +76,6 @@ module "proxy_service" {
   deployment_maximum_percent = 200
   enable_autoscaling         = false
 
-  // TODO: do not keep this - we should probably nat to a single public ip
   assign_public_ip = true
 
   // ssh in for debugging
@@ -92,6 +91,9 @@ module "proxy_service" {
         containerPort = 80
         protocol      = "tcp"
       }]
+
+      // nginx writes to /etc and /var
+      readonlyRootFilesystem = false
     }
 
   }
@@ -108,6 +110,13 @@ module "proxy_service" {
 
   subnet_ids = module.vpc.public_subnets
 
+  security_group_ingress_rules = {
+    from_alb = {
+      ip_protocol                  = "tcp"
+      from_port                    = 80
+      referenced_security_group_id = module.alb.security_group_id
+    }
+  }
   security_group_egress_rules = {
     all = {
       ip_protocol = "-1"
