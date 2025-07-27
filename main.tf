@@ -98,20 +98,6 @@ module "proxy_service" {
     }
   }
 
-  service_connect_configuration = {
-    namespace = aws_service_discovery_http_namespace.service_discovery_namespace.arn
-    service = [
-      {
-        client_alias = {
-          port     = 80
-          dns_name = "proxy-service"
-        }
-        port_name      = "proxy-service"
-        discovery_name = "proxy-service"
-      }
-    ]
-  }
-
   load_balancer = {
     service = {
       target_group_arn = module.alb.target_groups["proxy"].arn
@@ -199,18 +185,12 @@ module "api_service" {
     }
   }
 
-  service_connect_configuration = {
-    namespace = aws_service_discovery_http_namespace.service_discovery_namespace.arn
-    service = [
-      {
-        client_alias = {
-          port     = 3000
-          dns_name = "api-service"
-        }
-        port_name      = "api-service"
-        discovery_name = "api-service"
-      }
-    ]
+  load_balancer = {
+    service = {
+      target_group_arn = module.alb.target_groups["api"].arn
+      container_name   = "api_service_container"
+      container_port   = 3000
+    }
   }
 
   subnet_ids = module.vpc.public_subnets
@@ -292,6 +272,26 @@ module "alb" {
     proxy = {
       port     = 80
       protocol = "HTTP"
+
+      rules = {
+        api = {
+          conditions = [
+            {
+              path_pattern = {
+                values = ["/api/*"]
+              }
+            }
+          ]
+          actions = [
+            {
+              type             = "forward"
+              target_group_key = "api"
+            }
+          ]
+        }
+      }
+
+      // default rule
       forward = {
         target_group_key = "proxy"
       }
@@ -305,6 +305,14 @@ module "alb" {
       target_type = "ip"
 
       // ECS will attach services to the group dynamically
+      create_attachment = false
+    }
+
+    api = {
+      protocol    = "HTTP"
+      port        = 80
+      target_type = "ip"
+
       create_attachment = false
 
       // TODO: health check
