@@ -3,6 +3,8 @@
 set -euo pipefail
 set -x
 
+PLATFORM=linux/amd64
+
 USER_ID=196481062593
 REGION=eu-west-2
 REPO_BASE_URL=$USER_ID.dkr.ecr.$REGION.amazonaws.com
@@ -11,8 +13,8 @@ TAG=latest
 PROXY_PATH=connect-proxy
 API_SERVER_PATH=connect-api-server
 
-docker build .       -t $PROXY_PATH
-docker build server/ -t $API_SERVER_PATH
+docker buildx build .       -t $PROXY_PATH      --platform $PLATFORM
+docker buildx build server/ -t $API_SERVER_PATH --platform $PLATFORM
 
 aws ecr get-login-password \
   --region $REGION \
