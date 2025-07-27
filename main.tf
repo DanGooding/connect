@@ -71,7 +71,7 @@ module "proxy_service" {
   cluster_arn = module.cluster.arn
 
   cpu                        = 512  // 0.5 vCPU
-  memory                     = 1024 // 512 MB
+  memory                     = 1024 // MB
   desired_count              = 1
   deployment_maximum_percent = 200
   enable_autoscaling         = false
@@ -148,8 +148,8 @@ module "api_service" {
   name        = "api-service"
   cluster_arn = module.cluster.arn
 
-  cpu                        = 512  // 0.5 vCPU
-  memory                     = 1024 // 1024 MB
+  cpu                        = 512
+  memory                     = 1024
   desired_count              = 1
   deployment_maximum_percent = 200
   enable_autoscaling         = false
