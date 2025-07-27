@@ -26,3 +26,5 @@ for IMAGE_PATH in $PROXY_PATH $API_SERVER_PATH; do
   docker tag $IMAGE_PATH:$TAG $REPO_BASE_URL/$IMAGE_PATH:$TAG
   docker push $REPO_BASE_URL/$IMAGE_PATH:$TAG
 done
+
+docker image prune --force
