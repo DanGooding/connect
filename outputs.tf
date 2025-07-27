@@ -1,4 +1,4 @@
-output "public_ip" {
-  description = "public ip of service"
-  value       = aws_eip.public_ip.public_ip
+output "alb_hostname" {
+  description = "hostname of entry point load balancer"
+  value       = module.alb.dns_name
 }
