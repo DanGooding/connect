@@ -1,7 +1,6 @@
 
 const express = require('express');
 const router = express.Router();
-const fs = require('node:fs/promises')
 
 const mongoose = require('mongoose');
 const Wall = require('./Wall.js');
@@ -9,15 +8,19 @@ const Wall = require('./Wall.js');
 mongoose.connection.once('open', () => console.log(`connected to mongodb`));
 mongoose.connection.on('error', err => console.error('mongo error: ', err.message));
 
-fs.readFile(process.env.DB_URL_FILE)
-  .catch(err => console.error('missing mongodb configuration', err))
-  .then(db_url => db_url.toString().trim())
-  .then(db_url =>
-    mongoose.connect(db_url, { dbName: process.env.DB_NAME, useNewUrlParser: true, useUnifiedTopology: true }))
-  .catch(err => {
-    console.error('failed to connect to mongodb');
-    console.error(err);
-  });
+if (process.env.DB_URL == null) {
+  console.error('missing DB_URL environment variable');
+} else {
+  mongoose.connect(process.env.DB_URL,
+    {
+      dbName: process.env.DB_NAME,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    })
+    .catch(err => {
+      console.error('failed to connect to mongodb:', err);
+    });
+}
 
 // ensure we give an error response, rather than hanging waiting for the db
 mongoose.set('bufferCommands', false);

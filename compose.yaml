@@ -6,9 +6,7 @@ services:
     environment:
       - NODE_ENV=production
       - DB_NAME=connect
-      - DB_URL_FILE=/run/secrets/db_url
-    secrets:
-      - db_url
+      - DB_URL=mongodb://host.docker.internal
     networks:
       - app-network
 
@@ -27,7 +25,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-secrets:
-  db_url:
-    environment: DB_URL
