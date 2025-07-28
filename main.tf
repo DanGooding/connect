@@ -278,8 +278,10 @@ module "alb" {
 
   listeners = {
     listener = {
-      port     = 80
-      protocol = "HTTP"
+      protocol = "HTTPS"
+      port     = 443
+
+      certificate_arn = var.domain_certificate_arn
 
       rules = {
         api = {
