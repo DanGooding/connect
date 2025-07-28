@@ -27,4 +27,4 @@ for IMAGE_PATH in $STATIC_SERVER_PATH $API_SERVER_PATH; do
   docker push $REPO_BASE_URL/$IMAGE_PATH:$TAG
 done
 
-docker image prune --force
+docker image prune --force --filter "until=24h"
