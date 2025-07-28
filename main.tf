@@ -202,8 +202,10 @@ module "static_service" {
 
   security_group_ingress_rules = {
     from_alb = {
-      ip_protocol                  = "tcp"
+      ip_protocol = "tcp"
+      // note 'from_port/to_port' in this context define a range of allowed _destination_ ports (in this case a one-element range)
       from_port                    = var.static_service_port
+      to_port                      = var.static_service_port
       referenced_security_group_id = module.alb.security_group_id
     }
   }
@@ -290,7 +292,7 @@ module "api_service" {
 
   security_group_ingress_rules = {
     from_alb = {
-      ip_protocol = "-1"
+      ip_protocol = "tcp"
       cidr_ipv4   = module.vpc.vpc_cidr_block
     }
   }
