@@ -308,8 +308,6 @@ module "alb" {
 
   target_groups = {
     static = {
-      protocol    = "HTTP"
-      port        = 80
       target_type = "ip"
 
       // ECS will attach services to the group dynamically
@@ -317,8 +315,6 @@ module "alb" {
     }
 
     api = {
-      protocol    = "HTTP"
-      port        = 80
       target_type = "ip"
 
       create_attachment = false
