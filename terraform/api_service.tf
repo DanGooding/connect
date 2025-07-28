@@ -92,6 +92,10 @@ module "api_service" {
     }
   }
 
+  task_tags = {
+    image = var.api_service_container_image_tag
+  }
+
   tags = {
     Name         = "api-ecs-service"
     project_name = var.project_name
