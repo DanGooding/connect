@@ -35,3 +35,15 @@ variable "db_credentials" {
     url  = "mongodb+srv://cluster0.649fjz8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
   }
 }
+
+variable "api_service_container_image_tag" {
+  description = "container image to run for API service"
+  type        = string
+  default     = "latest"
+}
+
+variable "static_service_container_image_tag" {
+  description = "container image to run for static webserver"
+  type        = string
+  default     = "latest"
+}

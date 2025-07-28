@@ -31,7 +31,7 @@ module "static_service" {
       cpu       = 256
       memory    = 512
       essential = true
-      image     = "${aws_ecr_repository.static_container_repo.repository_url}:latest"
+      image     = "${aws_ecr_repository.static_container_repo.repository_url}:${var.static_service_container_image_tag}"
       portMappings = [{
         containerPort = var.static_service_port
         protocol      = "tcp"
