@@ -5,7 +5,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Wall = require('./Wall.js');
 
-mongoose.connection.once('open', () => console.log(`connected to mongodb`));
+mongoose.connection.once('open', () => console.log('connected to mongodb'));
 mongoose.connection.on('error', err => console.error('mongo error: ', err.message));
 
 if (process.env.DB_URL == null) {
@@ -15,9 +15,7 @@ if (process.env.DB_URL == null) {
     {
       dbName: process.env.DB_NAME,
       user: process.env.DB_USER,
-      pass: process.env.DB_PASS,
-      useNewUrlParser: true,
-      useUnifiedTopology: true
+      pass: process.env.DB_PASS
     })
     .catch(err => {
       console.error('failed to connect to mongodb:', err);
