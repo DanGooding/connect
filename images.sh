@@ -13,8 +13,8 @@ TAG=latest
 STATIC_SERVER_PATH=connect-static-server
 API_SERVER_PATH=connect-api-server
 
-docker buildx build .       -t $STATIC_SERVER_PATH --platform $PLATFORM
-docker buildx build server/ -t $API_SERVER_PATH    --platform $PLATFORM
+docker buildx build frontend/   -t $STATIC_SERVER_PATH --platform $PLATFORM
+docker buildx build api-server/ -t $API_SERVER_PATH    --platform $PLATFORM
 
 aws ecr get-login-password \
   --region $REGION \
