@@ -3,4 +3,4 @@ A fan-made site for playing past Connecting-Wall rounds from the UK quiz show On
 
 Available at https://connect.danielgooding.uk
 
-Built with React, Mongo, Express.
+Built with React, MongoDB, Express, hosted on ECS behind Cloudflare.
