@@ -11,6 +11,7 @@ mongoose.connection.on('error', err => console.error('mongo error: ', err.messag
 if (process.env.DB_URL == null) {
   console.error('missing DB_URL environment variable');
 } else {
+  console.log(`connecting to ${process.env.DB_URL} user: ${DB_USER} db: ${process.env.DB_NAME}`);
   mongoose.connect(process.env.DB_URL,
     {
       dbName: process.env.DB_NAME,
