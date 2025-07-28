@@ -10,11 +10,11 @@ REGION=eu-west-2
 REPO_BASE_URL=$USER_ID.dkr.ecr.$REGION.amazonaws.com
 TAG=latest
 
-PROXY_PATH=connect-proxy
+STATIC_SERVER_PATH=connect-static-server
 API_SERVER_PATH=connect-api-server
 
-docker buildx build .       -t $PROXY_PATH      --platform $PLATFORM
-docker buildx build server/ -t $API_SERVER_PATH --platform $PLATFORM
+docker buildx build .       -t $STATIC_SERVER_PATH --platform $PLATFORM
+docker buildx build server/ -t $API_SERVER_PATH    --platform $PLATFORM
 
 aws ecr get-login-password \
   --region $REGION \
@@ -22,7 +22,7 @@ aws ecr get-login-password \
   --username AWS \
   --password-stdin \
 
-for IMAGE_PATH in $PROXY_PATH $API_SERVER_PATH; do
+for IMAGE_PATH in $STATIC_SERVER_PATH $API_SERVER_PATH; do
   docker tag $IMAGE_PATH:$TAG $REPO_BASE_URL/$IMAGE_PATH:$TAG
   docker push $REPO_BASE_URL/$IMAGE_PATH:$TAG
 done

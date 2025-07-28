@@ -39,8 +39,8 @@ resource "aws_ecr_repository" "api_server_container_repo" {
   }
 }
 
-resource "aws_ecr_repository" "proxy_container_repo" {
-  name = "connect-proxy"
+resource "aws_ecr_repository" "static_container_repo" {
+  name = "connect-static-server"
   image_scanning_configuration {
     scan_on_push = true
   }
@@ -64,10 +64,10 @@ module "cluster" {
   }
 }
 
-module "proxy_service" {
+module "static_service" {
   source = "terraform-aws-modules/ecs/aws//modules/service"
 
-  name        = "proxy-service"
+  name        = "static-service"
   cluster_arn = module.cluster.arn
 
   cpu                        = 256 // 0.25 vCPU
@@ -82,15 +82,15 @@ module "proxy_service" {
   enable_execute_command = true
 
   container_definitions = {
-    proxy_container = {
+    static_server_container = {
       cpu       = 256
       memory    = 512
       essential = true
-      image     = "${aws_ecr_repository.proxy_container_repo.repository_url}:latest"
+      image     = "${aws_ecr_repository.static_container_repo.repository_url}:latest"
       portMappings = [{
         containerPort = 80
         protocol      = "tcp"
-        name          = "proxy-service"
+        name          = "static-service"
       }]
 
       // nginx writes to /etc and /var
@@ -100,8 +100,8 @@ module "proxy_service" {
 
   load_balancer = {
     service = {
-      target_group_arn = module.alb.target_groups["proxy"].arn
-      container_name   = "proxy_container"
+      target_group_arn = module.alb.target_groups["static"].arn
+      container_name   = "static_server_container"
       container_port   = 80
     }
   }
@@ -123,7 +123,7 @@ module "proxy_service" {
   }
 
   tags = {
-    Name         = "proxy-ecs-service"
+    Name         = "static-ecs-service"
     project_name = var.project_name
   }
 }
@@ -196,7 +196,7 @@ module "api_service" {
   subnet_ids = module.vpc.public_subnets
 
   security_group_ingress_rules = {
-    from_proxy = {
+    from_alb = {
       ip_protocol = "-1"
       cidr_ipv4   = module.vpc.vpc_cidr_block
     }
@@ -209,7 +209,7 @@ module "api_service" {
   }
 
   tags = {
-    Name         = "proxy-ecs-service"
+    Name         = "api-ecs-service"
     project_name = var.project_name
   }
 }
@@ -269,7 +269,7 @@ module "alb" {
   }
 
   listeners = {
-    proxy = {
+    listener = {
       port     = 80
       protocol = "HTTP"
 
@@ -293,13 +293,13 @@ module "alb" {
 
       // default rule
       forward = {
-        target_group_key = "proxy"
+        target_group_key = "static"
       }
     }
   }
 
   target_groups = {
-    proxy = {
+    static = {
       protocol    = "HTTP"
       port        = 80
       target_type = "ip"
