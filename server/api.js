@@ -67,7 +67,7 @@ router.get('/walls/:id', async (req, res) => {
   }
 });
 
-router.get('*', (req, res) => {
+router.use((req, res, next) => {
   res.status(404).json({ error: 'That endpoint does not exist' });
 })
 
