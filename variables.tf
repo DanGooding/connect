@@ -9,3 +9,29 @@ variable "domain_certificate_arn" {
   type        = string
   default     = "arn:aws:acm:eu-west-2:196481062593:certificate/4ece37fb-0fe4-49d9-8929-65354870ca46"
 }
+
+variable "static_service_port" {
+  description = "port exposed by static webserver container"
+  type        = number
+  default     = 80
+}
+
+variable "api_service_port" {
+  description = "port exposed by api server container"
+  type        = number
+  default     = 3000
+}
+
+variable "db_credentials" {
+  description = "configures connectivity to db - the cluster, database, and username"
+  type = object({
+    name = string
+    user = string
+    url  = string
+  })
+  default = {
+    name = "connect"
+    user = "api2"
+    url  = "mongodb+srv://cluster0.649fjz8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  }
+}
