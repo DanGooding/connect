@@ -1,20 +1,24 @@
 #!/bin/bash
 
 set -euo pipefail
-set -x
 
 PLATFORM=linux/amd64
 
 USER_ID=196481062593
 REGION=eu-west-2
 REPO_BASE_URL=$USER_ID.dkr.ecr.$REGION.amazonaws.com
-TAG=latest
+
+if [ -n "$(git status --porcelain)" ]; then
+  echo unclean git status - not building >&2
+  exit 1
+fi
+TAG="$(git rev-parse HEAD)"
 
 STATIC_SERVER_PATH=connect-static-server
 API_SERVER_PATH=connect-api-server
 
-docker buildx build frontend/   -t $STATIC_SERVER_PATH --platform $PLATFORM
-docker buildx build api-server/ -t $API_SERVER_PATH    --platform $PLATFORM
+docker buildx build frontend/   -t $STATIC_SERVER_PATH --platform $PLATFORM --tag $TAG
+docker buildx build api-server/ -t $API_SERVER_PATH    --platform $PLATFORM --tag $TAG
 
 aws ecr get-login-password \
   --region $REGION \
