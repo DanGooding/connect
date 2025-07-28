@@ -165,16 +165,24 @@ module "api_service" {
         containerPort = 3000
         protocol      = "tcp"
       }]
-      secrets = [
-        {
-          name      = "DB_URL"
-          valueFrom = aws_secretsmanager_secret.db_url_with_token.arn
-        }
-      ]
       environment = [
         {
           name  = "DB_NAME"
           value = "connect"
+        },
+        {
+          name  = "DB_USER",
+          value = "api2"
+        },
+        {
+          name  = "DB_URL",
+          value = "mongodb+srv://cluster0.649fjz8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+        }
+      ]
+      secrets = [
+        {
+          name      = "DB_PASS"
+          valueFrom = aws_secretsmanager_secret.db_password.arn
         }
       ]
     }
@@ -215,7 +223,7 @@ data "aws_iam_policy_document" "access_secrets_for_api_service" {
   statement {
     effect    = "Allow"
     actions   = ["secretsmanager:GetSecretValue"]
-    resources = [aws_secretsmanager_secret.db_url_with_token.arn]
+    resources = [aws_secretsmanager_secret.db_password.arn]
   }
 }
 
