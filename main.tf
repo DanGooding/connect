@@ -29,20 +29,92 @@ module "vpc" {
   }
 }
 
-resource "aws_ecr_repository" "api_server_container_repo" {
-  name = "connect-api-server"
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-  tags = {
-    project_name = var.project_name
-  }
-}
+module "alb" {
+  source = "terraform-aws-modules/alb/aws"
 
-resource "aws_ecr_repository" "static_container_repo" {
-  name = "connect-static-server"
-  image_scanning_configuration {
-    scan_on_push = true
+  name               = "connect-alb"
+  load_balancer_type = "application"
+
+  vpc_id  = module.vpc.vpc_id
+  subnets = module.vpc.public_subnets
+
+  // TODO: unset?
+  enable_deletion_protection = false
+
+  security_group_ingress_rules = {
+    all_http = {
+      from_port   = 80
+      to_port     = 80
+      ip_protocol = "tcp"
+      cidr_ipv4   = "0.0.0.0/0"
+    }
+    all_https = {
+      from_port   = 443
+      to_port     = 443
+      ip_protocol = "tcp"
+      cidr_ipv4   = "0.0.0.0/0"
+    }
+  }
+  security_group_egress_rules = {
+    all = {
+      ip_protocol = "-1"
+      cidr_ipv4   = module.vpc.vpc_cidr_block
+    }
+  }
+
+  listeners = {
+    listener = {
+      protocol = "HTTPS"
+      port     = 443
+
+      certificate_arn = var.domain_certificate_arn
+
+      rules = {
+        api = {
+          conditions = [
+            {
+              path_pattern = {
+                values = ["/api/*"]
+              }
+            }
+          ]
+          actions = [
+            {
+              type             = "forward"
+              target_group_key = "api"
+            }
+          ]
+        }
+      }
+
+      // default rule
+      forward = {
+        target_group_key = "static"
+      }
+    }
+  }
+
+  target_groups = {
+    static = {
+      target_type = "ip"
+
+      // ECS will attach services to the group dynamically
+      create_attachment = false
+    }
+
+    api = {
+      target_type = "ip"
+
+      create_attachment = false
+
+      health_check = {
+        matcher = 200
+        // TODO: define a proper health check path
+        path     = "/api/walls/random"
+        port     = "traffic-port"
+        protocol = "HTTP"
+      }
+    }
   }
   tags = {
     project_name = var.project_name
@@ -59,6 +131,26 @@ module "cluster" {
     }
   }
 
+  tags = {
+    project_name = var.project_name
+  }
+}
+
+resource "aws_ecr_repository" "api_server_container_repo" {
+  name = "connect-api-server"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+  tags = {
+    project_name = var.project_name
+  }
+}
+
+resource "aws_ecr_repository" "static_container_repo" {
+  name = "connect-static-server"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
   tags = {
     project_name = var.project_name
   }
@@ -234,96 +326,4 @@ resource "aws_iam_policy" "access_secrets_for_api_service" {
 resource "aws_iam_role_policy_attachment" "api_sevice_can_access_secrets" {
   role       = module.api_service.task_exec_iam_role_name
   policy_arn = aws_iam_policy.access_secrets_for_api_service.arn
-}
-
-module "alb" {
-  source = "terraform-aws-modules/alb/aws"
-
-  name               = "connect-alb"
-  load_balancer_type = "application"
-
-  vpc_id  = module.vpc.vpc_id
-  subnets = module.vpc.public_subnets
-
-  // TODO: unset?
-  enable_deletion_protection = false
-
-  security_group_ingress_rules = {
-    all_http = {
-      from_port   = 80
-      to_port     = 80
-      ip_protocol = "tcp"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
-    all_https = {
-      from_port   = 443
-      to_port     = 443
-      ip_protocol = "tcp"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
-  }
-  security_group_egress_rules = {
-    all = {
-      ip_protocol = "-1"
-      cidr_ipv4   = module.vpc.vpc_cidr_block
-    }
-  }
-
-  listeners = {
-    listener = {
-      protocol = "HTTPS"
-      port     = 443
-
-      certificate_arn = var.domain_certificate_arn
-
-      rules = {
-        api = {
-          conditions = [
-            {
-              path_pattern = {
-                values = ["/api/*"]
-              }
-            }
-          ]
-          actions = [
-            {
-              type             = "forward"
-              target_group_key = "api"
-            }
-          ]
-        }
-      }
-
-      // default rule
-      forward = {
-        target_group_key = "static"
-      }
-    }
-  }
-
-  target_groups = {
-    static = {
-      target_type = "ip"
-
-      // ECS will attach services to the group dynamically
-      create_attachment = false
-    }
-
-    api = {
-      target_type = "ip"
-
-      create_attachment = false
-
-      health_check = {
-        matcher = 200
-        // TODO: define a proper health check path
-        path     = "/api/walls/random"
-        port     = "traffic-port"
-        protocol = "HTTP"
-      }
-    }
-  }
-  tags = {
-    project_name = var.project_name
-  }
 }
