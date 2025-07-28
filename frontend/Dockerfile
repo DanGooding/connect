@@ -13,4 +13,4 @@ RUN npm run build
 FROM nginx:${NGINX_VERSION}-alpine AS static-server
 WORKDIR /app
 COPY --from=build-static /app/build static/
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx.conf /etc/nginx/nginx.conf
