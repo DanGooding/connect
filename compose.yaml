@@ -7,24 +7,12 @@ services:
       - NODE_ENV=production
       - DB_NAME=connect
       - DB_URL=mongodb://host.docker.internal
-    networks:
-      - app-network
     ports:
       - 3000:3000
 
-
-  proxy:
+  static-server:
     build:
       context: .
-    image: proxy
-    networks:
-      - app-network
+    image: static-server
     ports:
       - 80:80
-      - 443:443
-    depends_on:
-      - api-server
-
-networks:
-  app-network:
-    driver: bridge
