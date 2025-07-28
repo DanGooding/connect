@@ -315,7 +315,16 @@ module "alb" {
 
       create_attachment = false
 
-      // TODO: health check
+      health_check = {
+        matcher = 200
+        // TODO: define a proper health check path
+        path     = "/api/walls/random"
+        port     = "traffic-port"
+        protocol = "HTTP"
+      }
     }
+  }
+  tags = {
+    project_name = var.project_name
   }
 }
