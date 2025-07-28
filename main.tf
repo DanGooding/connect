@@ -128,13 +128,6 @@ module "static_service" {
   }
 }
 
-resource "aws_service_discovery_http_namespace" "service_discovery_namespace" {
-  name = "connect"
-  tags = {
-    project_name = var.project_name
-  }
-}
-
 resource "aws_secretsmanager_secret" "db_password" {
   name = "connect-db-password"
   tags = {
