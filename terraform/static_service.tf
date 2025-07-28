@@ -69,6 +69,10 @@ module "static_service" {
     }
   }
 
+  task_tags = {
+    image = var.static_service_container_image_tag
+  }
+
   tags = {
     Name         = "static-ecs-service"
     project_name = var.project_name
