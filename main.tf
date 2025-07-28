@@ -88,7 +88,7 @@ module "static_service" {
       essential = true
       image     = "${aws_ecr_repository.static_container_repo.repository_url}:latest"
       portMappings = [{
-        containerPort = 80
+        containerPort = var.static_service_port
         protocol      = "tcp"
         name          = "static-service"
       }]
@@ -102,7 +102,7 @@ module "static_service" {
     service = {
       target_group_arn = module.alb.target_groups["static"].arn
       container_name   = "static_server_container"
-      container_port   = 80
+      container_port   = var.static_service_port
     }
   }
 
@@ -112,8 +112,8 @@ module "static_service" {
     from_alb = {
       ip_protocol = "tcp"
       // note 'from_port/to_port' in this context define a range of allowed _destination_ ports (in this case a one-element range)
-      from_port                    = 80
-      to_port                      = 80
+      from_port                    = var.static_service_port
+      to_port                      = var.static_service_port
       referenced_security_group_id = module.alb.security_group_id
     }
   }
@@ -162,21 +162,21 @@ module "api_service" {
       image     = "${aws_ecr_repository.api_server_container_repo.repository_url}:latest"
       portMappings = [{
         name          = "api-service"
-        containerPort = 3000
+        containerPort = var.api_service_port
         protocol      = "tcp"
       }]
       environment = [
         {
           name  = "DB_NAME"
-          value = "connect"
+          value = var.db_credentials.name
         },
         {
           name  = "DB_USER",
-          value = "api2"
+          value = var.db_credentials.user
         },
         {
           name  = "DB_URL",
-          value = "mongodb+srv://cluster0.649fjz8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+          value = var.db_credentials.url
         }
       ]
       secrets = [
@@ -192,7 +192,7 @@ module "api_service" {
     service = {
       target_group_arn = module.alb.target_groups["api"].arn
       container_name   = "api_service_container"
-      container_port   = 3000
+      container_port   = var.api_service_port
     }
   }
 
@@ -201,8 +201,8 @@ module "api_service" {
   security_group_ingress_rules = {
     from_alb = {
       ip_protocol                  = "tcp"
-      from_port                    = 80
-      to_port                      = 80
+      from_port                    = var.api_service_port
+      to_port                      = var.api_service_port
       referenced_security_group_id = module.alb.security_group_id
     }
   }
