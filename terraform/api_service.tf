@@ -37,7 +37,7 @@ module "api_service" {
       cpu       = 256
       memory    = 512
       essential = true
-      image     = "${aws_ecr_repository.api_server_container_repo.repository_url}:latest"
+      image     = "${aws_ecr_repository.api_server_container_repo.repository_url}:${var.api_service_container_image_tag}"
       portMappings = [{
         name          = "api-service"
         containerPort = var.api_service_port
