@@ -49,6 +49,14 @@ data "aws_iam_policy_document" "push_to_ecr_repos" {
   statement {
     effect = "Allow"
     actions = [
+      "ecr:GetAuthorizationToken",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+    actions = [
       "ecr:UploadLayerPart",
       "ecr:PutImage",
       "ecr:InitiateLayerUpload",
@@ -61,7 +69,6 @@ data "aws_iam_policy_document" "push_to_ecr_repos" {
       "ecr:ListImages",
       "ecr:BatchGetRepositoryScanningConfiguration",
       "ecr:DescribeRegistry",
-      "ecr:GetAuthorizationToken",
       "ecr:GetImageCopyStatus",
       "ecr:GetLifecyclePolicy",
       "ecr:GetLifecyclePolicyPreview",
@@ -74,10 +81,7 @@ data "aws_iam_policy_document" "push_to_ecr_repos" {
       "ecr:TagResource",
       "ecr:UntagResource"
     ]
-    resources = [
-      aws_ecr_repository.static_container_repo.arn,
-      aws_ecr_repository.api_server_container_repo.arn
-    ]
+    resources = [aws_ecr_repository.api_server_container_repo.arn, aws_ecr_repository.static_container_repo.arn]
   }
 }
 
