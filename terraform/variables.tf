@@ -47,3 +47,9 @@ variable "static_service_container_image_tag" {
   type        = string
   default     = "6d877e3688db18505ba766310425e49095da550a"
 }
+
+variable "github_repo" {
+  description = "github repository that actions run in"
+  type = string
+  default = "DanGooding/connect"
+}
