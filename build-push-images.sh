@@ -21,12 +21,7 @@ PLATFORM=linux/amd64
 STATIC_SERVER_REPO=connect-static-server
 API_SERVER_REPO=connect-api-server
 
-docker buildx build frontend/   -t $STATIC_SERVER_REPO --platform $PLATFORM --tag $TAG
-docker buildx build api-server/ -t $API_SERVER_REPO    --platform $PLATFORM --tag $TAG
-
-for IMAGE_PATH in $STATIC_SERVER_REPO $API_SERVER_REPO; do
-  docker tag $IMAGE_PATH:$TAG $REGISTRY/$IMAGE_PATH:$TAG
-  docker push $REGISTRY/$IMAGE_PATH:$TAG
-done
+docker buildx build frontend/   --tag $REGISTRY/$STATIC_SERVER_REPO:$TAG --platform $PLATFORM --push
+docker buildx build api-server/ --tag $REGISTRY/$API_SERVER_REPO:$TAG    --platform $PLATFORM --push 
 
 docker image prune --force --filter "until=24h"
