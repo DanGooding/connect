@@ -38,25 +38,25 @@ class Fetcher extends React.Component<FetcherProps, FetcherState> {
         if (!res.ok) {
           res.json()
             // api responded with error message
-            .then(({error}) => 
-              this.setState({fetchError: {code: res.status, message: error}})
+            .then(({ error }) =>
+              this.setState({ fetchError: { code: res.status, message: error } })
             )
             // didn't get through to api server
             .catch(() => {
-              this.setState({fetchError: {code: res.status, message: res.statusText}})
+              this.setState({ fetchError: { code: res.status, message: res.statusText } })
             });
           return;
         }
         res.json()
           // successful response from api
           .then(data =>
-            // TODO: avoid setting state after unmount
+            // note there might be a race where we set state after unmount
             this.setState({
               isLoaded: true,
-              props: 
-                this.props.buildProps == null 
+              props:
+                this.props.buildProps == null
                   ? data
-                  : this.props.buildProps(data) 
+                  : this.props.buildProps(data)
             }));
       })
       // network failure
@@ -73,17 +73,17 @@ class Fetcher extends React.Component<FetcherProps, FetcherState> {
   render() {
     if (this.state.fetchError != null) {
       return (
-        <ErrorMessage 
-          code={this.state.fetchError.code} 
-          message={this.state.fetchError.message} 
+        <ErrorMessage
+          code={this.state.fetchError.code}
+          message={this.state.fetchError.message}
         />
       );
-    }else if (!this.state.isLoaded) {
+    } else if (!this.state.isLoaded) {
       return <LoadingIndicator />;
     }
 
     const Component = this.props.component;
-    return <Component {...this.state.props}/>;
+    return <Component {...this.state.props} />;
   }
 }
 

@@ -44,7 +44,7 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
   }
 
   handleChangeGuess(event: React.ChangeEvent<HTMLInputElement>) {
-    if (this.state.answerShown) return; // TODO: remove?
+    if (this.state.answerShown) return;
     this.setState({
       guess: event.target.value.substring(0, maxGuessLength)
     });
@@ -81,12 +81,12 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
         <div className="connection-input-wrapper">
           <div className="connection-input-grid">
             <label className="connection-input-label">Connection</label>
-            <input 
+            <input
               className="connection-input-textbox"
-              type="text" 
-              value={this.state.guess} 
-              onChange={this.handleChangeGuess} 
-              disabled={this.state.answerShown} 
+              type="text"
+              value={this.state.guess}
+              onChange={this.handleChangeGuess}
+              disabled={this.state.answerShown}
             />
             {!this.state.answerShown &&
               <button className="connection-check" onClick={this.checkGuess}>Check</button>
@@ -94,32 +94,32 @@ class ConnectionInput extends React.Component<ConnectionInputProps, ConnectionIn
 
             {this.state.answerShown &&
               <>
-                <MarkIcon 
-                  correct={this.props.answerCorrect || false} 
+                <MarkIcon
+                  correct={this.props.answerCorrect || false}
                   onClick={() => this.setMark(!this.props.answerCorrect)}
                 />
 
                 <span className="connection-input-label">Answer</span>
                 <span className="connection-answer">{this.props.connection}</span>
-                
+
                 <span></span>
                 <span className="connection-input-label">Mark it:</span>
 
                 <div className="connection-correct-radio">
 
                   <label htmlFor={`radio_${radioName}_correct`}>Correct</label>
-                  <input 
-                    type="radio" name={radioName} 
+                  <input
+                    type="radio" name={radioName}
                     id={`radio_${radioName}_correct`}
-                    checked={this.props.answerCorrect || false} 
+                    checked={this.props.answerCorrect || false}
                     onChange={this.handleChangeMark}
                     value="correct"
                   />
                   <label htmlFor={`radio_${radioName}_incorrect`}>Incorrect</label>
-                  <input 
-                    type="radio" name={radioName} 
+                  <input
+                    type="radio" name={radioName}
                     id={`radio_${radioName}_incorrect`}
-                    checked={!this.props.answerCorrect} 
+                    checked={!this.props.answerCorrect}
                     onChange={this.handleChangeMark}
                     value="incorrect"
                   />

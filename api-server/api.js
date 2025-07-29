@@ -35,7 +35,6 @@ router.use((req, res, next) => {
 
 router.get('/walls', async (req, res) => {
   try {
-    // TODO: limit & paginate
     const walls =
       await Wall
         .find({})
