@@ -14,10 +14,9 @@
     background-color: var(--main-blue);
     /* transition: width .1s linear; */
     transform-origin: top left;
-    
+
 }
 
-/* TODO: vendor prefixes */
 @keyframes grow {
     from {
         transform: scaleX(0);

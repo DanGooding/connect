@@ -7,9 +7,8 @@ import { buildProps } from './GameFetcher';
 
 // pushes the wall id to router history once mounted
 function HistoryInjector(props: GameProps & RouteComponentProps & { id: string }) {
-  // TODO: this could run multiple times
   useEffect(() => props.history.push(`/walls/${props.id}`));
-  return <Game {...props}/>;
+  return <Game {...props} />;
 }
 
 function RandomGameFetcher() {

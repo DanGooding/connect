@@ -44,7 +44,7 @@ export function buildProps(wall: WallModel): GameProps {
   };
 }
 
-// TODO RouteComponentProps<{id: string}> should be possible but TS isn't allowing it
+// RouteComponentProps<{id: string}> should be possible but TS isn't allowing it
 // https://stackoverflow.com/questions/48138111/what-typescript-type-should-i-use-to-reference-the-match-object-in-my-props
 type GameFetcherProps = RouteComponentProps & {
   // the url match of /walls/:id
