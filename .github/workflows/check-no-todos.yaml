@@ -12,7 +12,7 @@ jobs:
       
       - name: Grep for TODOs
         run: |
-          if git grep TODO ; then
+          if git grep TODO ':(exclude).github/workflows/check-no-todos.yaml' ; then
             echo found unadressed todo items >&2
             exit 1
           fi
