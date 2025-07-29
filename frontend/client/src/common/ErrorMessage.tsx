@@ -12,7 +12,6 @@ type ErrorMessageProps = {
 };
 
 function ErrorMessage(props: ErrorMessageProps) {
-  // TODO: retry option
   return (
     <div className="error-message">
       <FontAwesomeIcon icon={faExclamationTriangle} size="3x" />
