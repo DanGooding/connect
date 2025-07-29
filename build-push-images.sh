@@ -18,10 +18,13 @@ fi
 
 PLATFORM=linux/amd64
 
-STATIC_SERVER_REPO=connect-static-server
-API_SERVER_REPO=connect-api-server
+build() {
+  REPO=$1
+  DIR=$2
+  docker buildx build $DIR --tag $REGISTRY/$REPO:$TAG --platform $PLATFORM --push
+}
 
-docker buildx build frontend/   --tag $REGISTRY/$STATIC_SERVER_REPO:$TAG --platform $PLATFORM --push
-docker buildx build api-server/ --tag $REGISTRY/$API_SERVER_REPO:$TAG    --platform $PLATFORM --push 
+build connect-static-server frontend/
+build connect-api-server    api-server/
 
 docker image prune --force --filter "until=24h"
