@@ -12,11 +12,6 @@ if [ -z "${REGISTRY:+x}" ]; then
   exit 1
 fi
 
-if [ -n "$(git status --porcelain)" ]; then
-  echo unclean git status - not building >&2
-  exit 1
-fi
-
 PLATFORM=linux/amd64
 
 build() {
