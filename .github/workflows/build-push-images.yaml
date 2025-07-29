@@ -34,4 +34,4 @@ jobs:
         env:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           TAG: ${{ github.sha }}
-        run: ./build-push-images.sh
+        run: ./docker/build-push-images.sh
