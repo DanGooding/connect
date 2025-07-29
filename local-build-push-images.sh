@@ -13,7 +13,7 @@ aws ecr get-login-password \
   --password-stdin \
 
 (
-  export TAG="$(git rev-parse HEAD)"
+  export TAG="dev"
   export REGISTRY
   ./build-push-images.sh
 )
