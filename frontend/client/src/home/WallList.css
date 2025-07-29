@@ -33,11 +33,6 @@
     }
 }
 
-/* TODO: this is fragile? */
-/* :visited .wall-list-item-wrapper {
-    background-color: #aaa;
-} */
-
 /* this is definitely fragile */
 @media (hover: hover) {
     :hover > .wall-list-item-wrapper {
@@ -48,10 +43,6 @@
     margin: 0 5px;
     text-align: center;
 }
-
-/* .wall-list-item-label {
-
-} */
 
 .wall-list-item-value {
     font-size: 25px;

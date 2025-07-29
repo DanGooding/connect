@@ -90,12 +90,11 @@ class Game extends React.Component<GameProps, GameState> {
 
   handleTileClick(clue: string) {
     if (this.state.wallOutcome !== "ongoing") return;
-    if (this.state.selection.size === groupSize) return;  // TODO: this is a hack
+    if (this.state.selection.size === groupSize) return;
 
     let newSelection = new Set(this.state.selection);
 
     if (this.state.selection.has(clue)) { // deselect this clue
-      // TODO: delay
       newSelection.delete(clue);
       this.setState({ selection: newSelection });
 
@@ -227,8 +226,6 @@ class Game extends React.Component<GameProps, GameState> {
           numCorrectConnections={this.state.connectionMarks.filter(x => x).length}
         />
       );
-      // TODO: also an exit button?
-      // TODO: save (time / completed flag) for this wall? (cookies)
     }
 
     const shownGroupIndices = this.getShownGroupIndices();

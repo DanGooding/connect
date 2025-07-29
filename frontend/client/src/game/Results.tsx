@@ -28,11 +28,11 @@ function Results(props: ResultsProps) {
 
             <span className="result-value">{props.numFoundGroups}</span>
             <span className="result-description">{pluralise('group', props.numFoundGroups)} found</span>
-            
+
             <span className="result-plus">+</span>
             <span className="result-value">{props.numCorrectConnections}</span>
             <span className="result-description">{pluralise('connection', props.numCorrectConnections)} found</span>
-            
+
             {addBonusPoints &&
               <>
                 <span className="result-plus">+</span>
@@ -50,8 +50,6 @@ function Results(props: ResultsProps) {
       </div>
     </div>
   );
-  // TODO: 'well done!' message?
-  // TODO: also num lives remaining & time
 }
 
 Results.propTypes = {

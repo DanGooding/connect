@@ -8,9 +8,6 @@ module "alb" {
   vpc_id  = module.vpc.vpc_id
   subnets = module.vpc.public_subnets
 
-  // TODO: unset?
-  enable_deletion_protection = false
-
   security_group_ingress_rules = {
     all_http = {
       from_port   = 80
@@ -78,8 +75,7 @@ module "alb" {
       create_attachment = false
 
       health_check = {
-        matcher = 200
-        // TODO: define a proper health check path
+        matcher  = 200
         path     = "/api/walls/random"
         port     = "traffic-port"
         protocol = "HTTP"

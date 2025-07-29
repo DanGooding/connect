@@ -5,7 +5,6 @@ import { WallSymbolName } from '../common/WallSymbol';
 import WallList, { WallListProps } from './WallList';
 
 type WallSummaryModel = {
-  // TODO: change '_id' to 'id' in api
   _id: string,
   series: number,
   episode: number,
