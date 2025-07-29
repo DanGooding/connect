@@ -7,29 +7,32 @@ on:
       - main
 
 jobs:
-  - name: Checkout repo
-    uses: actions/checkout@v3
-
-  - name: Set up Docker Buildx
-    uses: docker/setup-buildx-action@v3
-
-  - name: Configure AWS credentials
-    uses: aws-actions/configure-aws-credentials@v4
+  Build-and-Push-Docker-Images:
+    runs-on: ubuntu-latest
     permissions:
-      id-token: write
-      contents: read
-    with:
-      # from terraform output github_actions_role
-      role-to-assume: arn:aws:iam::196481062593:role/connect-github-actions
-      aws-region: eu-west-2
+          id-token: write
+          contents: read
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-  - name: Login to Amazon ECR Private
-    id: login-ecr
-    uses: aws-actions/amazon-ecr-login@v2
-  
-  - name: Build, tag, and push docker images to Amazon ECR
-    env:
-      REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      TAG: ${{ github.sha }}
-    run: |
-      ./build-push-images.sh
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          # from terraform output github_actions_role
+          role-to-assume: arn:aws:iam::196481062593:role/connect-github-actions
+          aws-region: eu-west-2
+
+      - name: Login to Amazon ECR Private
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Build, tag, and push docker images to Amazon ECR
+        env:
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          TAG: ${{ github.sha }}
+        run: |
+          ./build-push-images.sh
