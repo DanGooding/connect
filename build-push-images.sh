@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
+set -x
 
 if [ -z "${TAG:+x}" ]; then
   echo missing TAG variable >&2
