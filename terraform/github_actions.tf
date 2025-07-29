@@ -49,13 +49,30 @@ data "aws_iam_policy_document" "push_to_ecr_repos" {
   statement {
     effect = "Allow"
     actions = [
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage",
-      "ecr:BatchCheckLayerAvailability",
+      "ecr:UploadLayerPart",
       "ecr:PutImage",
       "ecr:InitiateLayerUpload",
-      "ecr:UploadLayerPart",
-      "ecr:CompleteLayerUpload"
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:CompleteLayerUpload",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:DescribeImages",
+      "ecr:DescribePullThroughCacheRules",
+      "ecr:ListImages",
+      "ecr:BatchGetRepositoryScanningConfiguration",
+      "ecr:DescribeRegistry",
+      "ecr:GetAuthorizationToken",
+      "ecr:GetImageCopyStatus",
+      "ecr:GetLifecyclePolicy",
+      "ecr:GetLifecyclePolicyPreview",
+      "ecr:GetRegistryPolicy",
+      "ecr:ListTagsForResource",
+      "ecr:BatchDeleteImage",
+      "ecr:BatchImportUpstreamImage",
+      "ecr:PutImageTagMutability",
+      "ecr:ReplicateImage",
+      "ecr:TagResource",
+      "ecr:UntagResource"
     ]
     resources = [
       aws_ecr_repository.static_container_repo.arn,
