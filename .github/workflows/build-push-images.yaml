@@ -15,8 +15,12 @@ jobs:
 
   - name: Configure AWS credentials
     uses: aws-actions/configure-aws-credentials@v4
+    permissions:
+      id-token: write
+      contents: read
     with:
-      role-to-assume: // TODO: role
+      # from terraform output github_actions_role
+      role-to-assume: arn:aws:iam::196481062593:role/connect-github-actions
       aws-region: eu-west-2
 
   - name: Login to Amazon ECR Private
