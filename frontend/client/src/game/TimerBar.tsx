@@ -13,10 +13,11 @@ type TimerBarProps = {
 };
 
 function TimerBar(props: TimerBarProps) {
-  // TODO: storing state in the DOM like this is bad
+  // this isn't great: the source of truth for the timer's 
+  // progress probably shouldn't be a css animation.
   return (
     <div className="timer-bar">
-      <div 
+      <div
         className="timer-bar-inner"
         style={{
           animation: `grow ${props.duration}s linear`,
