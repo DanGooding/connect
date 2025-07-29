@@ -38,9 +38,7 @@ type GameState = {
   // the number of lives remaining - null means currently unlimited
   lives: number | null,
   // whether the wall has been won or lost? (else it's still being played)
-  wallCompleted: boolean, // TODO: combine these two?
-  wallFailed: boolean,
-  
+  wallOutcome: "completed" | "failed" | "ongoing",
   // was the entered connection correct for each group (same order as props.groups)
   // undefined=unchecked, true/false=correct/incorrect
   connectionMarks: (boolean | undefined | null)[],
@@ -67,8 +65,7 @@ class Game extends React.Component<GameProps, GameState> {
 
     lives: null,
 
-    wallCompleted: false,
-    wallFailed: false,
+    wallOutcome: "ongoing",
 
     connectionMarks: repeat(null, numGroups),
 
@@ -92,19 +89,19 @@ class Game extends React.Component<GameProps, GameState> {
   }
 
   handleTileClick(clue: string) {
-    if (this.state.wallCompleted || this.state.wallFailed) return;
+    if (this.state.wallOutcome !== "ongoing") return;
     if (this.state.selection.size === groupSize) return;  // TODO: this is a hack
-  
+
     let newSelection = new Set(this.state.selection);
-  
+
     if (this.state.selection.has(clue)) { // deselect this clue
       // TODO: delay
       newSelection.delete(clue);
-      this.setState({selection: newSelection});
-      
-    }else { // select this clue
+      this.setState({ selection: newSelection });
+
+    } else { // select this clue
       newSelection.add(clue);
-      this.setState({selection: newSelection}, () => {
+      this.setState({ selection: newSelection }, () => {
         if (this.state.selection.size === groupSize) {
           this.handleGuess();
         }
@@ -115,14 +112,14 @@ class Game extends React.Component<GameProps, GameState> {
   // check whether the selection is a group, updating state if so, 
   handleGuess() {
     if (this.state.selection.size < groupSize) return;
-    
+
     // check if any group matches the guess
     const i = this.props.groups.findIndex(group => setEq(group, this.state.selection));
     if (i === -1 || this.state.foundGroupIndices.includes(i)) {
       // haven't found a (new) group
       setTimeout(() => {
         this.didGuessWrong();
-        this.setState({selection: new Set()});
+        this.setState({ selection: new Set() });
       }, 500); // 'rate limit' guessing
       return;
     }
@@ -148,21 +145,22 @@ class Game extends React.Component<GameProps, GameState> {
 
   didGuessWrong() {
     if (this.state.lives != null) {
-      const newLives = Math.max(this.state.lives - 1, 0);
-      this.setState({
-        lives: newLives,
-        wallFailed: newLives === 0
-      });
+      const lives = Math.max(this.state.lives - 1, 0);
+      if (lives === 0) {
+        this.setState({ lives, wallOutcome: "failed" });
+      } else {
+        this.setState({ lives });
+      }
     }
   }
 
   // called when a group has been found
   didGuessRight() {
     if (this.state.foundGroupIndices.length === numGroups) {
-      this.setState({wallCompleted: true});
-    }else if (this.state.foundGroupIndices.length === numGroups - 2) {
+      this.setState({ wallOutcome: "completed" });
+    } else if (this.state.foundGroupIndices.length === numGroups - 2) {
       // when only two groups left, enable lives
-      this.setState({lives: maxLives});
+      this.setState({ lives: maxLives });
     }
     this.updateClueOrder();
   }
@@ -170,7 +168,7 @@ class Game extends React.Component<GameProps, GameState> {
   // time for the wall has run out
   handleTimeUp() {
     this.setState({
-      wallFailed: true
+      wallOutcome: "failed"
     });
   }
 
@@ -192,7 +190,7 @@ class Game extends React.Component<GameProps, GameState> {
         newClueOrder.push(clue);
       }
     }
-    this.setState({clueOrder: newClueOrder});
+    this.setState({ clueOrder: newClueOrder });
   }
 
   // automatically find all remaining groups,
@@ -213,12 +211,12 @@ class Game extends React.Component<GameProps, GameState> {
   handleChangeMark(i: number, newMark: boolean) {
     let connectionMarks = this.state.connectionMarks.slice();
     connectionMarks[i] = newMark;
-    this.setState({connectionMarks});
+    this.setState({ connectionMarks });
   }
 
   // called when finished marking connections - i.e. the whole game is over
   handleFinishGame() {
-    this.setState({allFinished: true});
+    this.setState({ allFinished: true });
   }
 
   render() {
@@ -236,7 +234,7 @@ class Game extends React.Component<GameProps, GameState> {
     const shownGroupIndices = this.getShownGroupIndices();
     const shownGroups = shownGroupIndices.map(i => this.props.groups[i]);
 
-    const wallOver = this.state.wallCompleted || this.state.wallFailed;
+    const wallOver = this.state.wallOutcome !== "ongoing";
 
     return (
       <div>
@@ -244,36 +242,36 @@ class Game extends React.Component<GameProps, GameState> {
           <h2>Series {this.props.series} - Episode {this.props.episode} - <WallSymbol symbolName={this.props.symbolName} /> wall</h2>
           <Wall
             clues={this.props.clues}
-            clueOrder={this.state.clueOrder} 
+            clueOrder={this.state.clueOrder}
             selection={this.state.selection}
-            foundGroups={shownGroups} 
+            foundGroups={shownGroups}
             frozen={wallOver}
             onTileClick={this.handleTileClick}
           />
-          <TimerBar 
-            duration={wallDuration} 
+          <TimerBar
+            duration={wallDuration}
             paused={wallOver}
-            onFinish={this.handleTimeUp} 
+            onFinish={this.handleTimeUp}
           />
-          {this.state.lives != null && 
-            <HealthBar lives={this.state.lives} maxLives={maxLives}/>
+          {this.state.lives != null &&
+            <HealthBar lives={this.state.lives} maxLives={maxLives} />
           }
         </div>
-        
+
         {wallOver &&
           <div>
             <h3 className="game-over-reason">
               {(() => {
-                if (this.state.wallCompleted) {
+                if (this.state.wallOutcome === "completed") {
                   return 'You\'ve solved the wall!';
-                }else if (this.state.lives === 0) {
+                } else if (this.state.lives === 0) {
                   return 'Out of lives...';
-                }else {
+                } else {
                   return 'Out of time...';
                 }
               })()}
             </h3>
-            <ConnectionsForm 
+            <ConnectionsForm
               groupIndices={shownGroupIndices}
               connections={this.props.connections}
               answerMarks={this.state.connectionMarks}
