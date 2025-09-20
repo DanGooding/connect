@@ -10,9 +10,5 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
       
-      - name: Grep for TODOs
-        run: |
-          if git grep TODO ':(exclude).github/workflows/check-no-todos.yaml' ; then
-            echo found unadressed todo items >&2
-            exit 1
-          fi
+      - name: Check no TODOs
+        uses: DanGooding/check-no-todos-action@7a585fe4a36029a0dfa30000468df2383fc31344
